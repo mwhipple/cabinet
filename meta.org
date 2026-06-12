@@ -1,0 +1,23 @@
+#+TITLE: meta
+
+A notebook for this project itself.
+
+* GitHub Setup
+
+Obey GH instructions.
+
+#+begin_src shell
+echo "#+TITLE: notebooks" >> README.org
+git init
+git add README.org
+git commit -m "first commit"
+git branch -M main
+git remote add origin git@github.com:mwhipple/notebooks.git
+git push -u origin main
+#+end_src
+
+#+RESULTS:
+| Reinitialized | existing | Git      | repository | in           | /Users/mwhipple/ws/notebooks/.git/ |                |
+| [main         | b27dc91] | first    | commit     |              |                                    |                |
+| 1             | file     | changed, | 1          | insertion(+) |                                    |                |
+| branch        | 'main'   | set      | up         | to           | track                              | 'origin/main'. |
