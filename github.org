@@ -3,7 +3,7 @@
 :END:
 #+TITLE: github
 
-GitHub is a widely used git hosting site with social elements
+GitHub is a widely used [[file:git.org][git]] hosting site with social elements
 (probably doesn't need an explanation).
 
 I personally tend to gravitate towards alternatives, but GitHub is
