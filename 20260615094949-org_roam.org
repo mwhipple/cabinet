@@ -1,0 +1,37 @@
+:PROPERTIES:
+:ID:       BD998169-D426-4D3C-A775-D2D9ED6DCFA3
+:END:
+#+title: org-roam
+
+org-roam allows for powerful zettelkasten style linking between content,
+enabling construction of a knowledge graph (rather than being overly biased
+towards more of a tree).
+
+I use "cabinet" to refer to an org roam space as a nod to zettelkasten.
+
+* Cabinet Setup
+
+** org-roam-directory
+
+#+begin_src emacs-lisp
+  (describe-variable 'org-roam-directory)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+org-roam-directory is a variable defined in ‘org-roam.el’.
+
+Its value is "/Users/mwhipple/memex/notebooks/"
+Original value was 
+"/Users/mwhipple/org-roam/"
+Local in buffer 20260615094949-org_roam.org; global value is 
+"/Users/mwhipple/memex"
+
+Default path to Org-roam files.
+All Org files, at any level of nesting, are considered part of the Org-roam.
+
+  This variable’s value is directory-local, set by the file
+  ‘/Users/mwhipple/memex/notebooks/.dir-locals.el’.
+  You can customize this variable.
+
+#+end_example

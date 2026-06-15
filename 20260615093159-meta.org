@@ -16,7 +16,7 @@ self-contained.
 
 To prepare for working with this repository, the ~.dir-locals.el~
 file must be tangled to configure the [[info:emacs#Directory Variables][directory variables]] that can be used
-for a local org-roam cabinet.
+for a local [[id:BD998169-D426-4D3C-A775-D2D9ED6DCFA3][org-roam]] cabinet.
 
 ~.dir-locals.el~ makes use of static values, so this leverages some noweb expansion
 to populate the appropriate directory at the time of tangling.
@@ -41,7 +41,14 @@ to populate the appropriate directory at the time of tangling.
 #+end_src
 
 #+RESULTS:
-: /Users/mwhipple/memex/notebooks
+: /Users/mwhipple/memex
+
+#+begin_src emacs-lisp
+  org-roam-db-location
+#+end_src
+
+#+RESULTS:
+: ~/.emacs.d/org-roam.db
 
 
 * One-Time
