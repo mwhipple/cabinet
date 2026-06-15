@@ -1,0 +1,26 @@
+:PROPERTIES:
+:ID:       002B2928-C32F-49F3-B93F-CBEEE215A7D7
+:END:
+#+title: python
+
+Python has become one of the most popular languages for application
+development.  It and JavaScript seem to be the major contenders for
+high-level work including working with AI.
+
+* Setting up a Virtual Environment
+
+Python can manage local environments with dependencies using its
+built-in ~venv~ functionality. Within a notebook this will be
+supported through creating the relevant directory, and then
+updating blocks to use the python within that directory.
+
+Creating under ~/tmp~ seems like a reasonable practice by default.
+
+** Create the venv
+
+This invokes the host python.
+
+#+begin_src shell :var host_py="python" :var venv="/tmp/test"
+  ${host_py} -m venv ${venv}
+#+end_src
+
