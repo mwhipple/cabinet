@@ -86,6 +86,38 @@ it is displayed along with the global value.
 
 * Point
 
+** point
+
+#+begin_src emacs-lisp
+  (describe-function #'point)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+point is a primitive-function in ‘C source code’.
+
+(point)
+
+Declared type: (function nil integer)
+
+Return value of point, as an integer.
+Beginning of buffer is position (point-min).
+
+  Other relevant functions are documented in the buffer group.
+  Probably introduced at or before Emacs version 17.
+  This function does not change global state, including the match
+    data.
+  This function has a ‘byte-compile’ property ‘byte-compile-no-args’.
+    See the manual for details.
+
+#+end_example
+
+#+begin_src emacs-lisp
+  (point)
+#+end_src
+
+#+RESULTS:
+: 2583
 
 ** point-min
 

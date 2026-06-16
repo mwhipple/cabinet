@@ -19,6 +19,8 @@ updating blocks to use the python within that directory.
 
 Creating under ~/tmp~ seems like a reasonable practice by default.
 
+Ocassionally something may get messed up, where recreating the venv is the brute force fix.
+
 ** Create the venv
 
 This invokes the host python.
