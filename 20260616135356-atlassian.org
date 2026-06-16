@@ -1,5 +1,6 @@
 :PROPERTIES:
 :ID:       FC988BB7-0319-4E5A-BE2A-7A9BEDF6F0F5
+:header-args: :results output
 :END:
 #+title: atlassian
 
@@ -33,7 +34,7 @@ https://developer.atlassian.com/cloud/acli/guides/install-acli/
 
 ** Homebrew
 
-#+begin_src shell :session brew :async :results output
+#+begin_src shell :session brew :async
   brew trust --formula atlassian/acli/acli
   brew tap atlassian/homebrew-acli
   brew install acli
@@ -47,3 +48,36 @@ https://developer.atlassian.com/cloud/acli/guides/install-acli/
 
 #+RESULTS:
 : acli version 1.3.19-stable
+
+* Help
+
+#+begin_src shell
+  acli --help
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Work seamlessly with Atlassian from the command line.
+
+Usage:
+  acli [command]
+
+Available Commands
+  admin       Admin commands.
+  auth        Authenticate to use Atlassian CLI.
+  confluence  Confluence Cloud commands.
+  jira        Jira Cloud commands.
+  rovodev     Atlassian’s AI coding agent: Rovo Dev (Beta).
+
+Additional Commands:
+  completion  Generate the autocompletion script for the specified shell
+  config      Commands for changing configuration settings.
+  feedback    Submit a request or report a problem.
+  help        Help about any command
+
+Flags:
+  -h, --help      Show help for command
+  -v, --version   version for acli
+
+Use "acli [command] --help" for more information about a command.
+#+end_example
