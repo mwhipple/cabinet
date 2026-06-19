@@ -16,6 +16,30 @@
 #+begin_src emacs-lisp
   (shortdoc "alist")
 #+end_src
+* buffers
+
+** with-current-buffer
+
+#+begin_src emacs-lisp
+  (describe-function #'with-current-buffer)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+with-current-buffer is a Lisp macro in ‘subr.el’.
+
+(with-current-buffer BUFFER-OR-NAME &rest BODY)
+
+Execute the forms in BODY with BUFFER-OR-NAME temporarily current.
+BUFFER-OR-NAME must be a buffer or the name of an existing buffer.
+The value returned is the value of the last form in BODY.  See
+also ‘with-temp-buffer’.
+
+  Other relevant functions are documented in the buffer group.
+  Probably introduced at or before Emacs version 20.1.
+
+#+end_example
+
 #+end_example
 
 * generic functions
