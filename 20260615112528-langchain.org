@@ -356,6 +356,2527 @@ Ollama can be used from the provided library.
 
 #+begin_src python
   from langchain_ollama.llms import OllamaLLM
+  print(help(OllamaLLM))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Help on class OllamaLLM in module langchain_ollama.llms:
+
+class OllamaLLM(langchain_core.language_models.llms.BaseLLM)
+ |  OllamaLLM(
+ |      *args: Any,
+ |      name: str | None = None,
+ |      cache: langchain_core.caches.BaseCache | bool | None = None,
+ |      verbose: bool = <factory>,
+ |      callbacks: list[langchain_core.callbacks.base.BaseCallbackHandler] | langchain_core.callbacks.base.BaseCallbackManager | None = None,
+ |      tags: list[str] | None = None,
+ |      metadata: dict[str, Any] | None = None,
+ |      custom_get_token_ids: collections.abc.Callable[[str], list[int]] | None = None,
+ |      model: str,
+ |      reasoning: bool | None = None,
+ |      validate_model_on_init: bool = False,
+ |      mirostat: int | None = None,
+ |      mirostat_eta: float | None = None,
+ |      mirostat_tau: float | None = None,
+ |      num_ctx: int | None = None,
+ |      num_gpu: int | None = None,
+ |      num_thread: int | None = None,
+ |      num_predict: int | None = None,
+ |      repeat_last_n: int | None = None,
+ |      repeat_penalty: float | None = None,
+ |      temperature: float | None = None,
+ |      seed: int | None = None,
+ |      stop: list[str] | None = None,
+ |      tfs_z: float | None = None,
+ |      top_k: int | None = None,
+ |      top_p: float | None = None,
+ |      format: Literal['', 'json'] = '',
+ |      keep_alive: int | str | None = None,
+ |      base_url: str | None = None,
+ |      client_kwargs: dict | None = {},
+ |      async_client_kwargs: dict | None = {},
+ |      sync_client_kwargs: dict | None = {}
+ |  ) -> None
+ |
+ |  Ollama large language models.
+ |
+ |  Setup:
+ |      Install `langchain-ollama` and install/run the Ollama server locally:
+ |
+ |      ```bash
+ |      pip install -U langchain-ollama
+ |      # Visit https://ollama.com/download to download and install Ollama
+ |      # (Linux users): start the server with `ollama serve`
+ |      ```
+ |
+ |      Download a model to use:
+ |
+ |      ```bash
+ |      ollama pull llama3.1
+ |      ```
+ |
+ |  Key init args — generation params:
+ |      model: str
+ |          Name of the Ollama model to use (e.g. `'llama4'`).
+ |      temperature: float | None
+ |          Sampling temperature. Higher values make output more creative.
+ |      num_predict: int | None
+ |          Maximum number of tokens to predict.
+ |      top_k: int | None
+ |          Limits the next token selection to the K most probable tokens.
+ |      top_p: float | None
+ |          Nucleus sampling parameter. Higher values lead to more diverse text.
+ |      mirostat: int | None
+ |          Enable Mirostat sampling for controlling perplexity.
+ |      seed: int | None
+ |          Random number seed for generation reproducibility.
+ |
+ |  Key init args — client params:
+ |      base_url:
+ |          Base URL where Ollama server is hosted.
+ |      keep_alive:
+ |          How long the model stays loaded into memory.
+ |      format:
+ |          Specify the format of the output.
+ |
+ |  See full list of supported init args and their descriptions in the params section.
+ |
+ |  Instantiate:
+ |      ```python
+ |      from langchain_ollama import OllamaLLM
+ |
+ |      model = OllamaLLM(
+ |          model="llama3.1",
+ |          temperature=0.7,
+ |          num_predict=256,
+ |          # base_url="http://localhost:11434",
+ |          # other params...
+ |      )
+ |      ```
+ |
+ |  Invoke:
+ |      ```python
+ |      input_text = "The meaning of life is "
+ |      response = model.invoke(input_text)
+ |      print(response)
+ |      ```
+ |      ```txt
+ |      "a philosophical question that has been contemplated by humans for
+ |      centuries..."
+ |      ```
+ |
+ |  Stream:
+ |      ```python
+ |      for chunk in model.stream(input_text):
+ |          print(chunk, end="")
+ |      ```
+ |      ```txt
+ |      a philosophical question that has been contemplated by humans for
+ |      centuries...
+ |      ```
+ |
+ |  Async:
+ |      ```python
+ |      response = await model.ainvoke(input_text)
+ |
+ |      # stream:
+ |      # async for chunk in model.astream(input_text):
+ |      #     print(chunk, end="")
+ |      ```
+ |
+ |  Method resolution order:
+ |      OllamaLLM
+ |      langchain_core.language_models.llms.BaseLLM
+ |      langchain_core.language_models.base.BaseLanguageModel[str]
+ |      langchain_core.language_models.base.BaseLanguageModel
+ |      langchain_core.runnables.base.RunnableSerializable[Union[PromptValue, str, Sequence[Union[BaseMessage, list[str], tuple[str, str], str, dict[str, Any]]]], TypeVar]
+ |      langchain_core.runnables.base.RunnableSerializable
+ |      langchain_core.load.serializable.Serializable
+ |      pydantic.main.BaseModel
+ |      langchain_core.runnables.base.Runnable
+ |      abc.ABC
+ |      typing.Generic
+ |      builtins.object
+ |
+ |  Methods defined here:
+ |
+ |  model_post_init(self, _context: Any, /) -> None from langchain_core.language_models.base.BaseLanguageModel
+ |      Pydantic V2 lifecycle hook called automatically after `__init__`.
+ |
+ |      Seeds `metadata["lc_versions"]` with the installed `langchain-core`
+ |      (and `langchain`, if installed) versions so that every LLM trace
+ |      carries the package versions that produced it.
+ |
+ |      Partner packages should **not** override this method. Instead, they
+ |      should define a `@model_validator(mode="after")` that calls
+ |      `_add_version` to append their own version to the same dict.
+ |
+ |      !!! warning "Validator naming"
+ |
+ |          Each subclass's validator **must** have a unique name. Pydantic
+ |          replaces — rather than chains — same-named `model_validator` methods
+ |          in child classes. For example, a `BaseChatOpenAI` subclass should
+ |          use `_set_<partner>_version`, not `_set_version`, to avoid silently
+ |          dropping the parent's entry.
+ |
+ |      Args:
+ |          _context: Pydantic validation context (typically `None`).
+ |
+ |  ----------------------------------------------------------------------
+ |  Data and other attributes defined here:
+ |
+ |  __abstractmethods__ = frozenset()
+ |
+ |  __annotations__ = {'_async_client': 'AsyncClient | None', '_client': '...
+ |
+ |  __class_vars__ = set()
+ |
+ |  __parameters__ = ()
+ |
+ |  __private_attributes__ = {'_async_client': ModelPrivateAttr(), '_clien...
+ |
+ |  __pydantic_complete__ = True
+ |
+ |  __pydantic_computed_fields__ = {}
+ |
+ |  __pydantic_core_schema__ = {'function': {'function': <function OllamaL...
+ |
+ |  __pydantic_custom_init__ = True
+ |
+ |  __pydantic_decorators__ = DecoratorInfos(validators={}, field_validato...
+ |
+ |  __pydantic_extra_info__ = None
+ |
+ |  __pydantic_fields__ = {'async_client_kwargs': FieldInfo(annotation=Uni...
+ |
+ |  __pydantic_generic_metadata__ = {'args': (), 'origin': None, 'paramete...
+ |
+ |  __pydantic_parent_namespace__ = None
+ |
+ |  __pydantic_post_init__ = 'model_post_init'
+ |
+ |  __pydantic_serializer__ = SchemaSerializer(serializer=PolymorphismTram...
+ |
+ |  __pydantic_setattr_handlers__ = {}
+ |
+ |  __pydantic_validator__ = SchemaValidator(title="OllamaLLM", validator=...
+ |
+ |  __signature__ = <Signature (*args: Any, name: str | None = None,...}, ...
+ |
+ |  model_config = {'arbitrary_types_allowed': True, 'extra': 'ignore', 'p...
+ |
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from langchain_core.language_models.llms.BaseLLM:
+ |
+ |  __str__(self) -> str
+ |      Return a string representation of the object for printing.
+ |
+ |  async abatch(
+ |      self,
+ |      inputs: list[LanguageModelInput],
+ |      config: RunnableConfig | list[RunnableConfig] | None = None,
+ |      *,
+ |      return_exceptions: bool = False,
+ |      **kwargs: Any
+ |  ) -> list[str]
+ |      Default implementation runs `ainvoke` in parallel using `asyncio.gather`.
+ |
+ |      The default implementation of `batch` works well for IO bound runnables.
+ |
+ |      Subclasses must override this method if they can batch more efficiently;
+ |      e.g., if the underlying `Runnable` uses an API which supports a batch mode.
+ |
+ |      Args:
+ |          inputs: A list of inputs to the `Runnable`.
+ |          config: A config to use when invoking the `Runnable`.
+ |
+ |              The config supports standard keys like `'tags'`, `'metadata'` for
+ |              tracing purposes, `'max_concurrency'` for controlling how much work to
+ |              do in parallel, and other keys.
+ |
+ |              Please refer to `RunnableConfig` for more details.
+ |          return_exceptions: Whether to return exceptions instead of raising them.
+ |          **kwargs: Additional keyword arguments to pass to the `Runnable`.
+ |
+ |      Returns:
+ |          A list of outputs from the `Runnable`.
+ |
+ |  async agenerate(
+ |      self,
+ |      prompts: list[str],
+ |      stop: list[str] | None = None,
+ |      callbacks: Callbacks | list[Callbacks] | None = None,
+ |      *,
+ |      tags: list[str] | list[list[str]] | None = None,
+ |      metadata: builtins.dict[str, Any] | list[builtins.dict[str, Any]] | None = None,
+ |      run_name: str | list[str] | None = None,
+ |      run_id: uuid.UUID | list[uuid.UUID | None] | None = None,
+ |      **kwargs: Any
+ |  ) -> LLMResult
+ |      Asynchronously pass a sequence of prompts to a model and return generations.
+ |
+ |      This method should make use of batched calls for models that expose a batched
+ |      API.
+ |
+ |      Use this method when you want to:
+ |
+ |      1. Take advantage of batched calls,
+ |      2. Need more output from the model than just the top generated value,
+ |      3. Are building chains that are agnostic to the underlying language model
+ |          type (e.g., pure text completion models vs chat models).
+ |
+ |      Args:
+ |          prompts: List of string prompts.
+ |          stop: Stop words to use when generating.
+ |
+ |              Model output is cut off at the first occurrence of any of these
+ |              substrings.
+ |          callbacks: `Callbacks` to pass through.
+ |
+ |              Used for executing additional functionality, such as logging or
+ |              streaming, throughout generation.
+ |          tags: List of tags to associate with each prompt. If provided, the length
+ |              of the list must match the length of the prompts list.
+ |          metadata: List of metadata dictionaries to associate with each prompt. If
+ |              provided, the length of the list must match the length of the prompts
+ |              list.
+ |          run_name: List of run names to associate with each prompt. If provided, the
+ |              length of the list must match the length of the prompts list.
+ |          run_id: List of run IDs to associate with each prompt. If provided, the
+ |              length of the list must match the length of the prompts list.
+ |          **kwargs: Arbitrary additional keyword arguments.
+ |
+ |              These are usually passed to the model provider API call.
+ |
+ |      Raises:
+ |          ValueError: If the length of `callbacks`, `tags`, `metadata`, or
+ |              `run_name` (if provided) does not match the length of prompts.
+ |
+ |      Returns:
+ |          An `LLMResult`, which contains a list of candidate `Generations` for each
+ |              input prompt and additional model provider-specific output.
+ |
+ |  async agenerate_prompt(
+ |      self,
+ |      prompts: list[PromptValue],
+ |      stop: list[str] | None = None,
+ |      callbacks: Callbacks | list[Callbacks] | None = None,
+ |      **kwargs: Any
+ |  ) -> LLMResult
+ |      Asynchronously pass a sequence of prompts and return model generations.
+ |
+ |      This method should make use of batched calls for models that expose a batched
+ |      API.
+ |
+ |      Use this method when you want to:
+ |
+ |      1. Take advantage of batched calls,
+ |      2. Need more output from the model than just the top generated value,
+ |      3. Are building chains that are agnostic to the underlying language model
+ |          type (e.g., pure text completion models vs chat models).
+ |
+ |      Args:
+ |          prompts: List of `PromptValue` objects.
+ |
+ |              A `PromptValue` is an object that can be converted to match the format
+ |              of any language model (string for pure text generation models and
+ |              `BaseMessage` objects for chat models).
+ |          stop: Stop words to use when generating.
+ |
+ |              Model output is cut off at the first occurrence of any of these
+ |              substrings.
+ |          callbacks: `Callbacks` to pass through.
+ |
+ |              Used for executing additional functionality, such as logging or
+ |              streaming, throughout generation.
+ |          **kwargs: Arbitrary additional keyword arguments.
+ |
+ |              These are usually passed to the model provider API call.
+ |
+ |      Returns:
+ |          An `LLMResult`, which contains a list of candidate `Generation` objects for
+ |              each input prompt and additional model provider-specific output.
+ |
+ |  async ainvoke(
+ |      self,
+ |      input: LanguageModelInput,
+ |      config: RunnableConfig | None = None,
+ |      *,
+ |      stop: list[str] | None = None,
+ |      **kwargs: Any
+ |  ) -> str
+ |      Transform a single input into an output.
+ |
+ |      Args:
+ |          input: The input to the `Runnable`.
+ |          config: A config to use when invoking the `Runnable`.
+ |
+ |              The config supports standard keys like `'tags'`, `'metadata'` for
+ |              tracing purposes, `'max_concurrency'` for controlling how much work to
+ |              do in parallel, and other keys.
+ |
+ |              Please refer to `RunnableConfig` for more details.
+ |
+ |      Returns:
+ |          The output of the `Runnable`.
+ |
+ |  asdict(self) -> builtins.dict[str, Any]
+ |      Return a dictionary representation of the LLM.
+ |
+ |  async astream(
+ |      self,
+ |      input: LanguageModelInput,
+ |      config: RunnableConfig | None = None,
+ |      *,
+ |      stop: list[str] | None = None,
+ |      **kwargs: Any
+ |  ) -> AsyncIterator[str]
+ |      Default implementation of `astream`, which calls `ainvoke`.
+ |
+ |      Subclasses must override this method if they support streaming output.
+ |
+ |      Args:
+ |          input: The input to the `Runnable`.
+ |          config: The config to use for the `Runnable`.
+ |          **kwargs: Additional keyword arguments to pass to the `Runnable`.
+ |
+ |      Yields:
+ |          The output of the `Runnable`.
+ |
+ |  batch(
+ |      self,
+ |      inputs: list[LanguageModelInput],
+ |      config: RunnableConfig | list[RunnableConfig] | None = None,
+ |      *,
+ |      return_exceptions: bool = False,
+ |      **kwargs: Any
+ |  ) -> list[str]
+ |      Default implementation runs invoke in parallel using a thread pool executor.
+ |
+ |      The default implementation of batch works well for IO bound runnables.
+ |
+ |      Subclasses must override this method if they can batch more efficiently;
+ |      e.g., if the underlying `Runnable` uses an API which supports a batch mode.
+ |
+ |      Args:
+ |          inputs: A list of inputs to the `Runnable`.
+ |          config: A config to use when invoking the `Runnable`. The config supports
+ |              standard keys like `'tags'`, `'metadata'` for
+ |              tracing purposes, `'max_concurrency'` for controlling how much work
+ |              to do in parallel, and other keys.
+ |
+ |              Please refer to `RunnableConfig` for more details.
+ |          return_exceptions: Whether to return exceptions instead of raising them.
+ |          **kwargs: Additional keyword arguments to pass to the `Runnable`.
+ |
+ |      Returns:
+ |          A list of outputs from the `Runnable`.
+ |
+ |  dict(self, **_kwargs: Any) -> builtins.dict[str, Any]
+ |      !!! deprecated "1.4.2 Use `asdict` instead. It will be removed in langchain-core==2.0.0."
+ |
+ |      DEPRECATED - use `asdict()` instead.
+ |
+ |      Return a dictionary representation of the LLM.
+ |
+ |  generate(
+ |      self,
+ |      prompts: list[str],
+ |      stop: list[str] | None = None,
+ |      callbacks: Callbacks | list[Callbacks] | None = None,
+ |      *,
+ |      tags: list[str] | list[list[str]] | None = None,
+ |      metadata: builtins.dict[str, Any] | list[builtins.dict[str, Any]] | None = None,
+ |      run_name: str | list[str] | None = None,
+ |      run_id: uuid.UUID | list[uuid.UUID | None] | None = None,
+ |      **kwargs: Any
+ |  ) -> LLMResult
+ |      Pass a sequence of prompts to a model and return generations.
+ |
+ |      This method should make use of batched calls for models that expose a batched
+ |      API.
+ |
+ |      Use this method when you want to:
+ |
+ |      1. Take advantage of batched calls,
+ |      2. Need more output from the model than just the top generated value,
+ |      3. Are building chains that are agnostic to the underlying language model
+ |          type (e.g., pure text completion models vs chat models).
+ |
+ |      Args:
+ |          prompts: List of string prompts.
+ |          stop: Stop words to use when generating.
+ |
+ |              Model output is cut off at the first occurrence of any of these
+ |              substrings.
+ |          callbacks: `Callbacks` to pass through.
+ |
+ |              Used for executing additional functionality, such as logging or
+ |              streaming, throughout generation.
+ |          tags: List of tags to associate with each prompt. If provided, the length
+ |              of the list must match the length of the prompts list.
+ |          metadata: List of metadata dictionaries to associate with each prompt. If
+ |              provided, the length of the list must match the length of the prompts
+ |              list.
+ |          run_name: List of run names to associate with each prompt. If provided, the
+ |              length of the list must match the length of the prompts list.
+ |          run_id: List of run IDs to associate with each prompt. If provided, the
+ |              length of the list must match the length of the prompts list.
+ |          **kwargs: Arbitrary additional keyword arguments.
+ |
+ |              These are usually passed to the model provider API call.
+ |
+ |      Raises:
+ |          ValueError: If prompts is not a list.
+ |          ValueError: If the length of `callbacks`, `tags`, `metadata`, or
+ |              `run_name` (if provided) does not match the length of prompts.
+ |
+ |      Returns:
+ |          An `LLMResult`, which contains a list of candidate `Generations` for each
+ |              input prompt and additional model provider-specific output.
+ |
+ |  generate_prompt(
+ |      self,
+ |      prompts: list[PromptValue],
+ |      stop: list[str] | None = None,
+ |      callbacks: Callbacks | list[Callbacks] | None = None,
+ |      **kwargs: Any
+ |  ) -> LLMResult
+ |      Pass a sequence of prompts to the model and return model generations.
+ |
+ |      This method should make use of batched calls for models that expose a batched
+ |      API.
+ |
+ |      Use this method when you want to:
+ |
+ |      1. Take advantage of batched calls,
+ |      2. Need more output from the model than just the top generated value,
+ |      3. Are building chains that are agnostic to the underlying language model
+ |          type (e.g., pure text completion models vs chat models).
+ |
+ |      Args:
+ |          prompts: List of `PromptValue` objects.
+ |
+ |              A `PromptValue` is an object that can be converted to match the format
+ |              of any language model (string for pure text generation models and
+ |              `BaseMessage` objects for chat models).
+ |          stop: Stop words to use when generating.
+ |
+ |              Model output is cut off at the first occurrence of any of these
+ |              substrings.
+ |          callbacks: `Callbacks` to pass through.
+ |
+ |              Used for executing additional functionality, such as logging or
+ |              streaming, throughout generation.
+ |          **kwargs: Arbitrary additional keyword arguments.
+ |
+ |              These are usually passed to the model provider API call.
+ |
+ |      Returns:
+ |          An `LLMResult`, which contains a list of candidate `Generation` objects for
+ |              each input prompt and additional model provider-specific output.
+ |
+ |  invoke(
+ |      self,
+ |      input: LanguageModelInput,
+ |      config: RunnableConfig | None = None,
+ |      *,
+ |      stop: list[str] | None = None,
+ |      **kwargs: Any
+ |  ) -> str
+ |      Transform a single input into an output.
+ |
+ |      Args:
+ |          input: The input to the `Runnable`.
+ |          config: A config to use when invoking the `Runnable`.
+ |
+ |              The config supports standard keys like `'tags'`, `'metadata'` for
+ |              tracing purposes, `'max_concurrency'` for controlling how much work to
+ |              do in parallel, and other keys.
+ |
+ |              Please refer to `RunnableConfig` for more details.
+ |
+ |      Returns:
+ |          The output of the `Runnable`.
+ |
+ |  save(self, file_path: Path | str) -> None
+ |      Save the LLM.
+ |
+ |      Args:
+ |          file_path: Path to file to save the LLM to.
+ |
+ |      Raises:
+ |          ValueError: If the file path is not a string or Path object.
+ |
+ |      Example:
+ |          ```python
+ |          llm.save(file_path="path/llm.yaml")
+ |          ```
+ |
+ |  stream(
+ |      self,
+ |      input: LanguageModelInput,
+ |      config: RunnableConfig | None = None,
+ |      *,
+ |      stop: list[str] | None = None,
+ |      **kwargs: Any
+ |  ) -> Iterator[str]
+ |      Default implementation of `stream`, which calls `invoke`.
+ |
+ |      Subclasses must override this method if they support streaming output.
+ |
+ |      Args:
+ |          input: The input to the `Runnable`.
+ |          config: The config to use for the `Runnable`.
+ |          **kwargs: Additional keyword arguments to pass to the `Runnable`.
+ |
+ |      Yields:
+ |          The output of the `Runnable`.
+ |
+ |  ----------------------------------------------------------------------
+ |  Readonly properties inherited from langchain_core.language_models.llms.BaseLLM:
+ |
+ |  OutputType
+ |      Get the output type for this `Runnable`.
+ |
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from langchain_core.language_models.base.BaseLanguageModel:
+ |
+ |  get_num_tokens(self, text: str) -> int
+ |      Get the number of tokens present in the text.
+ |
+ |      Useful for checking if an input fits in a model's context window.
+ |
+ |      This should be overridden by model-specific implementations to provide accurate
+ |      token counts via model-specific tokenizers.
+ |
+ |      Args:
+ |          text: The string input to tokenize.
+ |
+ |      Returns:
+ |          The integer number of tokens in the text.
+ |
+ |  get_num_tokens_from_messages(
+ |      self,
+ |      messages: list[BaseMessage],
+ |      tools: Sequence[Any] | None = None
+ |  ) -> int
+ |      Get the number of tokens in the messages.
+ |
+ |      Useful for checking if an input fits in a model's context window.
+ |
+ |      This should be overridden by model-specific implementations to provide accurate
+ |      token counts via model-specific tokenizers.
+ |
+ |      !!! note
+ |
+ |          * The base implementation of `get_num_tokens_from_messages` ignores tool
+ |              schemas.
+ |          * The base implementation of `get_num_tokens_from_messages` adds additional
+ |              prefixes to messages in represent user roles, which will add to the
+ |              overall token count. Model-specific implementations may choose to
+ |              handle this differently.
+ |
+ |      Args:
+ |          messages: The message inputs to tokenize.
+ |          tools: If provided, sequence of dict, `BaseModel`, function, or
+ |              `BaseTool` objects to be converted to tool schemas.
+ |
+ |      Returns:
+ |          The sum of the number of tokens across the messages.
+ |
+ |  get_token_ids(self, text: str) -> list[int]
+ |      Return the ordered IDs of the tokens in a text.
+ |
+ |      Args:
+ |          text: The string input to tokenize.
+ |
+ |      Returns:
+ |          A list of IDs corresponding to the tokens in the text, in order they occur
+ |              in the text.
+ |
+ |  with_structured_output(self, schema: dict[str, Any] | type, **kwargs: Any) -> Runnable[LanguageModelInput, dict[str, Any] | BaseModel]
+ |      Not implemented on this class.
+ |
+ |  ----------------------------------------------------------------------
+ |  Class methods inherited from langchain_core.language_models.base.BaseLanguageModel:
+ |
+ |  set_verbose(verbose: bool | None) -> bool
+ |      If verbose is `None`, set it.
+ |
+ |      This allows users to pass in `None` as verbose to access the global setting.
+ |
+ |      Args:
+ |          verbose: The verbosity setting to use.
+ |
+ |      Returns:
+ |          The verbosity setting to use.
+ |
+ |  ----------------------------------------------------------------------
+ |  Readonly properties inherited from langchain_core.language_models.base.BaseLanguageModel:
+ |
+ |  InputType
+ |      Get the input type for this `Runnable`.
+ |
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from langchain_core.runnables.base.RunnableSerializable:
+ |
+ |  configurable_alternatives(
+ |      self,
+ |      which: ConfigurableField,
+ |      *,
+ |      default_key: str = 'default',
+ |      prefix_keys: bool = False,
+ |      **kwargs: Runnable[Input, Output] | Callable[[], Runnable[Input, Output]]
+ |  ) -> RunnableSerializable[Input, Output]
+ |      Configure alternatives for `Runnable` objects that can be set at runtime.
+ |
+ |      Args:
+ |          which: The `ConfigurableField` instance that will be used to select the
+ |              alternative.
+ |          default_key: The default key to use if no alternative is selected.
+ |          prefix_keys: Whether to prefix the keys with the `ConfigurableField` id.
+ |          **kwargs: A dictionary of keys to `Runnable` instances or callables that
+ |              return `Runnable` instances.
+ |
+ |      Returns:
+ |          A new `Runnable` with the alternatives configured.
+ |
+ |      !!! example
+ |
+ |          ```python
+ |          from langchain_anthropic import ChatAnthropic
+ |          from langchain_core.runnables.utils import ConfigurableField
+ |          from langchain_openai import ChatOpenAI
+ |
+ |          model = ChatAnthropic(
+ |              model_name="claude-sonnet-4-5-20250929"
+ |          ).configurable_alternatives(
+ |              ConfigurableField(id="llm"),
+ |              default_key="anthropic",
+ |              openai=ChatOpenAI(),
+ |          )
+ |
+ |          # uses the default model ChatAnthropic
+ |          print(model.invoke("which organization created you?").content)
+ |
+ |          # uses ChatOpenAI
+ |          print(
+ |              model.with_config(configurable={"llm": "openai"})
+ |              .invoke("which organization created you?")
+ |              .content
+ |          )
+ |          ```
+ |
+ |  configurable_fields(self, **kwargs: AnyConfigurableField) -> RunnableSerializable[Input, Output]
+ |      Configure particular `Runnable` fields at runtime.
+ |
+ |      Args:
+ |          **kwargs: A dictionary of `ConfigurableField` instances to configure.
+ |
+ |      Raises:
+ |          ValueError: If a configuration key is not found in the `Runnable`.
+ |
+ |      Returns:
+ |          A new `Runnable` with the fields configured.
+ |
+ |      !!! example
+ |
+ |          ```python
+ |          from langchain_core.runnables import ConfigurableField
+ |          from langchain_openai import ChatOpenAI
+ |
+ |          model = ChatOpenAI(max_tokens=20).configurable_fields(
+ |              max_tokens=ConfigurableField(
+ |                  id="output_token_number",
+ |                  name="Max tokens in the output",
+ |                  description="The maximum number of tokens in the output",
+ |              )
+ |          )
+ |
+ |          # max_tokens = 20
+ |          print(
+ |              "max_tokens_20: ", model.invoke("tell me something about chess").content
+ |          )
+ |
+ |          # max_tokens = 200
+ |          print(
+ |              "max_tokens_200: ",
+ |              model.with_config(configurable={"output_token_number": 200})
+ |              .invoke("tell me something about chess")
+ |              .content,
+ |          )
+ |          ```
+ |
+ |  to_json(self) -> SerializedConstructor | SerializedNotImplemented
+ |      Serialize the `Runnable` to JSON.
+ |
+ |      Returns:
+ |          A JSON-serializable representation of the `Runnable`.
+ |
+ |  ----------------------------------------------------------------------
+ |  Data and other attributes inherited from langchain_core.runnables.base.RunnableSerializable:
+ |
+ |  __orig_bases__ = (<class 'langchain_core.load.serializable.Serializabl...
+ |
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from langchain_core.load.serializable.Serializable:
+ |
+ |  __init__(self, *args: Any, **kwargs: Any) -> None
+ |      # Remove default BaseModel init docstring.
+ |
+ |  __repr_args__(self) -> Any
+ |
+ |  to_json_not_implemented(self) -> SerializedNotImplemented
+ |      Serialize a "not implemented" object.
+ |
+ |      Returns:
+ |          `SerializedNotImplemented`.
+ |
+ |  ----------------------------------------------------------------------
+ |  Class methods inherited from langchain_core.load.serializable.Serializable:
+ |
+ |  get_lc_namespace() -> list[str]
+ |      Get the namespace of the LangChain object.
+ |
+ |      The default implementation splits `cls.__module__` on `'.'`, e.g.
+ |      `langchain_openai.chat_models` becomes
+ |      `["langchain_openai", "chat_models"]`. This value is used by `lc_id` to
+ |      build the serialization identifier.
+ |
+ |      New partner packages should **not** override this method. The default
+ |      behavior is correct for any class whose module path already reflects
+ |      its package name. Some older packages (e.g. `langchain-openai`,
+ |      `langchain-anthropic`) override it to return a legacy-style namespace
+ |      like `["langchain", "chat_models", "openai"]`, matching the module
+ |      paths that existed before those integrations were split out of the
+ |      main `langchain` package. Those overrides are kept for
+ |      backwards-compatible deserialization; new packages should not copy them.
+ |
+ |      Deserialization mapping is handled separately by
+ |      `SERIALIZABLE_MAPPING` in `langchain_core.load.mapping`.
+ |
+ |      Returns:
+ |          The namespace.
+ |
+ |  is_lc_serializable() -> bool
+ |      Is this class serializable?
+ |
+ |      By design, even if a class inherits from `Serializable`, it is not serializable
+ |      by default. This is to prevent accidental serialization of objects that should
+ |      not be serialized.
+ |
+ |      Returns:
+ |          Whether the class is serializable. Default is `False`.
+ |
+ |  lc_id() -> list[str]
+ |      Return a unique identifier for this class for serialization purposes.
+ |
+ |      The unique identifier is a list of strings that describes the path
+ |      to the object.
+ |
+ |      For example, for the class `langchain.llms.openai.OpenAI`, the id is
+ |      `["langchain", "llms", "openai", "OpenAI"]`.
+ |
+ |  ----------------------------------------------------------------------
+ |  Readonly properties inherited from langchain_core.load.serializable.Serializable:
+ |
+ |  lc_attributes
+ |      List of attribute names that should be included in the serialized kwargs.
+ |
+ |      These attributes must be accepted by the constructor.
+ |
+ |      Default is an empty dictionary.
+ |
+ |  lc_secrets
+ |      A map of constructor argument names to secret ids.
+ |
+ |      For example, `{"openai_api_key": "OPENAI_API_KEY"}`
+ |
+ |  ----------------------------------------------------------------------
+ |  Data descriptors inherited from langchain_core.load.serializable.Serializable:
+ |
+ |  __weakref__
+ |      list of weak references to the object
+ |
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from pydantic.main.BaseModel:
+ |
+ |  __copy__(self) -> Self
+ |      Returns a shallow copy of the model.
+ |
+ |  __deepcopy__(self, memo: dict[int, Any] | None = None) -> Self
+ |      Returns a deep copy of the model.
+ |
+ |  __delattr__(self, item: str) -> Any
+ |      Implement delattr(self, name).
+ |
+ |  __eq__(self, other: Any) -> bool
+ |      Return self==value.
+ |
+ |  __getattr__(self, item: str) -> Any
+ |
+ |  __getstate__(self) -> dict[Any, Any]
+ |      Helper for pickle.
+ |
+ |  __iter__(self) -> TupleGenerator
+ |      So `dict(model)` works.
+ |
+ |  __pretty__(self, fmt: Callable[[Any], Any], **kwargs: Any) -> Generator[Any] from pydantic._internal._repr.Representation
+ |      Used by devtools (https://python-devtools.helpmanual.io/) to pretty print objects.
+ |
+ |  __replace__(self, **changes: Any) -> Self
+ |      # Because we make use of `@dataclass_transform()`, `__replace__` is already synthesized by
+ |      # type checkers, so we define the implementation in this `if not TYPE_CHECKING:` block:
+ |
+ |  __repr__(self) -> str
+ |      Return repr(self).
+ |
+ |  __repr_name__(self) -> str from pydantic._internal._repr.Representation
+ |      Name of the instance's class, used in __repr__.
+ |
+ |  __repr_recursion__(self, object: Any) -> str from pydantic._internal._repr.Representation
+ |      Returns the string representation of a recursive object.
+ |
+ |  __repr_str__(self, join_str: str) -> str from pydantic._internal._repr.Representation
+ |
+ |  __rich_repr__(self) -> RichReprResult from pydantic._internal._repr.Representation
+ |      Used by Rich (https://rich.readthedocs.io/en/stable/pretty.html) to pretty print objects.
+ |
+ |  __setattr__(self, name: str, value: Any) -> None
+ |      Implement setattr(self, name, value).
+ |
+ |  __setstate__(self, state: dict[Any, Any]) -> None
+ |
+ |  copy(
+ |      self,
+ |      *,
+ |      include: AbstractSetIntStr | MappingIntStrAny | None = None,
+ |      exclude: AbstractSetIntStr | MappingIntStrAny | None = None,
+ |      update: Dict[str, Any] | None = None,
+ |      deep: bool = False
+ |  ) -> Self
+ |      Returns a copy of the model.
+ |
+ |      !!! warning "Deprecated"
+ |          This method is now deprecated; use `model_copy` instead.
+ |
+ |      If you need `include` or `exclude`, use:
+ |
+ |      ```python {test="skip" lint="skip"}
+ |      data = self.model_dump(include=include, exclude=exclude, round_trip=True)
+ |      data = {**data, **(update or {})}
+ |      copied = self.model_validate(data)
+ |      ```
+ |
+ |      Args:
+ |          include: Optional set or mapping specifying which fields to include in the copied model.
+ |          exclude: Optional set or mapping specifying which fields to exclude in the copied model.
+ |          update: Optional dictionary of field-value pairs to override field values in the copied model.
+ |          deep: If True, the values of fields that are Pydantic models will be deep-copied.
+ |
+ |      Returns:
+ |          A copy of the model with included, excluded and updated fields as specified.
+ |
+ |  json(
+ |      self,
+ |      *,
+ |      include: IncEx | None = None,
+ |      exclude: IncEx | None = None,
+ |      by_alias: bool = False,
+ |      exclude_unset: bool = False,
+ |      exclude_defaults: bool = False,
+ |      exclude_none: bool = False,
+ |      encoder: Callable[[Any], Any] | None = PydanticUndefined,
+ |      models_as_dict: bool = PydanticUndefined,
+ |      **dumps_kwargs: Any
+ |  ) -> str
+ |
+ |  model_copy(self, *, update: Mapping[str, Any] | None = None, deep: bool = False) -> Self
+ |      !!! abstract "Usage Documentation"
+ |          [`model_copy`](../concepts/models.md#model-copy)
+ |
+ |      Returns a copy of the model.
+ |
+ |      !!! note
+ |          The underlying instance's [`__dict__`][object.__dict__] attribute is copied. This
+ |          might have unexpected side effects if you store anything in it, on top of the model
+ |          fields (e.g. the value of [cached properties][functools.cached_property]).
+ |
+ |      Args:
+ |          update: Values to change/add in the new model. Note: the data is not validated
+ |              before creating the new model. You should trust this data.
+ |          deep: Set to `True` to make a deep copy of the model.
+ |
+ |      Returns:
+ |          New model instance.
+ |
+ |  model_dump(
+ |      self,
+ |      *,
+ |      mode: Literal['json', 'python'] | str = 'python',
+ |      include: IncEx | None = None,
+ |      exclude: IncEx | None = None,
+ |      context: Any | None = None,
+ |      by_alias: bool | None = None,
+ |      exclude_unset: bool = False,
+ |      exclude_defaults: bool = False,
+ |      exclude_none: bool = False,
+ |      exclude_computed_fields: bool = False,
+ |      round_trip: bool = False,
+ |      warnings: bool | Literal['none', 'warn', 'error'] = True,
+ |      fallback: Callable[[Any], Any] | None = None,
+ |      serialize_as_any: bool = False,
+ |      polymorphic_serialization: bool | None = None
+ |  ) -> dict[str, Any]
+ |      !!! abstract "Usage Documentation"
+ |          [`model_dump`](../concepts/serialization.md#python-mode)
+ |
+ |      Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+ |
+ |      Args:
+ |          mode: The mode in which `to_python` should run.
+ |              If mode is 'json', the output will only contain JSON serializable types.
+ |              If mode is 'python', the output may contain non-JSON-serializable Python objects.
+ |          include: A set of fields to include in the output.
+ |          exclude: A set of fields to exclude from the output.
+ |          context: Additional context to pass to the serializer.
+ |          by_alias: Whether to use the field's alias in the dictionary key if defined.
+ |          exclude_unset: Whether to exclude fields that have not been explicitly set.
+ |          exclude_defaults: Whether to exclude fields that are set to their default value.
+ |          exclude_none: Whether to exclude fields that have a value of `None`.
+ |          exclude_computed_fields: Whether to exclude computed fields.
+ |              While this can be useful for round-tripping, it is usually recommended to use the dedicated
+ |              `round_trip` parameter instead.
+ |          round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
+ |          warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
+ |              "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
+ |          fallback: A function to call when an unknown value is encountered. If not provided,
+ |              a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError] error is raised.
+ |          serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
+ |          polymorphic_serialization: Whether to use model and dataclass polymorphic serialization for this call.
+ |
+ |      Returns:
+ |          A dictionary representation of the model.
+ |
+ |  model_dump_json(
+ |      self,
+ |      *,
+ |      indent: int | None = None,
+ |      ensure_ascii: bool = False,
+ |      include: IncEx | None = None,
+ |      exclude: IncEx | None = None,
+ |      context: Any | None = None,
+ |      by_alias: bool | None = None,
+ |      exclude_unset: bool = False,
+ |      exclude_defaults: bool = False,
+ |      exclude_none: bool = False,
+ |      exclude_computed_fields: bool = False,
+ |      round_trip: bool = False,
+ |      warnings: bool | Literal['none', 'warn', 'error'] = True,
+ |      fallback: Callable[[Any], Any] | None = None,
+ |      serialize_as_any: bool = False,
+ |      polymorphic_serialization: bool | None = None
+ |  ) -> str
+ |      !!! abstract "Usage Documentation"
+ |          [`model_dump_json`](../concepts/serialization.md#json-mode)
+ |
+ |      Generates a JSON representation of the model using Pydantic's `to_json` method.
+ |
+ |      Args:
+ |          indent: Indentation to use in the JSON output. If None is passed, the output will be compact.
+ |          ensure_ascii: If `True`, the output is guaranteed to have all incoming non-ASCII characters escaped.
+ |              If `False` (the default), these characters will be output as-is.
+ |          include: Field(s) to include in the JSON output.
+ |          exclude: Field(s) to exclude from the JSON output.
+ |          context: Additional context to pass to the serializer.
+ |          by_alias: Whether to serialize using field aliases.
+ |          exclude_unset: Whether to exclude fields that have not been explicitly set.
+ |          exclude_defaults: Whether to exclude fields that are set to their default value.
+ |          exclude_none: Whether to exclude fields that have a value of `None`.
+ |          exclude_computed_fields: Whether to exclude computed fields.
+ |              While this can be useful for round-tripping, it is usually recommended to use the dedicated
+ |              `round_trip` parameter instead.
+ |          round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
+ |          warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
+ |              "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
+ |          fallback: A function to call when an unknown value is encountered. If not provided,
+ |              a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError] error is raised.
+ |          serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
+ |          polymorphic_serialization: Whether to use model and dataclass polymorphic serialization for this call.
+ |
+ |      Returns:
+ |          A JSON string representation of the model.
+ |
+ |  ----------------------------------------------------------------------
+ |  Class methods inherited from pydantic.main.BaseModel:
+ |
+ |  __class_getitem__(typevar_values: type[Any] | tuple[type[Any], ...]) -> type[BaseModel] | _forward_ref.PydanticRecursiveRef
+ |      Parameterizes a generic class.
+ |
+ |      At least, parameterizing a generic class is the *main* thing this
+ |      method does. For example, for some generic class `Foo`, this is called
+ |      when we do `Foo[int]` - there, with `cls=Foo` and `params=int`.
+ |
+ |      However, note that this method is also called when defining generic
+ |      classes in the first place with `class Foo[T]: ...`.
+ |
+ |  __get_pydantic_core_schema__(
+ |      source: type[BaseModel],
+ |      handler: GetCoreSchemaHandler,
+ |      /
+ |  ) -> CoreSchema
+ |
+ |  __get_pydantic_json_schema__(
+ |      core_schema: CoreSchema,
+ |      handler: GetJsonSchemaHandler,
+ |      /
+ |  ) -> JsonSchemaValue
+ |      Hook into generating the model's JSON schema.
+ |
+ |      Args:
+ |          core_schema: A `pydantic-core` CoreSchema.
+ |              You can ignore this argument and call the handler with a new CoreSchema,
+ |              wrap this CoreSchema (`{'type': 'nullable', 'schema': current_schema}`),
+ |              or just call the handler with the original schema.
+ |          handler: Call into Pydantic's internal JSON schema generation.
+ |              This will raise a `pydantic.errors.PydanticInvalidForJsonSchema` if JSON schema
+ |              generation fails.
+ |              Since this gets called by `BaseModel.model_json_schema` you can override the
+ |              `schema_generator` argument to that function to change JSON schema generation globally
+ |              for a type.
+ |
+ |      Returns:
+ |          A JSON schema, as a Python object.
+ |
+ |  __pydantic_init_subclass__(**kwargs: Any) -> None
+ |      This is intended to behave just like `__init_subclass__`, but is called by `ModelMetaclass`
+ |      only after basic class initialization is complete. In particular, attributes like `model_fields` will
+ |      be present when this is called, but forward annotations are not guaranteed to be resolved yet,
+ |      meaning that creating an instance of the class may fail.
+ |
+ |      This is necessary because `__init_subclass__` will always be called by `type.__new__`,
+ |      and it would require a prohibitively large refactor to the `ModelMetaclass` to ensure that
+ |      `type.__new__` was called in such a manner that the class would already be sufficiently initialized.
+ |
+ |      This will receive the same `kwargs` that would be passed to the standard `__init_subclass__`, namely,
+ |      any kwargs passed to the class definition that aren't used internally by Pydantic.
+ |
+ |      Args:
+ |          **kwargs: Any keyword arguments passed to the class definition that aren't used internally
+ |              by Pydantic.
+ |
+ |      Note:
+ |          You may want to override [`__pydantic_on_complete__()`][pydantic.main.BaseModel.__pydantic_on_complete__]
+ |          instead, which is called once the class and its fields are fully initialized and ready for validation.
+ |
+ |  __pydantic_on_complete__() -> None
+ |      This is called once the class and its fields are fully initialized and ready to be used.
+ |
+ |      This typically happens when the class is created (just before
+ |      [`__pydantic_init_subclass__()`][pydantic.main.BaseModel.__pydantic_init_subclass__] is called on the superclass),
+ |      except when forward annotations are used that could not immediately be resolved.
+ |      In that case, it will be called later, when the model is rebuilt automatically or explicitly using
+ |      [`model_rebuild()`][pydantic.main.BaseModel.model_rebuild].
+ |
+ |  construct(_fields_set: set[str] | None = None, **values: Any) -> Self
+ |
+ |  from_orm(obj: Any) -> Self
+ |
+ |  model_construct(_fields_set: set[str] | None = None, **values: Any) -> Self
+ |      Creates a new instance of the `Model` class with validated data.
+ |
+ |      Creates a new model setting `__dict__` and `__pydantic_fields_set__` from trusted or pre-validated data.
+ |      Default values are respected, but no other validation is performed.
+ |
+ |      !!! note
+ |          `model_construct()` generally respects the `model_config.extra` setting on the provided model.
+ |          That is, if `model_config.extra == 'allow'`, then all extra passed values are added to the model instance's `__dict__`
+ |          and `__pydantic_extra__` fields. If `model_config.extra == 'ignore'` (the default), then all extra passed values are ignored.
+ |          Because no validation is performed with a call to `model_construct()`, having `model_config.extra == 'forbid'` does not result in
+ |          an error if extra values are passed, but they will be ignored.
+ |
+ |      Args:
+ |          _fields_set: A set of field names that were originally explicitly set during instantiation. If provided,
+ |              this is directly used for the [`model_fields_set`][pydantic.BaseModel.model_fields_set] attribute.
+ |              Otherwise, the field names from the `values` argument will be used.
+ |          values: Trusted or pre-validated data dictionary.
+ |
+ |      Returns:
+ |          A new instance of the `Model` class with validated data.
+ |
+ |  model_json_schema(
+ |      by_alias: bool = True,
+ |      ref_template: str = '#/$defs/{model}',
+ |      schema_generator: type[GenerateJsonSchema] = <class 'pydantic.json_schema.GenerateJsonSchema'>,
+ |      mode: JsonSchemaMode = 'validation',
+ |      *,
+ |      union_format: Literal['any_of', 'primitive_type_array'] = 'any_of'
+ |  ) -> dict[str, Any]
+ |      Generates a JSON schema for a model class.
+ |
+ |      Args:
+ |          by_alias: Whether to use attribute aliases or not.
+ |          ref_template: The reference template.
+ |          union_format: The format to use when combining schemas from unions together. Can be one of:
+ |
+ |              - `'any_of'`: Use the [`anyOf`](https://json-schema.org/understanding-json-schema/reference/combining#anyOf)
+ |              keyword to combine schemas (the default).
+ |              - `'primitive_type_array'`: Use the [`type`](https://json-schema.org/understanding-json-schema/reference/type)
+ |              keyword as an array of strings, containing each type of the combination. If any of the schemas is not a primitive
+ |              type (`string`, `boolean`, `null`, `integer` or `number`) or contains constraints/metadata, falls back to
+ |              `any_of`.
+ |          schema_generator: To override the logic used to generate the JSON schema, as a subclass of
+ |              `GenerateJsonSchema` with your desired modifications
+ |          mode: The mode in which to generate the schema.
+ |
+ |      Returns:
+ |          The JSON schema for the given model class.
+ |
+ |  model_parametrized_name(params: tuple[type[Any], ...]) -> str
+ |      Compute the class name for parametrizations of generic classes.
+ |
+ |      This method can be overridden to achieve a custom naming scheme for generic BaseModels.
+ |
+ |      Args:
+ |          params: Tuple of types of the class. Given a generic class
+ |              `Model` with 2 type variables and a concrete model `Model[str, int]`,
+ |              the value `(str, int)` would be passed to `params`.
+ |
+ |      Returns:
+ |          String representing the new class where `params` are passed to `cls` as type variables.
+ |
+ |      Raises:
+ |          TypeError: Raised when trying to generate concrete names for non-generic models.
+ |
+ |  model_rebuild(
+ |      *,
+ |      force: bool = False,
+ |      raise_errors: bool = True,
+ |      _parent_namespace_depth: int = 2,
+ |      _types_namespace: MappingNamespace | None = None
+ |  ) -> bool | None
+ |      Try to rebuild the pydantic-core schema for the model.
+ |
+ |      This may be necessary when one of the annotations is a ForwardRef which could not be resolved during
+ |      the initial attempt to build the schema, and automatic rebuilding fails.
+ |
+ |      Args:
+ |          force: Whether to force the rebuilding of the model schema, defaults to `False`.
+ |          raise_errors: Whether to raise errors, defaults to `True`.
+ |          _parent_namespace_depth: The depth level of the parent namespace, defaults to 2.
+ |          _types_namespace: The types namespace, defaults to `None`.
+ |
+ |      Returns:
+ |          Returns `None` if the schema is already "complete" and rebuilding was not required.
+ |          If rebuilding _was_ required, returns `True` if rebuilding was successful, otherwise `False`.
+ |
+ |  model_validate(
+ |      obj: Any,
+ |      *,
+ |      strict: bool | None = None,
+ |      extra: ExtraValues | None = None,
+ |      from_attributes: bool | None = None,
+ |      context: Any | None = None,
+ |      by_alias: bool | None = None,
+ |      by_name: bool | None = None
+ |  ) -> Self
+ |      Validate a pydantic model instance.
+ |
+ |      Args:
+ |          obj: The object to validate.
+ |          strict: Whether to enforce types strictly.
+ |          extra: Whether to ignore, allow, or forbid extra data during model validation.
+ |              See the [`extra` configuration value][pydantic.ConfigDict.extra] for details.
+ |          from_attributes: Whether to extract data from object attributes.
+ |          context: Additional context to pass to the validator.
+ |          by_alias: Whether to use the field's alias when validating against the provided input data.
+ |          by_name: Whether to use the field's name when validating against the provided input data.
+ |
+ |      Raises:
+ |          ValidationError: If the object could not be validated.
+ |
+ |      Returns:
+ |          The validated model instance.
+ |
+ |  model_validate_json(
+ |      json_data: str | bytes | bytearray,
+ |      *,
+ |      strict: bool | None = None,
+ |      extra: ExtraValues | None = None,
+ |      context: Any | None = None,
+ |      by_alias: bool | None = None,
+ |      by_name: bool | None = None
+ |  ) -> Self
+ |      !!! abstract "Usage Documentation"
+ |          [JSON Parsing](../concepts/json.md#json-parsing)
+ |
+ |      Validate the given JSON data against the Pydantic model.
+ |
+ |      Args:
+ |          json_data: The JSON data to validate.
+ |          strict: Whether to enforce types strictly.
+ |          extra: Whether to ignore, allow, or forbid extra data during model validation.
+ |              See the [`extra` configuration value][pydantic.ConfigDict.extra] for details.
+ |          context: Extra variables to pass to the validator.
+ |          by_alias: Whether to use the field's alias when validating against the provided input data.
+ |          by_name: Whether to use the field's name when validating against the provided input data.
+ |
+ |      Returns:
+ |          The validated Pydantic model.
+ |
+ |      Raises:
+ |          ValidationError: If `json_data` is not a JSON string or the object could not be validated.
+ |
+ |  model_validate_strings(
+ |      obj: Any,
+ |      *,
+ |      strict: bool | None = None,
+ |      extra: ExtraValues | None = None,
+ |      context: Any | None = None,
+ |      by_alias: bool | None = None,
+ |      by_name: bool | None = None
+ |  ) -> Self
+ |      Validate the given object with string data against the Pydantic model.
+ |
+ |      Args:
+ |          obj: The object containing string data to validate.
+ |          strict: Whether to enforce types strictly.
+ |          extra: Whether to ignore, allow, or forbid extra data during model validation.
+ |              See the [`extra` configuration value][pydantic.ConfigDict.extra] for details.
+ |          context: Extra variables to pass to the validator.
+ |          by_alias: Whether to use the field's alias when validating against the provided input data.
+ |          by_name: Whether to use the field's name when validating against the provided input data.
+ |
+ |      Returns:
+ |          The validated Pydantic model.
+ |
+ |  parse_file(
+ |      path: str | Path,
+ |      *,
+ |      content_type: str | None = None,
+ |      encoding: str = 'utf8',
+ |      proto: DeprecatedParseProtocol | None = None,
+ |      allow_pickle: bool = False
+ |  ) -> Self
+ |
+ |  parse_obj(obj: Any) -> Self
+ |
+ |  parse_raw(
+ |      b: str | bytes,
+ |      *,
+ |      content_type: str | None = None,
+ |      encoding: str = 'utf8',
+ |      proto: DeprecatedParseProtocol | None = None,
+ |      allow_pickle: bool = False
+ |  ) -> Self
+ |
+ |  schema(by_alias: bool = True, ref_template: str = '#/$defs/{model}') -> Dict[str, Any]
+ |
+ |  schema_json(
+ |      *,
+ |      by_alias: bool = True,
+ |      ref_template: str = '#/$defs/{model}',
+ |      **dumps_kwargs: Any
+ |  ) -> str
+ |
+ |  update_forward_refs(**localns: Any) -> None
+ |
+ |  validate(value: Any) -> Self
+ |
+ |  ----------------------------------------------------------------------
+ |  Readonly properties inherited from pydantic.main.BaseModel:
+ |
+ |  __fields_set__
+ |
+ |  model_extra
+ |      Get extra fields set during validation.
+ |
+ |      Returns:
+ |          A dictionary of extra fields, or `None` if `config.extra` is not set to `"allow"`.
+ |
+ |  model_fields_set
+ |      Returns the set of fields that have been explicitly set on this model instance.
+ |
+ |      Returns:
+ |          A set of strings representing the fields that have been set,
+ |              i.e. that were not filled from defaults.
+ |
+ |  ----------------------------------------------------------------------
+ |  Data descriptors inherited from pydantic.main.BaseModel:
+ |
+ |  __dict__
+ |      dictionary for instance variables
+ |
+ |  __pydantic_extra__
+ |
+ |  __pydantic_fields_set__
+ |
+ |  __pydantic_private__
+ |
+ |  ----------------------------------------------------------------------
+ |  Data and other attributes inherited from pydantic.main.BaseModel:
+ |
+ |  __hash__ = None
+ |
+ |  __pydantic_root_model__ = False
+ |
+ |  model_computed_fields = {}
+ |
+ |  model_fields = {'async_client_kwargs': FieldInfo(annotation=Union[dict...
+ |
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from langchain_core.runnables.base.Runnable:
+ |
+ |  __or__(
+ |      self,
+ |      other: Runnable[Output, Other] | Callable[[Iterator[Output]], Iterator[Other]] | Callable[[AsyncIterator[Output]], AsyncIterator[Other]] | Callable[[Output], Other] | Mapping[str, Runnable[Output, Any] | Callable[[Output], Any] | Any]
+ |  ) -> RunnableSerializable[Input, Any]
+ |      Runnable "or" operator.
+ |
+ |      Compose this `Runnable` with another object to create a
+ |      `RunnableSequence`.
+ |
+ |      Args:
+ |          other: Another `Runnable` or a `Runnable`-like object.
+ |
+ |      Returns:
+ |          A new `Runnable`.
+ |
+ |  __ror__(
+ |      self,
+ |      other: Runnable[Other, Input] | Callable[[Iterator[Other]], Iterator[Input]] | Callable[[AsyncIterator[Other]], AsyncIterator[Input]] | Callable[[Other], Any] | Mapping[str, Runnable[Other, Input] | Callable[[Other], Any] | Any]
+ |  ) -> RunnableSerializable[Any, Output]
+ |      Runnable "reverse-or" operator.
+ |
+ |      Compose this `Runnable` with another object to create a
+ |      `RunnableSequence`.
+ |
+ |      Args:
+ |          other: Another `Runnable` or a `Runnable`-like object.
+ |
+ |      Returns:
+ |          A new `Runnable`.
+ |
+ |  async abatch_as_completed(
+ |      self,
+ |      inputs: Sequence[Input],
+ |      config: RunnableConfig | Sequence[RunnableConfig] | None = None,
+ |      *,
+ |      return_exceptions: bool = False,
+ |      **kwargs: Any | None
+ |  ) -> AsyncIterator[tuple[int, Output | Exception]]
+ |      Run `ainvoke` in parallel on a list of inputs.
+ |
+ |      Yields results as they complete.
+ |
+ |      Args:
+ |          inputs: A list of inputs to the `Runnable`.
+ |          config: A config to use when invoking the `Runnable`.
+ |
+ |              The config supports standard keys like `'tags'`, `'metadata'` for
+ |              tracing purposes, `'max_concurrency'` for controlling how much work to
+ |              do in parallel, and other keys.
+ |
+ |              Please refer to `RunnableConfig` for more details.
+ |          return_exceptions: Whether to return exceptions instead of raising them.
+ |          **kwargs: Additional keyword arguments to pass to the `Runnable`.
+ |
+ |      Yields:
+ |          A tuple of the index of the input and the output from the `Runnable`.
+ |
+ |  as_tool(
+ |      self,
+ |      args_schema: type[BaseModel] | None = None,
+ |      *,
+ |      name: str | None = None,
+ |      description: str | None = None,
+ |      arg_types: dict[str, type] | None = None
+ |  ) -> BaseTool
+ |      .. beta::
+ |         This API is in beta and may change in the future.
+ |
+ |      Create a `BaseTool` from a `Runnable`.
+ |
+ |      `as_tool` will instantiate a `BaseTool` with a name, description, and
+ |      `args_schema` from a `Runnable`. Where possible, schemas are inferred
+ |      from `runnable.get_input_schema`.
+ |
+ |      Alternatively (e.g., if the `Runnable` takes a dict as input and the specific
+ |      `dict` keys are not typed), the schema can be specified directly with
+ |      `args_schema`.
+ |
+ |      You can also pass `arg_types` to just specify the required arguments and their
+ |      types.
+ |
+ |      Args:
+ |          args_schema: The schema for the tool.
+ |          name: The name of the tool.
+ |          description: The description of the tool.
+ |          arg_types: A dictionary of argument names to types.
+ |
+ |      Returns:
+ |          A `BaseTool` instance.
+ |
+ |      !!! example "`TypedDict` input"
+ |
+ |          ```python
+ |          from typing_extensions import TypedDict
+ |          from langchain_core.runnables import RunnableLambda
+ |
+ |
+ |          class Args(TypedDict):
+ |              a: int
+ |              b: list[int]
+ |
+ |
+ |          def f(x: Args) -> str:
+ |              return str(x["a"] * max(x["b"]))
+ |
+ |
+ |          runnable = RunnableLambda(f)
+ |          as_tool = runnable.as_tool()
+ |          as_tool.invoke({"a": 3, "b": [1, 2]})
+ |          ```
+ |
+ |      !!! example "`dict` input, specifying schema via `args_schema`"
+ |
+ |          ```python
+ |          from typing import Any
+ |          from pydantic import BaseModel, Field
+ |          from langchain_core.runnables import RunnableLambda
+ |
+ |          def f(x: dict[str, Any]) -> str:
+ |              return str(x["a"] * max(x["b"]))
+ |
+ |          class FSchema(BaseModel):
+ |              """Apply a function to an integer and list of integers."""
+ |
+ |              a: int = Field(..., description="Integer")
+ |              b: list[int] = Field(..., description="List of ints")
+ |
+ |          runnable = RunnableLambda(f)
+ |          as_tool = runnable.as_tool(FSchema)
+ |          as_tool.invoke({"a": 3, "b": [1, 2]})
+ |          ```
+ |
+ |      !!! example "`dict` input, specifying schema via `arg_types`"
+ |
+ |          ```python
+ |          from typing import Any
+ |          from langchain_core.runnables import RunnableLambda
+ |
+ |
+ |          def f(x: dict[str, Any]) -> str:
+ |              return str(x["a"] * max(x["b"]))
+ |
+ |
+ |          runnable = RunnableLambda(f)
+ |          as_tool = runnable.as_tool(arg_types={"a": int, "b": list[int]})
+ |          as_tool.invoke({"a": 3, "b": [1, 2]})
+ |          ```
+ |
+ |      !!! example "`str` input"
+ |
+ |          ```python
+ |          from langchain_core.runnables import RunnableLambda
+ |
+ |
+ |          def f(x: str) -> str:
+ |              return x + "a"
+ |
+ |
+ |          def g(x: str) -> str:
+ |              return x + "z"
+ |
+ |
+ |          runnable = RunnableLambda(f) | g
+ |          as_tool = runnable.as_tool()
+ |          as_tool.invoke("b")
+ |          ```
+ |
+ |  assign(
+ |      self,
+ |      **kwargs: Runnable[dict[str, Any], Any] | Callable[[dict[str, Any]], Any] | Mapping[str, Runnable[dict[str, Any], Any] | Callable[[dict[str, Any]], Any]]
+ |  ) -> RunnableSerializable[Any, Any]
+ |      Assigns new fields to the `dict` output of this `Runnable`.
+ |
+ |      ```python
+ |      from langchain_core.language_models.fake import FakeStreamingListLLM
+ |      from langchain_core.output_parsers import StrOutputParser
+ |      from langchain_core.prompts import SystemMessagePromptTemplate
+ |      from langchain_core.runnables import Runnable
+ |      from operator import itemgetter
+ |
+ |      prompt = (
+ |          SystemMessagePromptTemplate.from_template("You are a nice assistant.")
+ |          + "{question}"
+ |      )
+ |      model = FakeStreamingListLLM(responses=["foo-lish"])
+ |
+ |      chain: Runnable = prompt | model | {"str": StrOutputParser()}
+ |
+ |      chain_with_assign = chain.assign(hello=itemgetter("str") | model)
+ |
+ |      print(chain_with_assign.input_schema.model_json_schema())
+ |      # {'title': 'PromptInput', 'type': 'object', 'properties':
+ |      {'question': {'title': 'Question', 'type': 'string'}}}
+ |      print(chain_with_assign.output_schema.model_json_schema())
+ |      # {'title': 'RunnableSequenceOutput', 'type': 'object', 'properties':
+ |      {'str': {'title': 'Str',
+ |      'type': 'string'}, 'hello': {'title': 'Hello', 'type': 'string'}}}
+ |      ```
+ |
+ |      Args:
+ |          **kwargs: A mapping of keys to `Runnable` or `Runnable`-like objects
+ |              that will be invoked with the entire output dict of this `Runnable`.
+ |
+ |      Returns:
+ |          A new `Runnable`.
+ |
+ |  astream_events(
+ |      self,
+ |      input: Any,
+ |      config: RunnableConfig | None = None,
+ |      *,
+ |      version: Literal['v1', 'v2', 'v3'] = 'v2',
+ |      include_names: Sequence[str] | None = None,
+ |      include_types: Sequence[str] | None = None,
+ |      include_tags: Sequence[str] | None = None,
+ |      exclude_names: Sequence[str] | None = None,
+ |      exclude_types: Sequence[str] | None = None,
+ |      exclude_tags: Sequence[str] | None = None,
+ |      **kwargs: Any
+ |  ) -> AsyncIterator[StreamEvent] | Awaitable[Any]
+ |      Generate a stream of events.
+ |
+ |      Use to create an iterator over `StreamEvent` that provide real-time information
+ |      about the progress of the `Runnable`, including `StreamEvent` from intermediate
+ |      results.
+ |
+ |      A `StreamEvent` is a dictionary with the following schema:
+ |
+ |      - `event`: Event names are of the format:
+ |          `on_[runnable_type]_(start|stream|end)`.
+ |      - `name`: The name of the `Runnable` that generated the event.
+ |      - `run_id`: Randomly generated ID associated with the given execution of the
+ |          `Runnable` that emitted the event. A child `Runnable` that gets invoked as
+ |          part of the execution of a parent `Runnable` is assigned its own unique ID.
+ |      - `parent_ids`: The IDs of the parent runnables that generated the event. The
+ |          root `Runnable` will have an empty list. The order of the parent IDs is from
+ |          the root to the immediate parent. Only available for v2 version of the API.
+ |          The v1 version of the API will return an empty list.
+ |      - `tags`: The tags of the `Runnable` that generated the event.
+ |      - `metadata`: The metadata of the `Runnable` that generated the event.
+ |      - `data`: The data associated with the event. The contents of this field
+ |          depend on the type of event. See the table below for more details.
+ |
+ |      Below is a table that illustrates some events that might be emitted by various
+ |      chains. Metadata fields have been omitted from the table for brevity.
+ |      Chain definitions have been included after the table.
+ |
+ |      !!! note
+ |          This reference table is for the v2 version of the schema.
+ |
+ |      | event                  | name                 | chunk                               | input                                             | output                                              |
+ |      | ---------------------- | -------------------- | ----------------------------------- | ------------------------------------------------- | --------------------------------------------------- |
+ |      | `on_chat_model_start`  | `'[model name]'`     |                                     | `{"messages": [[SystemMessage, HumanMessage]]}`   |                                                     |
+ |      | `on_chat_model_stream` | `'[model name]'`     | `AIMessageChunk(content="hello")`   |                                                   |                                                     |
+ |      | `on_chat_model_end`    | `'[model name]'`     |                                     | `{"messages": [[SystemMessage, HumanMessage]]}`   | `AIMessageChunk(content="hello world")`             |
+ |      | `on_llm_start`         | `'[model name]'`     |                                     | `{'input': 'hello'}`                              |                                                     |
+ |      | `on_llm_stream`        | `'[model name]'`     | `'Hello' `                          |                                                   |                                                     |
+ |      | `on_llm_end`           | `'[model name]'`     |                                     | `'Hello human!'`                                  |                                                     |
+ |      | `on_chain_start`       | `'format_docs'`      |                                     |                                                   |                                                     |
+ |      | `on_chain_stream`      | `'format_docs'`      | `'hello world!, goodbye world!'`    |                                                   |                                                     |
+ |      | `on_chain_end`         | `'format_docs'`      |                                     | `[Document(...)]`                                 | `'hello world!, goodbye world!'`                    |
+ |      | `on_tool_start`        | `'some_tool'`        |                                     | `{"x": 1, "y": "2"}`                              |                                                     |
+ |      | `on_tool_end`          | `'some_tool'`        |                                     |                                                   | `{"x": 1, "y": "2"}`                                |
+ |      | `on_retriever_start`   | `'[retriever name]'` |                                     | `{"query": "hello"}`                              |                                                     |
+ |      | `on_retriever_end`     | `'[retriever name]'` |                                     | `{"query": "hello"}`                              | `[Document(...), ..]`                               |
+ |      | `on_prompt_start`      | `'[template_name]'`  |                                     | `{"question": "hello"}`                           |                                                     |
+ |      | `on_prompt_end`        | `'[template_name]'`  |                                     | `{"question": "hello"}`                           | `ChatPromptValue(messages: [SystemMessage, ...])`   |
+ |
+ |      In addition to the standard events, users can also dispatch custom events (see example below).
+ |
+ |      Custom events will be only be surfaced with in the v2 version of the API!
+ |
+ |      A custom event has following format:
+ |
+ |      | Attribute   | Type   | Description                                                                                               |
+ |      | ----------- | ------ | --------------------------------------------------------------------------------------------------------- |
+ |      | `name`      | `str`  | A user defined name for the event.                                                                        |
+ |      | `data`      | `Any`  | The data associated with the event. This can be anything, though we suggest making it JSON serializable.  |
+ |
+ |      Here are declarations associated with the standard events shown above:
+ |
+ |      `format_docs`:
+ |
+ |      ```python
+ |      def format_docs(docs: list[Document]) -> str:
+ |          '''Format the docs.'''
+ |          return ", ".join([doc.page_content for doc in docs])
+ |
+ |
+ |      format_docs = RunnableLambda(format_docs)
+ |      ```
+ |
+ |      `some_tool`:
+ |
+ |      ```python
+ |      @tool
+ |      def some_tool(x: int, y: str) -> dict:
+ |          '''Some_tool.'''
+ |          return {"x": x, "y": y}
+ |      ```
+ |
+ |      `prompt`:
+ |
+ |      ```python
+ |      template = ChatPromptTemplate.from_messages(
+ |          [
+ |              ("system", "You are Cat Agent 007"),
+ |              ("human", "{question}"),
+ |          ]
+ |      ).with_config({"run_name": "my_template", "tags": ["my_template"]})
+ |      ```
+ |
+ |      !!! example
+ |
+ |          ```python
+ |          from langchain_core.runnables import RunnableLambda
+ |
+ |
+ |          async def reverse(s: str) -> str:
+ |              return s[::-1]
+ |
+ |
+ |          chain = RunnableLambda(func=reverse)
+ |
+ |          events = [
+ |              event async for event in chain.astream_events("hello", version="v2")
+ |          ]
+ |
+ |          # Will produce the following events
+ |          # (run_id, and parent_ids has been omitted for brevity):
+ |          [
+ |              {
+ |                  "data": {"input": "hello"},
+ |                  "event": "on_chain_start",
+ |                  "metadata": {},
+ |                  "name": "reverse",
+ |                  "tags": [],
+ |              },
+ |              {
+ |                  "data": {"chunk": "olleh"},
+ |                  "event": "on_chain_stream",
+ |                  "metadata": {},
+ |                  "name": "reverse",
+ |                  "tags": [],
+ |              },
+ |              {
+ |                  "data": {"output": "olleh"},
+ |                  "event": "on_chain_end",
+ |                  "metadata": {},
+ |                  "name": "reverse",
+ |                  "tags": [],
+ |              },
+ |          ]
+ |          ```
+ |
+ |      ```python title="Dispatch custom event"
+ |      from langchain_core.callbacks.manager import (
+ |          adispatch_custom_event,
+ |      )
+ |      from langchain_core.runnables import RunnableLambda, RunnableConfig
+ |      import asyncio
+ |
+ |
+ |      async def slow_thing(some_input: str, config: RunnableConfig) -> str:
+ |          """Do something that takes a long time."""
+ |          await asyncio.sleep(1) # Placeholder for some slow operation
+ |          await adispatch_custom_event(
+ |              "progress_event",
+ |              {"message": "Finished step 1 of 3"},
+ |              config=config # Must be included for python < 3.10
+ |          )
+ |          await asyncio.sleep(1) # Placeholder for some slow operation
+ |          await adispatch_custom_event(
+ |              "progress_event",
+ |              {"message": "Finished step 2 of 3"},
+ |              config=config # Must be included for python < 3.10
+ |          )
+ |          await asyncio.sleep(1) # Placeholder for some slow operation
+ |          return "Done"
+ |
+ |      slow_thing = RunnableLambda(slow_thing)
+ |
+ |      async for event in slow_thing.astream_events("some_input", version="v2"):
+ |          print(event)
+ |      ```
+ |
+ |      Args:
+ |          input: The input to the `Runnable`.
+ |          config: The config to use for the `Runnable`.
+ |          version: The version of the schema to use. One of `'v1'`, `'v2'`,
+ |              or `'v3'`.
+ |
+ |              Most callers should use `'v2'` (the default), which yields
+ |              `StreamEvent` dicts and supports custom events.
+ |
+ |              `'v3'` selects the typed, content-block-centric streaming
+ |              protocol and is only supported on `Runnable` subclasses that
+ |              implement it (currently `BaseChatModel` and
+ |              `langgraph.CompiledGraph`); on a generic `Runnable` it raises
+ |              `NotImplementedError`. The `'v3'` API is in beta and may
+ |              change. See the subclass override (e.g.
+ |              `BaseChatModel.astream_events`) for the v3 return shape.
+ |
+ |              `'v1'` is retained for backwards compatibility and will be
+ |              deprecated in `0.4.0`. Custom events are only surfaced in
+ |              `'v2'` / `'v3'`.
+ |          include_names: Only include events from `Runnable` objects with matching names.
+ |          include_types: Only include events from `Runnable` objects with matching types.
+ |          include_tags: Only include events from `Runnable` objects with matching tags.
+ |          exclude_names: Exclude events from `Runnable` objects with matching names.
+ |          exclude_types: Exclude events from `Runnable` objects with matching types.
+ |          exclude_tags: Exclude events from `Runnable` objects with matching tags.
+ |          **kwargs: Additional keyword arguments to pass to the `Runnable`.
+ |
+ |      Yields:
+ |          An async stream of `StreamEvent`.
+ |
+ |      Raises:
+ |          NotImplementedError: If the version is not `'v1'`, `'v2'`, or `'v3'`, or
+ |              if `'v3'` is requested on a `Runnable` that does not implement the v3
+ |              streaming protocol.
+ |
+ |  async astream_log(
+ |      self,
+ |      input: Any,
+ |      config: RunnableConfig | None = None,
+ |      *,
+ |      diff: bool = True,
+ |      with_streamed_output_list: bool = True,
+ |      include_names: Sequence[str] | None = None,
+ |      include_types: Sequence[str] | None = None,
+ |      include_tags: Sequence[str] | None = None,
+ |      exclude_names: Sequence[str] | None = None,
+ |      exclude_types: Sequence[str] | None = None,
+ |      exclude_tags: Sequence[str] | None = None,
+ |      **kwargs: Any
+ |  ) -> AsyncIterator[RunLogPatch] | AsyncIterator[RunLog]
+ |      Stream all output from a `Runnable`, as reported to the callback system.
+ |
+ |      This includes all inner runs of LLMs, Retrievers, Tools, etc.
+ |
+ |      Output is streamed as Log objects, which include a list of
+ |      Jsonpatch ops that describe how the state of the run has changed in each
+ |      step, and the final state of the run.
+ |
+ |      The Jsonpatch ops can be applied in order to construct state.
+ |
+ |      Args:
+ |          input: The input to the `Runnable`.
+ |          config: The config to use for the `Runnable`.
+ |          diff: Whether to yield diffs between each step or the current state.
+ |          with_streamed_output_list: Whether to yield the `streamed_output` list.
+ |          include_names: Only include logs with these names.
+ |          include_types: Only include logs with these types.
+ |          include_tags: Only include logs with these tags.
+ |          exclude_names: Exclude logs with these names.
+ |          exclude_types: Exclude logs with these types.
+ |          exclude_tags: Exclude logs with these tags.
+ |          **kwargs: Additional keyword arguments to pass to the `Runnable`.
+ |
+ |      Yields:
+ |          A `RunLogPatch` or `RunLog` object.
+ |
+ |  async atransform(
+ |      self,
+ |      input: AsyncIterator[Input],
+ |      config: RunnableConfig | None = None,
+ |      **kwargs: Any | None
+ |  ) -> AsyncIterator[Output]
+ |      Transform inputs to outputs.
+ |
+ |      Default implementation of atransform, which buffers input and calls `astream`.
+ |
+ |      Subclasses must override this method if they can start producing output while
+ |      input is still being generated.
+ |
+ |      Args:
+ |          input: An async iterator of inputs to the `Runnable`.
+ |          config: The config to use for the `Runnable`.
+ |          **kwargs: Additional keyword arguments to pass to the `Runnable`.
+ |
+ |      Yields:
+ |          The output of the `Runnable`.
+ |
+ |  batch_as_completed(
+ |      self,
+ |      inputs: Sequence[Input],
+ |      config: RunnableConfig | Sequence[RunnableConfig] | None = None,
+ |      *,
+ |      return_exceptions: bool = False,
+ |      **kwargs: Any | None
+ |  ) -> Iterator[tuple[int, Output | Exception]]
+ |      Run `invoke` in parallel on a list of inputs.
+ |
+ |      Yields results as they complete.
+ |
+ |      Args:
+ |          inputs: A list of inputs to the `Runnable`.
+ |          config: A config to use when invoking the `Runnable`.
+ |
+ |              The config supports standard keys like `'tags'`, `'metadata'` for
+ |              tracing purposes, `'max_concurrency'` for controlling how much work to
+ |              do in parallel, and other keys.
+ |
+ |              Please refer to `RunnableConfig` for more details.
+ |          return_exceptions: Whether to return exceptions instead of raising them.
+ |          **kwargs: Additional keyword arguments to pass to the `Runnable`.
+ |
+ |      Yields:
+ |          Tuples of the index of the input and the output from the `Runnable`.
+ |
+ |  bind(self, **kwargs: Any) -> Runnable[Input, Output]
+ |      Bind arguments to a `Runnable`, returning a new `Runnable`.
+ |
+ |      Useful when a `Runnable` in a chain requires an argument that is not
+ |      in the output of the previous `Runnable` or included in the user input.
+ |
+ |      Args:
+ |          **kwargs: The arguments to bind to the `Runnable`.
+ |
+ |      Returns:
+ |          A new `Runnable` with the arguments bound.
+ |
+ |      Example:
+ |          ```python
+ |          from langchain_ollama import ChatOllama
+ |          from langchain_core.output_parsers import StrOutputParser
+ |
+ |          model = ChatOllama(model="llama3.1")
+ |
+ |          # Without bind
+ |          chain = model | StrOutputParser()
+ |
+ |          chain.invoke("Repeat quoted words exactly: 'One two three four five.'")
+ |          # Output is 'One two three four five.'
+ |
+ |          # With bind
+ |          chain = model.bind(stop=["three"]) | StrOutputParser()
+ |
+ |          chain.invoke("Repeat quoted words exactly: 'One two three four five.'")
+ |          # Output is 'One two'
+ |          ```
+ |
+ |  config_schema(self, *, include: Sequence[str] | None = None) -> type[BaseModel]
+ |      The type of config this `Runnable` accepts specified as a Pydantic model.
+ |
+ |      To mark a field as configurable, see the `configurable_fields`
+ |      and `configurable_alternatives` methods.
+ |
+ |      Args:
+ |          include: A list of fields to include in the config schema.
+ |
+ |      Returns:
+ |          A Pydantic model that can be used to validate config.
+ |
+ |  get_config_jsonschema(self, *, include: Sequence[str] | None = None) -> dict[str, Any]
+ |      Get a JSON schema that represents the config of the `Runnable`.
+ |
+ |      Args:
+ |          include: A list of fields to include in the config schema.
+ |
+ |      Returns:
+ |          A JSON schema that represents the config of the `Runnable`.
+ |
+ |      !!! version-added "Added in `langchain-core` 0.3.0"
+ |
+ |  get_graph(self, config: RunnableConfig | None = None) -> Graph
+ |      Return a graph representation of this `Runnable`.
+ |
+ |  get_input_jsonschema(self, config: RunnableConfig | None = None) -> dict[str, Any]
+ |      Get a JSON schema that represents the input to the `Runnable`.
+ |
+ |      Args:
+ |          config: A config to use when generating the schema.
+ |
+ |      Returns:
+ |          A JSON schema that represents the input to the `Runnable`.
+ |
+ |      Example:
+ |          ```python
+ |          from langchain_core.runnables import RunnableLambda
+ |
+ |
+ |          def add_one(x: int) -> int:
+ |              return x + 1
+ |
+ |
+ |          runnable = RunnableLambda(add_one)
+ |
+ |          print(runnable.get_input_jsonschema())
+ |          ```
+ |
+ |      !!! version-added "Added in `langchain-core` 0.3.0"
+ |
+ |  get_input_schema(self, config: RunnableConfig | None = None) -> TypeBaseModel
+ |      Get a Pydantic model that can be used to validate input to the `Runnable`.
+ |
+ |      `Runnable` objects that leverage the `configurable_fields` and
+ |      `configurable_alternatives` methods will have a dynamic input schema that
+ |      depends on which configuration the `Runnable` is invoked with.
+ |
+ |      This method allows to get an input schema for a specific configuration.
+ |
+ |      Args:
+ |          config: A config to use when generating the schema.
+ |
+ |      Returns:
+ |          A Pydantic model that can be used to validate input.
+ |
+ |  get_name(self, suffix: str | None = None, *, name: str | None = None) -> str
+ |      Get the name of the `Runnable`.
+ |
+ |      Args:
+ |          suffix: An optional suffix to append to the name.
+ |          name: An optional name to use instead of the `Runnable`'s name.
+ |
+ |      Returns:
+ |          The name of the `Runnable`.
+ |
+ |  get_output_jsonschema(self, config: RunnableConfig | None = None) -> dict[str, Any]
+ |      Get a JSON schema that represents the output of the `Runnable`.
+ |
+ |      Args:
+ |          config: A config to use when generating the schema.
+ |
+ |      Returns:
+ |          A JSON schema that represents the output of the `Runnable`.
+ |
+ |      Example:
+ |          ```python
+ |          from langchain_core.runnables import RunnableLambda
+ |
+ |
+ |          def add_one(x: int) -> int:
+ |              return x + 1
+ |
+ |
+ |          runnable = RunnableLambda(add_one)
+ |
+ |          print(runnable.get_output_jsonschema())
+ |          ```
+ |
+ |      !!! version-added "Added in `langchain-core` 0.3.0"
+ |
+ |  get_output_schema(self, config: RunnableConfig | None = None) -> TypeBaseModel
+ |      Get a Pydantic model that can be used to validate output to the `Runnable`.
+ |
+ |      `Runnable` objects that leverage the `configurable_fields` and
+ |      `configurable_alternatives` methods will have a dynamic output schema that
+ |      depends on which configuration the `Runnable` is invoked with.
+ |
+ |      This method allows to get an output schema for a specific configuration.
+ |
+ |      Args:
+ |          config: A config to use when generating the schema.
+ |
+ |      Returns:
+ |          A Pydantic model that can be used to validate output.
+ |
+ |  get_prompts(self, config: RunnableConfig | None = None) -> list[BasePromptTemplate[Any]]
+ |      Return a list of prompts used by this `Runnable`.
+ |
+ |  map(self) -> Runnable[Sequence[Input], list[Output]]
+ |      Return a new `Runnable` that maps a list of inputs to a list of outputs.
+ |
+ |      Calls `invoke` with each input.
+ |
+ |      Returns:
+ |          A new `Runnable` that maps a list of inputs to a list of outputs.
+ |
+ |      Example:
+ |          ```python
+ |          from langchain_core.runnables import RunnableLambda
+ |
+ |
+ |          def _lambda(x: int) -> int:
+ |              return x + 1
+ |
+ |
+ |          runnable = RunnableLambda(_lambda)
+ |          print(runnable.map().invoke([1, 2, 3]))  # [2, 3, 4]
+ |          ```
+ |
+ |  pick(self, keys: str | list[str]) -> RunnableSerializable[Any, Any]
+ |      Pick keys from the output `dict` of this `Runnable`.
+ |
+ |      !!! example "Pick a single key"
+ |
+ |          ```python
+ |          import json
+ |
+ |          from langchain_core.runnables import RunnableLambda, RunnableMap
+ |
+ |          as_str = RunnableLambda(str)
+ |          as_json = RunnableLambda(json.loads)
+ |          chain = RunnableMap(str=as_str, json=as_json)
+ |
+ |          chain.invoke("[1, 2, 3]")
+ |          # -> {"str": "[1, 2, 3]", "json": [1, 2, 3]}
+ |
+ |          json_only_chain = chain.pick("json")
+ |          json_only_chain.invoke("[1, 2, 3]")
+ |          # -> [1, 2, 3]
+ |          ```
+ |
+ |      !!! example "Pick a list of keys"
+ |
+ |          ```python
+ |          from typing import Any
+ |
+ |          import json
+ |
+ |          from langchain_core.runnables import RunnableLambda, RunnableMap
+ |
+ |          as_str = RunnableLambda(str)
+ |          as_json = RunnableLambda(json.loads)
+ |
+ |
+ |          def as_bytes(x: Any) -> bytes:
+ |              return bytes(x, "utf-8")
+ |
+ |
+ |          chain = RunnableMap(
+ |              str=as_str, json=as_json, bytes=RunnableLambda(as_bytes)
+ |          )
+ |
+ |          chain.invoke("[1, 2, 3]")
+ |          # -> {"str": "[1, 2, 3]", "json": [1, 2, 3], "bytes": b"[1, 2, 3]"}
+ |
+ |          json_and_bytes_chain = chain.pick(["json", "bytes"])
+ |          json_and_bytes_chain.invoke("[1, 2, 3]")
+ |          # -> {"json": [1, 2, 3], "bytes": b"[1, 2, 3]"}
+ |          ```
+ |
+ |      Args:
+ |          keys: A key or list of keys to pick from the output dict.
+ |
+ |      Returns:
+ |          a new `Runnable`.
+ |
+ |  pipe(
+ |      self,
+ |      *others: Runnable[Any, Other] | Callable[[Any], Other],
+ |      name: str | None = None
+ |  ) -> RunnableSerializable[Input, Other]
+ |      Pipe `Runnable` objects.
+ |
+ |      Compose this `Runnable` with `Runnable`-like objects to make a
+ |      `RunnableSequence`.
+ |
+ |      Equivalent to `RunnableSequence(self, *others)` or `self | others[0] | ...`
+ |
+ |      Example:
+ |          ```python
+ |          from langchain_core.runnables import RunnableLambda
+ |
+ |
+ |          def add_one(x: int) -> int:
+ |              return x + 1
+ |
+ |
+ |          def mul_two(x: int) -> int:
+ |              return x * 2
+ |
+ |
+ |          runnable_1 = RunnableLambda(add_one)
+ |          runnable_2 = RunnableLambda(mul_two)
+ |          sequence = runnable_1.pipe(runnable_2)
+ |          # Or equivalently:
+ |          # sequence = runnable_1 | runnable_2
+ |          # sequence = RunnableSequence(first=runnable_1, last=runnable_2)
+ |          sequence.invoke(1)
+ |          await sequence.ainvoke(1)
+ |          # -> 4
+ |
+ |          sequence.batch([1, 2, 3])
+ |          await sequence.abatch([1, 2, 3])
+ |          # -> [4, 6, 8]
+ |          ```
+ |
+ |      Args:
+ |          *others: Other `Runnable` or `Runnable`-like objects to compose
+ |          name: An optional name for the resulting `RunnableSequence`.
+ |
+ |      Returns:
+ |          A new `Runnable`.
+ |
+ |  stream_events(
+ |      self,
+ |      input: Any,
+ |      config: RunnableConfig | None = None,
+ |      *,
+ |      version: Literal['v1', 'v2', 'v3'] = 'v2',
+ |      include_names: Sequence[str] | None = None,
+ |      include_types: Sequence[str] | None = None,
+ |      include_tags: Sequence[str] | None = None,
+ |      exclude_names: Sequence[str] | None = None,
+ |      exclude_types: Sequence[str] | None = None,
+ |      exclude_tags: Sequence[str] | None = None,
+ |      **kwargs: Any
+ |  ) -> Iterator[StreamEvent] | Iterator[Any]
+ |      Generate a stream of events synchronously.
+ |
+ |      Synchronous counterpart to `astream_events`. For `version='v3'`, subclasses
+ |      that implement the v3 streaming protocol (`BaseChatModel`, `CompiledGraph`)
+ |      override this method. All other versions and base-class calls raise
+ |      `NotImplementedError`.
+ |
+ |      Args:
+ |          input: The input to the `Runnable`.
+ |          config: The config to use for the `Runnable`.
+ |          version: The version of the schema to use. `'v3'` requires a subclass
+ |              that implements the v3 streaming protocol. `'v1'` and `'v2'` are not
+ |              supported on the sync path.
+ |          include_names: Only include events from `Runnable` objects with matching
+ |              names.
+ |          include_types: Only include events from `Runnable` objects with matching
+ |              types.
+ |          include_tags: Only include events from `Runnable` objects with matching
+ |              tags.
+ |          exclude_names: Exclude events from `Runnable` objects with matching names.
+ |          exclude_types: Exclude events from `Runnable` objects with matching types.
+ |          exclude_tags: Exclude events from `Runnable` objects with matching tags.
+ |          **kwargs: Additional keyword arguments to pass to the `Runnable`.
+ |
+ |      Raises:
+ |          NotImplementedError: Always. Subclasses override this method for supported
+ |              versions.
+ |
+ |  transform(
+ |      self,
+ |      input: Iterator[Input],
+ |      config: RunnableConfig | None = None,
+ |      **kwargs: Any | None
+ |  ) -> Iterator[Output]
+ |      Transform inputs to outputs.
+ |
+ |      Default implementation of transform, which buffers input and calls `astream`.
+ |
+ |      Subclasses must override this method if they can start producing output while
+ |      input is still being generated.
+ |
+ |      Args:
+ |          input: An iterator of inputs to the `Runnable`.
+ |          config: The config to use for the `Runnable`.
+ |          **kwargs: Additional keyword arguments to pass to the `Runnable`.
+ |
+ |      Yields:
+ |          The output of the `Runnable`.
+ |
+ |  with_alisteners(
+ |      self,
+ |      *,
+ |      on_start: AsyncListener | None = None,
+ |      on_end: AsyncListener | None = None,
+ |      on_error: AsyncListener | None = None
+ |  ) -> Runnable[Input, Output]
+ |      Bind async lifecycle listeners to a `Runnable`.
+ |
+ |      Returns a new `Runnable`.
+ |
+ |      The Run object contains information about the run, including its `id`,
+ |      `type`, `input`, `output`, `error`, `start_time`, `end_time`, and
+ |      any tags or metadata added to the run.
+ |
+ |      Args:
+ |          on_start: Called asynchronously before the `Runnable` starts running,
+ |              with the `Run` object.
+ |          on_end: Called asynchronously after the `Runnable` finishes running,
+ |              with the `Run` object.
+ |          on_error: Called asynchronously if the `Runnable` throws an error,
+ |              with the `Run` object.
+ |
+ |      Returns:
+ |          A new `Runnable` with the listeners bound.
+ |
+ |      Example:
+ |          ```python
+ |          from langchain_core.runnables import RunnableLambda, Runnable
+ |          from datetime import datetime, timezone
+ |          import time
+ |          import asyncio
+ |
+ |
+ |          def format_t(timestamp: float) -> str:
+ |              return datetime.fromtimestamp(timestamp, tz=timezone.utc).isoformat()
+ |
+ |
+ |          async def test_runnable(time_to_sleep: int):
+ |              print(f"Runnable[{time_to_sleep}s]: starts at {format_t(time.time())}")
+ |              await asyncio.sleep(time_to_sleep)
+ |              print(f"Runnable[{time_to_sleep}s]: ends at {format_t(time.time())}")
+ |
+ |
+ |          async def fn_start(run_obj: Runnable):
+ |              print(f"on start callback starts at {format_t(time.time())}")
+ |              await asyncio.sleep(3)
+ |              print(f"on start callback ends at {format_t(time.time())}")
+ |
+ |
+ |          async def fn_end(run_obj: Runnable):
+ |              print(f"on end callback starts at {format_t(time.time())}")
+ |              await asyncio.sleep(2)
+ |              print(f"on end callback ends at {format_t(time.time())}")
+ |
+ |
+ |          runnable = RunnableLambda(test_runnable).with_alisteners(
+ |              on_start=fn_start, on_end=fn_end
+ |          )
+ |
+ |
+ |          async def concurrent_runs():
+ |              await asyncio.gather(runnable.ainvoke(2), runnable.ainvoke(3))
+ |
+ |
+ |          asyncio.run(concurrent_runs())
+ |          # Result:
+ |          # on start callback starts at 2025-03-01T07:05:22.875378+00:00
+ |          # on start callback starts at 2025-03-01T07:05:22.875495+00:00
+ |          # on start callback ends at 2025-03-01T07:05:25.878862+00:00
+ |          # on start callback ends at 2025-03-01T07:05:25.878947+00:00
+ |          # Runnable[2s]: starts at 2025-03-01T07:05:25.879392+00:00
+ |          # Runnable[3s]: starts at 2025-03-01T07:05:25.879804+00:00
+ |          # Runnable[2s]: ends at 2025-03-01T07:05:27.881998+00:00
+ |          # on end callback starts at 2025-03-01T07:05:27.882360+00:00
+ |          # Runnable[3s]: ends at 2025-03-01T07:05:28.881737+00:00
+ |          # on end callback starts at 2025-03-01T07:05:28.882428+00:00
+ |          # on end callback ends at 2025-03-01T07:05:29.883893+00:00
+ |          # on end callback ends at 2025-03-01T07:05:30.884831+00:00
+ |          ```
+ |
+ |  with_config(self, config: RunnableConfig | None = None, **kwargs: Any) -> Runnable[Input, Output]
+ |      Bind config to a `Runnable`, returning a new `Runnable`.
+ |
+ |      Args:
+ |          config: The config to bind to the `Runnable`.
+ |          **kwargs: Additional keyword arguments to pass to the `Runnable`.
+ |
+ |      Returns:
+ |          A new `Runnable` with the config bound.
+ |
+ |  with_fallbacks(
+ |      self,
+ |      fallbacks: Sequence[Runnable[Input, Output]],
+ |      *,
+ |      exceptions_to_handle: tuple[type[BaseException], ...] = (<class 'Exception'>,),
+ |      exception_key: str | None = None
+ |  ) -> RunnableWithFallbacksT[Input, Output]
+ |      Add fallbacks to a `Runnable`, returning a new `Runnable`.
+ |
+ |      The new `Runnable` will try the original `Runnable`, and then each fallback
+ |      in order, upon failures.
+ |
+ |      Args:
+ |          fallbacks: A sequence of runnables to try if the original `Runnable`
+ |              fails.
+ |          exceptions_to_handle: A tuple of exception types to handle.
+ |          exception_key: If `string` is specified then handled exceptions will be
+ |              passed to fallbacks as part of the input under the specified key.
+ |
+ |              If `None`, exceptions will not be passed to fallbacks.
+ |
+ |              If used, the base `Runnable` and its fallbacks must accept a
+ |              dictionary as input.
+ |
+ |      Returns:
+ |          A new `Runnable` that will try the original `Runnable`, and then each
+ |              Fallback in order, upon failures.
+ |
+ |      Example:
+ |          ```python
+ |          from typing import Iterator
+ |
+ |          from langchain_core.runnables import RunnableGenerator
+ |
+ |
+ |          def _generate_immediate_error(input: Iterator) -> Iterator[str]:
+ |              raise ValueError()
+ |              yield ""
+ |
+ |
+ |          def _generate(input: Iterator) -> Iterator[str]:
+ |              yield from "foo bar"
+ |
+ |
+ |          runnable = RunnableGenerator(_generate_immediate_error).with_fallbacks(
+ |              [RunnableGenerator(_generate)]
+ |          )
+ |          print("".join(runnable.stream({})))  # foo bar
+ |          ```
+ |
+ |      Args:
+ |          fallbacks: A sequence of runnables to try if the original `Runnable`
+ |              fails.
+ |          exceptions_to_handle: A tuple of exception types to handle.
+ |          exception_key: If `string` is specified then handled exceptions will be
+ |              passed to fallbacks as part of the input under the specified key.
+ |
+ |              If `None`, exceptions will not be passed to fallbacks.
+ |
+ |              If used, the base `Runnable` and its fallbacks must accept a
+ |              dictionary as input.
+ |
+ |      Returns:
+ |          A new `Runnable` that will try the original `Runnable`, and then each
+ |              Fallback in order, upon failures.
+ |
+ |  with_listeners(
+ |      self,
+ |      *,
+ |      on_start: Callable[[Run], None] | Callable[[Run, RunnableConfig], None] | None = None,
+ |      on_end: Callable[[Run], None] | Callable[[Run, RunnableConfig], None] | None = None,
+ |      on_error: Callable[[Run], None] | Callable[[Run, RunnableConfig], None] | None = None
+ |  ) -> Runnable[Input, Output]
+ |      Bind lifecycle listeners to a `Runnable`, returning a new `Runnable`.
+ |
+ |      The Run object contains information about the run, including its `id`,
+ |      `type`, `input`, `output`, `error`, `start_time`, `end_time`, and
+ |      any tags or metadata added to the run.
+ |
+ |      Args:
+ |          on_start: Called before the `Runnable` starts running, with the `Run`
+ |              object.
+ |          on_end: Called after the `Runnable` finishes running, with the `Run`
+ |              object.
+ |          on_error: Called if the `Runnable` throws an error, with the `Run`
+ |              object.
+ |
+ |      Returns:
+ |          A new `Runnable` with the listeners bound.
+ |
+ |      Example:
+ |          ```python
+ |          from langchain_core.runnables import RunnableLambda
+ |          from langchain_core.tracers.schemas import Run
+ |
+ |          import time
+ |
+ |
+ |          def test_runnable(time_to_sleep: int):
+ |              time.sleep(time_to_sleep)
+ |
+ |
+ |          def fn_start(run_obj: Run):
+ |              print("start_time:", run_obj.start_time)
+ |
+ |
+ |          def fn_end(run_obj: Run):
+ |              print("end_time:", run_obj.end_time)
+ |
+ |
+ |          chain = RunnableLambda(test_runnable).with_listeners(
+ |              on_start=fn_start, on_end=fn_end
+ |          )
+ |          chain.invoke(2)
+ |          ```
+ |
+ |  with_retry(
+ |      self,
+ |      *,
+ |      retry_if_exception_type: tuple[type[BaseException], ...] = (<class 'Exception'>,),
+ |      wait_exponential_jitter: bool = True,
+ |      exponential_jitter_params: ExponentialJitterParams | None = None,
+ |      stop_after_attempt: int = 3
+ |  ) -> Runnable[Input, Output]
+ |      Create a new `Runnable` that retries the original `Runnable` on exceptions.
+ |
+ |      Args:
+ |          retry_if_exception_type: A tuple of exception types to retry on.
+ |          wait_exponential_jitter: Whether to add jitter to the wait
+ |              time between retries.
+ |          stop_after_attempt: The maximum number of attempts to make before
+ |              giving up.
+ |          exponential_jitter_params: Parameters for
+ |              `tenacity.wait_exponential_jitter`. Namely: `initial`, `max`,
+ |              `exp_base`, and `jitter` (all `float` values).
+ |
+ |      Returns:
+ |          A new `Runnable` that retries the original `Runnable` on exceptions.
+ |
+ |      Example:
+ |          ```python
+ |          from langchain_core.runnables import RunnableLambda
+ |
+ |          count = 0
+ |
+ |
+ |          def _lambda(x: int) -> None:
+ |              global count
+ |              count = count + 1
+ |              if x == 1:
+ |                  raise ValueError("x is 1")
+ |              else:
+ |                  pass
+ |
+ |
+ |          runnable = RunnableLambda(_lambda)
+ |          try:
+ |              runnable.with_retry(
+ |                  stop_after_attempt=2,
+ |                  retry_if_exception_type=(ValueError,),
+ |              ).invoke(1)
+ |          except ValueError:
+ |              pass
+ |
+ |          assert count == 2
+ |          ```
+ |
+ |  with_types(
+ |      self,
+ |      *,
+ |      input_type: type[Input] | None = None,
+ |      output_type: type[Output] | None = None
+ |  ) -> Runnable[Input, Output]
+ |      Bind input and output types to a `Runnable`, returning a new `Runnable`.
+ |
+ |      Args:
+ |          input_type: The input type to bind to the `Runnable`.
+ |          output_type: The output type to bind to the `Runnable`.
+ |
+ |      Returns:
+ |          A new `Runnable` with the types bound.
+ |
+ |  ----------------------------------------------------------------------
+ |  Readonly properties inherited from langchain_core.runnables.base.Runnable:
+ |
+ |  config_specs
+ |      List configurable fields for this `Runnable`.
+ |
+ |  input_schema
+ |      The type of input this `Runnable` accepts specified as a Pydantic model.
+ |
+ |  output_schema
+ |      Output schema.
+ |
+ |      The type of output this `Runnable` produces specified as a Pydantic model.
+ |
+ |  ----------------------------------------------------------------------
+ |  Class methods inherited from typing.Generic:
+ |
+ |  __init_subclass__(...)
+ |      Function to initialize subclasses.
+
+None
+#+end_example
+
+#+begin_src python
+  from langchain_ollama.llms import OllamaLLM
   from langchain_core.messages import HumanMessage
 
   print(OllamaLLM(model="gpt-oss").invoke([HumanMessage("Howdy!")]))
@@ -455,6 +2976,326 @@ A system prompt can be provided as an additional argument to the ~create_deep_ag
 
 #+begin_src python
   from deepagents import create_deep_agent
+  print(help(create_deep_agent))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Help on function create_deep_agent in module deepagents.graph:
+
+create_deep_agent(
+    model: str | BaseChatModel | None = None,
+    tools: Sequence[BaseTool | Callable | dict[str, Any]] | None = None,
+    ,*,
+    system_prompt: str | SystemMessage | None = None,
+    middleware: Sequence[AgentMiddleware] = (),
+    subagents: Sequence[SubAgent | CompiledSubAgent | AsyncSubAgent] | None = None,
+    skills: list[str] | None = None,
+    memory: list[str] | None = None,
+    permissions: list[FilesystemPermission] | None = None,
+    backend: BackendProtocol | BackendFactory | None = None,
+    interrupt_on: dict[str, bool | InterruptOnConfig] | None = None,
+    response_format: ResponseFormat[ResponseT] | type[ResponseT] | dict[str, Any] | None = None,
+    state_schema: type[DeepAgentState] | None = None,
+    context_schema: type[ContextT] | None = None,
+    checkpointer: Checkpointer | None = None,
+    store: BaseStore | None = None,
+    debug: bool = False,
+    name: str | None = None,
+    cache: BaseCache | None = None
+) -> CompiledStateGraph[AgentState[ResponseT], ContextT, InputAgentState, OutputAgentState[ResponseT]]
+    Create a deep agent.
+
+    !!! warning "Deep agents require a LLM that supports tool calling!"
+
+    By default, this agent has access to the following tools:
+
+    - `write_todos`: manage a todo list
+    - `ls`, `read_file`, `write_file`, `edit_file`, `glob`, `grep`: file operations
+    - `execute`: run shell commands
+    - `task`: call subagents
+
+    The `execute` tool allows running shell commands if the backend implements
+    [`SandboxBackendProtocol`][deepagents.backends.protocol.SandboxBackendProtocol].
+    For non-sandbox backends, the `execute` tool will return an error message.
+
+    Args:
+        model: The model to use.
+
+            !!! deprecated
+
+                Specify a model explicitly.
+
+                Passing `model=None` (relying on the default
+                `claude-sonnet-4-6`) is deprecated since `0.5.3` and will
+                be removed in `deepagents==1.0.0`. The parameter type
+                will change from `BaseChatModel | str | None` to
+                `BaseChatModel | str`. See
+                [Models](https://docs.langchain.com/oss/python/deepagents/models).
+
+            Accepts a `provider:model` string (e.g., `openai:gpt-5.5`); see
+            [`init_chat_model`][langchain.chat_models.init_chat_model(model_provider)]
+            for supported values. You can also pass a pre-initialized
+            [`BaseChatModel`][langchain.chat_models.BaseChatModel] instance directly.
+
+            !!! note "OpenAI Models and Data Retention"
+
+                If an `openai:` model is used, the agent will use the OpenAI
+                Responses API by default. To use OpenAI chat completions
+                instead, initialize the model with
+                `init_chat_model("openai:...", use_responses_api=False)` and
+                pass the initialized model instance here.
+
+                To disable data retention with the Responses API, use
+                `init_chat_model("openai:...", use_responses_api=True, store=False, include=["reasoning.encrypted_content"])`
+                and pass the initialized model instance here.
+        tools: Additional tools the agent should have access to.
+
+            These are merged with the built-in tool suite listed above
+            (`write_todos`, filesystem tools, `execute`, and `task`).
+
+            Passing tools here is additive — it never removes a built-in.
+            To drop a built-in tool, register a
+            [`HarnessProfile`][deepagents.HarnessProfile] with
+            `excluded_tools`.
+        system_prompt: Custom system instructions placed at the front of
+            the system prompt sent to the model.
+
+            Whatever you pass here always sits before the SDK's default
+            deep-agent prompt and any model-tuning suffix from a
+            registered `HarnessProfile`. With `system_prompt=None`, the
+            SDK default is used on its own (plus the profile suffix
+            when one applies). Sections are joined by a blank line.
+
+            Passing a `SystemMessage` instead of a string preserves any
+            `cache_control` markers on the message's content blocks —
+            useful for placing explicit Anthropic prompt-cache
+            breakpoints. The same ordering applies (caller's blocks
+            first, SDK content appended as an additional text block).
+
+            See [Prompt assembly](https://docs.langchain.com/oss/deepagents/customization#prompt-assembly)
+            for the full case-by-case breakdown.
+        middleware: Additional middleware to apply after the base stack
+            but before the tail middleware. The full ordering is:
+
+            Base stack:
+
+            - [`TodoListMiddleware`][langchain.agents.middleware.TodoListMiddleware]
+            - [`SkillsMiddleware`][deepagents.middleware.skills.SkillsMiddleware] (if `skills` is provided)
+            - [`FilesystemMiddleware`][deepagents.middleware.filesystem.FilesystemMiddleware]
+            - [`SubAgentMiddleware`][deepagents.middleware.subagents.SubAgentMiddleware]
+                (if any inline subagents — declarative
+                [`SubAgent`][deepagents.middleware.subagents.SubAgent] or
+                [`CompiledSubAgent`][deepagents.middleware.subagents.CompiledSubAgent]
+                — are available)
+            - [`SummarizationMiddleware`][langchain.agents.middleware.SummarizationMiddleware]
+            - [`PatchToolCallsMiddleware`][deepagents.middleware.patch_tool_calls.PatchToolCallsMiddleware]
+            - [`AsyncSubAgentMiddleware`][deepagents.middleware.async_subagents.AsyncSubAgentMiddleware] (if async `subagents` are provided)
+
+            ,*User middleware is inserted here.*
+
+            Tail stack:
+
+            - Harness profile `extra_middleware` (if any)
+            - `_ToolExclusionMiddleware` (if profile has `excluded_tools`)
+            - [`AnthropicPromptCachingMiddleware`][langchain_anthropic.middleware.AnthropicPromptCachingMiddleware] (unconditional; no-ops for
+                non-Anthropic models)
+            - [`MemoryMiddleware`][deepagents.middleware.memory.MemoryMiddleware] (if `memory` is provided)
+            - [`HumanInTheLoopMiddleware`][langchain.agents.middleware.HumanInTheLoopMiddleware] (if `interrupt_on` is provided)
+
+            After assembly, any entries in the profile's
+            `excluded_middleware` are filtered from the final stack. Class
+            entries match exact type; string entries match
+            `AgentMiddleware.name` exactly (e.g. `"SummarizationMiddleware"`
+            drops the summarization middleware via its public alias).
+            Entries that match nothing in the assembled stack raise
+            `ValueError`, as does excluding any class in the harness's
+            protected scaffolding set (e.g.,
+            [`FilesystemMiddleware`][deepagents.middleware.filesystem.FilesystemMiddleware]
+            or [`SubAgentMiddleware`][deepagents.middleware.subagents.SubAgentMiddleware]).
+
+            To run without the `task` tool, set
+            `general_purpose_subagent=GeneralPurposeSubagentProfile(enabled=False)`
+            on the active harness profile and pass no synchronous
+            subagents via `subagents=`. Async subagents are unaffected.
+        subagents: Subagent specs available to the main agent.
+
+            This collection supports three forms:
+
+            - [`SubAgent`][deepagents.middleware.subagents.SubAgent]: A declarative synchronous subagent spec.
+            - [`CompiledSubAgent`][deepagents.middleware.subagents.CompiledSubAgent]: A pre-compiled runnable subagent.
+            - [`AsyncSubAgent`][deepagents.middleware.async_subagents.AsyncSubAgent]: A remote/background subagent spec.
+
+            `SubAgent` entries are invoked through the `task` tool. They should
+            provide `name`, `description`, and `system_prompt`, and may also
+            override `tools`, `model`, `middleware`, `interrupt_on`, and
+            `skills`. See `interrupt_on` below for inheritance and override
+            behavior.
+
+            `CompiledSubAgent` entries are also exposed through the `task` tool,
+            but provide a pre-built `runnable` instead of a declarative prompt
+            and tool configuration.
+
+            `AsyncSubAgent` entries are identified by their async-subagent
+            fields (`graph_id`, and optionally `url`/`headers`) and are routed
+            into `AsyncSubAgentMiddleware` instead of `SubAgentMiddleware`.
+            They should provide `name`, `description`, and `graph_id`, and may
+            optionally include `url` and `headers`. These subagents run as
+            background tasks and expose the async subagent tools for launching,
+            checking, updating, cancelling, and listing tasks.
+
+            If no subagent named `general-purpose` is provided, a default
+            general-purpose synchronous subagent is added automatically unless
+            the active harness profile disables it. With no synchronous
+            subagents in play — none passed and the default disabled via
+            `general_purpose_subagent=GeneralPurposeSubagentProfile(enabled=False)`
+            — the `task` tool is not exposed. Async subagents are independent.
+
+        skills: List of skill source paths (e.g., `["/skills/user/", "/skills/project/"]`).
+
+            Paths must be specified using POSIX conventions (forward slashes)
+            and are relative to the backend's root. When using
+            `StateBackend` (default), provide skill files via
+            `invoke(files={...})`. With `FilesystemBackend`, skills are loaded
+            from disk relative to the backend's `root_dir`. Later sources
+            override earlier ones for skills with the same name (last one wins).
+        memory: List of memory file paths (`AGENTS.md` files) to load
+            (e.g., `["/memory/AGENTS.md"]`).
+
+            Display names are automatically derived from paths.
+
+            Memory is loaded at agent startup and added into the system prompt.
+        permissions: List of `FilesystemPermission` rules for the main agent
+            and its subagents.
+
+            Rules are evaluated in declaration order; the first match wins.
+            If no rule matches, the call is allowed.
+
+            Each rule's ``mode`` can be:
+
+            - ``"allow"`` (default): the call proceeds.
+            - ``"deny"``: the tool returns a permission-denied error.
+            - ``"interrupt"``: the call pauses for human approval via
+              `HumanInTheLoopMiddleware`. A `HumanInTheLoopMiddleware` is
+              auto-installed when any interrupt-mode rule is present, and the
+              generated `interrupt_on` entries are merged with the
+              `interrupt_on` argument below (user-supplied entries win per
+              tool name). Requires a `langchain` version that supports the
+              ``when`` predicate on `InterruptOnConfig`.
+
+            Subagents inherit these rules unless they specify their own
+            `permissions` field, which replaces the parent's rules entirely.
+
+            `FilesystemMiddleware` applies these permissions at the tool
+            level for its built-in filesystem tools, not at the backend
+            level. Direct backend usage does not currently incorporate
+            `permissions`.
+        backend: Optional backend for file storage and execution.
+
+            Pass a `Backend` instance (e.g. `StateBackend()`).
+
+            For execution support, use a backend that
+            implements [`SandboxBackendProtocol`][deepagents.backends.protocol.SandboxBackendProtocol].
+        interrupt_on: Mapping of tool names to interrupt configs.
+
+            Pass to pause agent execution at specified tool calls for human
+            approval or modification.
+
+            This config always applies to the main agent.
+
+            For subagents:
+            - Declarative `SubAgent` specs inherit the top-level `interrupt_on`
+                config by default.
+            - If a declarative `SubAgent` provides its own `interrupt_on`, that
+                subagent-specific config overrides the inherited
+                top-level config.
+            - `CompiledSubAgent` runnables do not inherit top-level
+                `interrupt_on`; configure human-in-the-loop behavior inside the
+                compiled runnable itself.
+            - Remote `AsyncSubAgent` specs do not inherit top-level
+                `interrupt_on`; configure any approval behavior on the remote
+                subagent itself.
+
+            For example, `interrupt_on={"edit_file": True}` pauses before
+            every edit.
+        response_format: A structured output response format to use for the agent.
+        state_schema: Custom state schema for the agent graph. Must be a
+            `TypedDict` subclass of
+            [`DeepAgentState`][deepagents.graph.DeepAgentState] so the
+            built-in `DeltaChannel` reducer on `messages` is preserved.
+
+            Generally, prefer defining state extensions with middleware so
+            the extra fields stay scoped to the hooks and tools that use
+            them.
+
+            When provided, this schema is used as the base graph schema and
+            is merged with state schemas contributed by middleware. It is
+            also forwarded when compiling declarative
+            [`SubAgent`][deepagents.middleware.subagents.SubAgent] specs for
+            the `task` tool, so subagents see the same custom fields as the
+            parent.
+
+            [`CompiledSubAgent`][deepagents.middleware.subagents.CompiledSubAgent]
+            runnables do not inherit this schema because they are already
+            compiled — compile those runnables with a compatible state
+            schema if they need access to the same custom state fields.
+            Remote
+            [`AsyncSubAgent`][deepagents.middleware.async_subagents.AsyncSubAgent]
+            specs likewise use the schema configured on the remote graph.
+
+            ```python
+            from deepagents.graph import DeepAgentState
+
+
+            class MyState(DeepAgentState):
+                page_url: str
+                file_urls: list[str]
+
+
+            agent = create_deep_agent(model=..., state_schema=MyState)
+            ```
+        context_schema: Schema class that defines immutable run-scoped context.
+
+            Passed through to [`create_agent`][langchain.agents.create_agent].
+        checkpointer: Optional `Checkpointer` for persisting agent state
+            between runs.
+
+            Passed through to [`create_agent`][langchain.agents.create_agent].
+        store: Optional store for persistent storage (required if backend
+            uses `StoreBackend`).
+
+            Passed through to [`create_agent`][langchain.agents.create_agent].
+        debug: Whether to enable debug mode.
+
+            Passed through to [`create_agent`][langchain.agents.create_agent].
+        name: The name of the agent.
+
+            Passed through to [`create_agent`][langchain.agents.create_agent].
+        cache: The cache to use for the agent.
+
+            Passed through to [`create_agent`][langchain.agents.create_agent].
+
+    Returns:
+        A configured deep agent.
+
+    Raises:
+        ImportError: If a required provider package is missing or below the
+            minimum supported version (e.g., `langchain-openrouter`).
+        ValueError: If the active `HarnessProfile.excluded_middleware`
+            references a class in the harness's protected scaffolding set
+            (e.g.,
+            [`FilesystemMiddleware`][deepagents.middleware.filesystem.FilesystemMiddleware]
+            or
+            [`SubAgentMiddleware`][deepagents.middleware.subagents.SubAgentMiddleware]),
+            uses a private (underscore-prefixed) name, collides with multiple
+            distinct middleware classes, or matches no entry in the assembled
+            stack.
+
+None
+#+end_example
+
+#+begin_src python
+  from deepagents import create_deep_agent
 
   tnega_agent = create_deep_agent(
       model="ollama:gpt-oss",
@@ -528,6 +3369,225 @@ The root directory contains:
 
 All Emacs temporary backups ending with a trailing `~` have been omitted.
 #+end_example
+
+
+** Tools
+
+Tools are trivially wired up with the provided decorator, and then can
+be passed to the agent.
+
+#+begin_src python
+  from langchain.tools import tool
+  print(help(tool))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Help on function tool in module langchain_core.tools.convert:
+
+tool(
+    name_or_callable: str | Callable[..., Any] | None = None,
+    runnable: Runnable[Any, Any] | None = None,
+    ,*args: Any,
+    description: str | None = None,
+    return_direct: bool = False,
+    args_schema: ArgsSchema | None = None,
+    infer_schema: bool = True,
+    response_format: Literal['content', 'content_and_artifact'] = 'content',
+    parse_docstring: bool = False,
+    error_on_invalid_docstring: bool = True,
+    extras: dict[str, Any] | None = None
+) -> BaseTool | Callable[[Callable[..., Any] | Runnable[Any, Any]], BaseTool]
+    Convert Python functions and `Runnables` to LangChain tools.
+
+    Can be used as a decorator with or without arguments to create tools from functions.
+
+    Functions can have any signature - the tool will automatically infer input schemas
+    unless disabled.
+
+    !!! note "Requirements"
+
+        - Functions should have type hints for proper schema inference.
+        - Functions may accept multiple arguments and return types are flexible;
+            outputs will be serialized if needed.
+        - When using with `Runnable`, a string name must be provided.
+
+    Args:
+        name_or_callable: Optional name of the tool or the `Callable` to be
+            converted to a tool.
+
+            Overrides the function's name.
+
+            Must be provided as a positional argument.
+        runnable: Optional `Runnable` to convert to a tool.
+
+            Must be provided as a positional argument.
+        description: Optional description for the tool.
+
+            Precedence for the tool description value is as follows:
+
+            - This `description` argument (used even if docstring and/or `args_schema`
+                are provided)
+            - Tool function docstring (used even if `args_schema` is provided)
+            - `args_schema` description (used only if `description` and docstring are
+                not provided)
+        ,*args: Extra positional arguments.
+
+            Must be empty.
+        return_direct: Whether to return directly from the tool rather than continuing
+            the agent loop.
+        args_schema: Optional argument schema for user to specify.
+        infer_schema: Whether to infer the schema of the arguments from the function's
+            signature.
+
+            This also makes the resultant tool accept a dictionary input to its `run()`
+            function.
+        response_format: The tool response format.
+
+            If `'content'`, then the output of the tool is interpreted as the contents
+            of a `ToolMessage`.
+
+            If `'content_and_artifact'`, then the output is expected to be a two-tuple
+            corresponding to the `(content, artifact)` of a `ToolMessage`.
+        parse_docstring: If `infer_schema` and `parse_docstring`, will attempt to
+            parse parameter descriptions from Google Style function docstrings.
+        error_on_invalid_docstring: If `parse_docstring` is provided, configure
+            whether to raise `ValueError` on invalid Google Style docstrings.
+        extras: Optional provider-specific extra fields for the tool.
+
+            Used to pass configuration that doesn't fit into standard tool fields.
+            Chat models should process known extras when constructing model payloads.
+
+            !!! example
+
+                For example, Anthropic-specific fields like `cache_control`,
+                `defer_loading`, or `input_examples`.
+
+    Raises:
+        ValueError: If too many positional arguments are provided (e.g. violating the
+            `*args` constraint).
+        ValueError: If a `Runnable` is provided without a string name. When using `tool`
+            with a `Runnable`, a `str` name must be provided as the `name_or_callable`.
+        ValueError: If the first argument is not a string or callable with
+            a `__name__` attribute.
+        ValueError: If the function does not have a docstring and description
+            is not provided and `infer_schema` is `False`.
+        ValueError: If `parse_docstring` is `True` and the function has an invalid
+            Google-style docstring and `error_on_invalid_docstring` is True.
+        ValueError: If a `Runnable` is provided that does not have an object schema.
+
+    Returns:
+        The tool.
+
+    Examples:
+        ```python
+        @tool
+        def search_api(query: str) -> str:
+            # Searches the API for the query.
+            return
+
+
+        @tool("search", return_direct=True)
+        def search_api(query: str) -> str:
+            # Searches the API for the query.
+            return
+
+
+        @tool(response_format="content_and_artifact")
+        def search_api(query: str) -> tuple[str, dict]:
+            return "partial json of results", {"full": "object of results"}
+        ```
+
+        Parse Google-style docstrings:
+
+        ```python
+        @tool(parse_docstring=True)
+        def foo(bar: str, baz: int) -> str:
+            """The foo.
+
+            Args:
+                bar: The bar.
+                baz: The baz.
+            """
+            return bar
+
+        foo.args_schema.model_json_schema()
+        ```
+
+        ```python
+        {
+            "title": "foo",
+            "description": "The foo.",
+            "type": "object",
+            "properties": {
+                "bar": {
+                    "title": "Bar",
+                    "description": "The bar.",
+                    "type": "string",
+                },
+                "baz": {
+                    "title": "Baz",
+                    "description": "The baz.",
+                    "type": "integer",
+                },
+            },
+            "required": ["bar", "baz"],
+        }
+        ```
+
+        Note that parsing by default will raise `ValueError` if the docstring is
+        considered invalid. A docstring is considered invalid if it contains arguments
+        not in the function signature, or is unable to be parsed into a summary and
+        `'Args:'` blocks. Examples below:
+
+        ```python
+        # No args section
+        def invalid_docstring_1(bar: str, baz: int) -> str:
+            """The foo."""
+            return bar
+
+        # Improper whitespace between summary and args section
+        def invalid_docstring_2(bar: str, baz: int) -> str:
+            """The foo.
+            Args:
+                bar: The bar.
+                baz: The baz.
+            """
+            return bar
+
+        # Documented args absent from function signature
+        def invalid_docstring_3(bar: str, baz: int) -> str:
+            """The foo.
+
+            Args:
+                banana: The bar.
+                monkey: The baz.
+            """
+            return bar
+
+        ```
+
+None
+#+end_example
+
+#+begin_src python
+  from langchain.tools import tool
+  @tool
+  def do_magic(spell: str):
+      """Perform magic based on the named spell."""
+      print(f"***{spell}***")
+
+  from deepagents import create_deep_agent
+  agent = create_deep_agent(
+      model="ollama:qwen3",
+      tools=[do_magic],
+  )
+
+  agent.invoke({"messages": [{"role": "user", "content": "Invoke the sacred foobiz spell"}]})
+#+end_src
+
+#+RESULTS:
+: ***sacred foobiz***
 
 ** Issues
 
