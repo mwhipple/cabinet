@@ -7,6 +7,15 @@ Python has become one of the most popular languages for application
 development.  It and JavaScript seem to be the major contenders for
 high-level work including working with AI.
 
+* Configuring for Babel
+
+#+begin_src emacs-lisp
+  (require 'ob-python)
+#+end_src
+
+#+RESULTS:
+: ob-python
+
 * Setting up a Virtual Environment
 :PROPERTIES:
 :ID:       A3C4A953-79CA-4160-AB26-A6EDCCD8AC09
@@ -16,6 +25,10 @@ Python can manage local environments with dependencies using its
 built-in ~venv~ functionality. Within a notebook this will be
 supported through creating the relevant directory, and then
 updating blocks to use the python within that directory.
+
+~uv~ /may/ offer an easier approach for some of this...I'm currently reading
+a couple python books that I hope cover that (but am not particularly
+concerned either way).
 
 Creating under ~/tmp~ seems like a reasonable practice by default.
 

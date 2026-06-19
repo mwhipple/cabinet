@@ -3,6 +3,20 @@
 :END:
 #+title: org-babel
 
+Org Babel is a literate programming environment using org mode in [[id:436EB0B7-811E-4828-BBF7-4126517DD7C6][emacs]].
+
+As evidenced by this repository, I'm fairly keen on it.
+
+I first started using it several years ago, but largely shelved it in favor of
+lighter touch solutions, but more recently with the rise of using AI for coding
+the model provided by org-babel seems particularly appropriate - resulting in options
+like the babel files capturing what amount to live lab notebooks that were used to
+drive the work of the agents.
+
+* Languages
+
+- [[id:002B2928-C32F-49F3-B93F-CBEEE215A7D7][python]]
+
 * Configuration
 
 ** org-confirm-babel-evaluate
