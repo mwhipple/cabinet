@@ -16,3 +16,44 @@
 #+begin_src emacs-lisp
   (shortdoc "alist")
 #+end_src
+#+end_example
+
+* generic functions
+
+I'm going to use generic functions a lot with emacs-lisp since they
+offer an enormously helpful way to reduce the conceptual footprint and
+provide richer behaviors.
+
+These tend not to be used heavily...I think potentially due to
+performance reasons - but I'll cross that bridge if/when I come to it.
+Emacs lisp also tends to understandably gravitate towards specialized
+functionality which I'm likely to drag it a bit outside of.
+
+#+begin_src emacs-lisp :results value
+  (describe-function #'cl-defgeneric)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+cl-defgeneric is a Lisp macro in ‘cl-generic.el’.
+
+(cl-defgeneric NAME ARGS [DOC-STRING] [OPTIONS-AND-METHODS...] &rest
+DEFAULT-BODY)
+
+Create a generic function NAME.
+DOC-STRING is the base documentation for this class.  A generic
+function usually has no body, as its purpose is to decide which
+method body is appropriate to use; ARGS are currently ignored if
+there’s no body.  If BODY is present, it provides the default
+implementation.
+Specific implementation methods are defined with ‘cl-defmethod’.
+OPTIONS-AND-METHODS currently understands:
+- (:documentation DOCSTRING)
+- (declare DECLARATIONS)
+- (:argument-precedence-order &rest ARGS)
+- (:method [QUALIFIERS...] ARGS &rest BODY)
+DEFAULT-BODY, if present, is used as the body of a default method.
+
+  Probably introduced at or before Emacs version 25.1.
+
+#+end_example
