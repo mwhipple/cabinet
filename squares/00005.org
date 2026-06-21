@@ -1,0 +1,35 @@
+#+TITLE: Knowledge is Power, Products are Dependence
+
+One of the most important factors contributing to the advancements in
+the modern world is humanity's optimization of knowledge sharing. This
+has to this point arguably culminated with fairly ubiquitous
+Internet access, leaving massive amounts of information at our fingertips.
+
+Knowledge itself has become increasingly accessible, and the knowledge
+itself allows for increasing self-empowerment. Unfortunately, however,
+these capabilities have primarily been used primarily for the
+distribution of /products/ rather than /knowledge/. Rather than being
+a channel for democratization and autonomy it has therefore become a
+driver for dependence and consolidation of power.
+
+I'd posit that the motivations on the supply side are obvious
+capitalistic drivers. Producers will continue to progress and ride
+rebound effects in the interest of moat building. On the consumer side
+the motivations are likely to be a mix of convenience, complacency,
+status, and human nature. There are also plenty of movements in the
+opposite direction such as makers and those seeking self-sufficiency.
+
+This specific perspective has crystallized for me recently in response
+to how the Internet has played over the course of this century, the
+role that technology now plays in our daily lives, and particularly
+when thinking about how the future may look as the role of AI evolves
+and the pending concomitant impacts. Currently this is in the stage of
+informing how I approach certain things, but so far it is still novel
+enough that there is not further practical information (other than
+looking to draw more deeply on movements already in flight).
+
+One small thread that I am likely to draw on more heavily (given my
+background) is how this relates to software specifically. In software
+this is likely to largely align with other efforts such as
+concept-first programming and cohere into a model where the primary
+mechanism for reuse is knowledge rather than products or artifacts.
