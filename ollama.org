@@ -68,11 +68,11 @@ This list therefore reflects what I currently have on one my workstations.
 
 #+RESULTS:
 : NAME                       ID              SIZE      MODIFIED    
-: nomic-embed-text:latest    0a109f422b47    274 MB    2 weeks ago    
-: qwen3:latest               500a1f067a9f    5.2 GB    2 weeks ago    
-: gpt-oss:latest             17052f91a42e    13 GB     4 weeks ago    
+: nomic-embed-text:latest    0a109f422b47    274 MB    3 weeks ago    
+: qwen3:latest               500a1f067a9f    5.2 GB    3 weeks ago    
+: gpt-oss:latest             17052f91a42e    13 GB     5 weeks ago    
 
 - [[id:D6EB63CC-2B15-45DC-8C49-33C0DB4DA1C5][gpt-oss]]
 - [[id:265230C1-96C3-4C5B-8CE3-050F471FCFF2][qwen3]]
 
-gemma4 seems to be a more promising default than gpt-oss...
+** TODO gemma4 seems to be a more promising default than gpt-oss...

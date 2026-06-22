@@ -16,9 +16,77 @@ drive the work of the agents.
 * Languages
 
 - [[id:222093AC-E4FC-4E90-B124-ADFFC31F6314][emacs-lisp]]
+- [[id:72258C97-F88E-4498-825D-A7447EC008AA][java]]
 - [[id:002B2928-C32F-49F3-B93F-CBEEE215A7D7][python]]
+- [[id:3368C2A8-C34F-45C2-8601-1735BD712D74][shell]]
 
 * Arguments
+
+** ~:post~
+
+Post Processing
+
+#+name: test-post
+#+begin_src shell :var val=""
+  echo "${val}-post"
+#+end_src
+
+#+RESULTS: test-post
+
+#+begin_src shell :results output :post test-post(val=*this*)
+  echo -n 'foo'
+#+end_src
+
+#+RESULTS:
+: foo-post
+
+#+name: from-json
+#+begin_src emacs-lisp :var input="" :results value
+  (json-parse-string input)
+#+end_src
+
+#+RESULTS: from-json
+
+#+begin_src shell :results output :post from-json(input=*this*)
+  echo -n '[1,2,3,4]'
+#+end_src
+
+#+RESULTS:
+: [1 2 3 4]
+
+#+begin_src shell :results output :post from-json(input=*this*)
+  echo -n '{"foo": "bar"}'
+#+end_src
+
+#+RESULTS:
+: #s(hash-table test equal data ("foo" "bar"))
+
+#+begin_src shell :results table
+  echo 'foo,bar'
+#+end_src
+
+#+BEGIN_SRC shell :results table
+  echo '[1,2,3, "foo"]' | jq -r '@csv'
+#+END_SRC
+
+#+RESULTS:
+| 1 | 2 | 3 | foo |
+
+#+BEGIN_SRC shell :results table :async :session ob-test
+  echo '[1,2,3, "foo"]' | jq -r '@csv'
+#+END_SRC
+
+#+RESULTS:
+: echo '[1,2,3, "foo"]' | jq -r '@csv'
+: 1,2,3,"foo"
+: [?2004hecho 'ob_comint_async_shell_end_31aa6728-dfec-43ea-8f97-2414b24181ff'[?2004l
+
+
+Post processing typically only works with sync blocks, and once async is started it stays async.
+Collect some recipes for dealing with this...may be easier to push this into the shell than to try to pull it in to babel.
+If there's a way to get CSV/TSV to play better that seems nicer.
+
+A built in jq formatter also seems appealing but not available as an extension point.
 
 ** ~:results~
 
