@@ -1,0 +1,19 @@
+:PROPERTIES:
+:ID:       3368C2A8-C34F-45C2-8601-1735BD712D74
+:END:
+#+title: shell
+
+For all intents and purposes I stick with bash as a
+traditional shell.
+
+Though this project also reflects trying to move away from that model.
+
+* Configuration for [[id:04B03591-50E7-41E2-A2A5-0C2893FAD39C][org-babel]]
+
+#+BEGIN_SRC emacs-lisp
+  (require 'ob-shell)
+#+END_SRC
+
+#+RESULTS:
+: ob-shell
+
