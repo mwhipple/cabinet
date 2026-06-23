@@ -40,3 +40,35 @@ nil, the grammar is installed to the standard location, the
 
 #+end_example
 
+#+begin_src emacs-lisp
+  (describe-variable 'treesit-language-source-alist)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+treesit-language-source-alist is a variable defined in ‘treesit.el’.
+
+Its value is nil
+
+Configuration for downloading and installing tree-sitter language grammars.
+
+The value should be an alist where each element has the form
+
+    (LANG . (URL REVISION SOURCE-DIR CC C++))
+
+Only LANG and URL are mandatory.  LANG is the language symbol.
+URL is the URL of the grammar’s Git repository or a directory
+where the repository has been cloned.
+
+REVISION is the Git tag or branch of the desired version,
+defaulting to the latest default branch.
+
+SOURCE-DIR is the relative subdirectory in the repository in which
+the grammar’s parser.c file resides, defaulting to "src".
+
+CC and C++ are C and C++ compilers, defaulting to "cc" and
+"c++", respectively.
+
+  Probably introduced at or before Emacs version 30.1.
+
+#+end_example
