@@ -1,0 +1,47 @@
+:PROPERTIES:
+:ID:       CD423BBA-4F33-4CCC-A126-D5E3BA22B219
+:END:
+#+title: emacs-yaml
+
+Support for working with YAML in emacs.
+
+Built-in support makes use of [[id:F103D183-FA21-4785-96BC-2A526F87E88F][emacs-tree-sitter]].
+
+This doesn't provide much in terms of linting or anything,
+but at least seems to apply the grammar.
+
+#+begin_src emacs-lisp
+  (describe-function #'yaml-ts-mode)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+yaml-ts-mode is an autoloaded interactive byte-code-function in
+‘yaml-ts-mode.el’.
+
+(yaml-ts-mode)
+
+Major mode for editing YAML, powered by tree-sitter.
+
+In addition to any hooks its parent mode ‘text-mode’ might have run,
+this mode runs the hook ‘yaml-ts-mode-hook’, as the final or penultimate
+step during initialization.
+
+  Parent mode: ‘text-mode’.
+  Extra parent mode: ‘yaml-mode’.
+  Probably introduced at or before Emacs version 29.1.
+
+#+end_example
+
+* Register Grammar
+
+#+begin_src emacs-lisp
+  (setq treesit-language-source-alist
+        (cons '(yaml . ("https://github.com/ikatyang/tree-sitter-yaml"))
+  	    treesit-language-source-alist))
+#+end_src
+
+#+begin_src emacs-lisp
+  (treesit-install-language-grammar 'yaml)
+#+end_src
+
