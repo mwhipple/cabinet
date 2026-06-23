@@ -1,0 +1,45 @@
+:PROPERTIES:
+:ID:       04CB70C7-0644-4623-AE80-63512F671F9A
+:END:
+#+title: formal-verification
+
+I have a general interest in formal verification, and I see it as a
+potential major component in the evolution of software engineering and
+AI. It is nicely complementary in that AI can absorb much of the
+tedium of formal verification, and the verification can provide
+confidence that the AI is doing what is desired. There's likely some
+prism through which Curry-Howard Correspondence can pass to bring us
+to some promised land...but I don't have the background to make that
+happen.
+
+Here I'm going to collect a quick take on some formal verification
+tools that I've used along with a corresponding roadmap to guide
+selection. As this covers limited personal experience, there are
+plenty of omissions including some major ones.
+
+* idris
+
+Idris allows for constructing provable implementations through
+dependent typing. It is also a great language overall. Something like
+this _could_ be particularly relevant for the AI use above, and
+something that I use personally - but without both a path to
+streamline integration with AI and a route to optimize most of the
+code without forfeiting some of the safety, it seems likely to be less
+tenable for professional use.
+
+* rocq
+
+One major win for this tool in general is the provided
+documentation. What seems to be the core differentiator for rocq is
+the ability to apply tactics. This would be my choice for doing
+something like building out a formal system: composing the assorted
+theorems and lemmas to provide guaranteed qualities of constructs.
+
+* [[id:12BC5AB3-D75B-43BC-A51E-C8CD80AAE829][tla+]]
+
+This provides some model checking of a specification, particularly
+good for working out prospective issues with distributed and
+concurrent systems. This would be/is my primary choice if I were
+looking to prove out something like safety/liveness properties of a
+design.
+
