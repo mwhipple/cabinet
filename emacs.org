@@ -592,6 +592,27 @@ also ‘with-temp-buffer’.
 
 #+end_example
 
+** with-temp-buffer
+
+#+begin_src emacs-lisp
+  (describe-function #'with-temp-buffer)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+with-temp-buffer is a Lisp macro in ‘subr.el’.
+
+(with-temp-buffer &rest BODY)
+
+Create a temporary buffer, and evaluate BODY there like ‘progn’.
+The buffer does not run the hooks ‘kill-buffer-hook’,
+‘kill-buffer-query-functions’, and ‘buffer-list-update-hook’.
+See also ‘with-temp-file’ and ‘with-output-to-string’.
+
+  Probably introduced at or before Emacs version 20.1.
+
+#+end_example
+
 * Clearing out definitions
 
 ** makunbound
