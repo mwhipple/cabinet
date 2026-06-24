@@ -72,6 +72,11 @@ then invoke the jar.
 ** Settings
 
 *** org-babel-tla-java-command
+:PROPERTIES:
+:ID:       A2EFA32C-2B61-4641-916C-6CE01E3F749A
+:END:
+
+Define the [[id:CBD977B3-D277-40F6-8923-1D55CD6C412D][java]] command for running [[id:12BC5AB3-D75B-43BC-A51E-C8CD80AAE829][tla+]].
 
 #+begin_src emacs-lisp
   (defcustom org-babel-tla-java-command org-babel-java-command
@@ -85,6 +90,11 @@ then invoke the jar.
 : org-babel-tla-java-command
 
 *** org-babel-tla-jar-path
+:PROPERTIES:
+:ID:       43363614-7E36-4E06-AC18-C5077F42E4C8
+:END:
+
+Define the path to the [[id:12BC5AB3-D75B-43BC-A51E-C8CD80AAE829][tla+]] JAR file.
 
 #+begin_src emacs-lisp
   (defcustom org-babel-tla-jar-path nil
@@ -101,3 +111,26 @@ then invoke the jar.
 #+RESULTS:
 : org-babel-tla/jar-path
 
+*** org-babel-tla/cmd-base
+
+Compose the base for the command by invoking
+[[id:A2EFA32C-2B61-4641-916C-6CE01E3F749A][org-babel-tla-java-command]] with a classpath including
+[[id:43363614-7E36-4E06-AC18-C5077F42E4C8][org-babel-tla-jar-path]]. The class to invoke will need to be specified,
+which allows the different tools to be used (whereas using the
+entrypoint for the jar only provides TLC).
+
+#+begin_src emacs-lisp
+  (defun org-babel-tla/cmd-base ()
+    (format "%s -cp %s" org-babel-tla-java-command (org-babel-tla/jar-path)))
+#+end_src
+
+#+RESULTS:
+: org-babel-tla/cmd-base
+
+**** Set this to a locally valid value
+
+This should be replaced if this notebook is used directly.
+
+#+begin_src emacs-lisp
+  (setq org-babel-tla-jar-path (expand-file-name "~/memex/vendor/tlacli/src/tlacli/tla2tools.jar"))
+#+end_src
