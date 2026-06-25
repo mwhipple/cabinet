@@ -27,7 +27,6 @@ GitLab), but set myself up so I can develop some processes.
 
 Atlassian provides ~acli~ as an interface for their services.
 
-
 * Installation
 
 https://developer.atlassian.com/cloud/acli/guides/install-acli/
@@ -231,4 +230,31 @@ Flags:
   -h, --help   Show help for command
 
 Use "acli jira workitem [command] --help" for more information about a command.
+#+end_example
+
+* Confluence
+
+** Help
+
+#+begin_src shell
+  acli confluence --help
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Confluence Cloud commands.
+
+Usage:
+  acli confluence [command]
+
+Available Commands:
+  auth        Authenticate to use Atlassian CLI.
+  blog        Confluence blog commands.
+  page        Confluence page commands.
+  space       Confluence space commands.
+
+Flags:
+  -h, --help   Show help for command
+
+Use "acli confluence [command] --help" for more information about a command.
 #+end_example
