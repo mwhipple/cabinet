@@ -52,6 +52,10 @@ Further help:
 #+end_example
 
 * Install
+:PROPERTIES:
+:ID:       09B4F4F5-8C42-4112-88A8-54A69E404549
+:ROAM_ALIASES: brew-install
+:END:
 
 #+begin_src shell :results output
   brew install --help

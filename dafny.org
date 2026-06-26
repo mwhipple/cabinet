@@ -1,0 +1,123 @@
+:PROPERTIES:
+:ID:       8BD69861-CEC7-4D93-804C-7002BEA8BF3B
+:END:
+#+title: dafny
+
+* Installation
+
+https://dafny.org/v4.4.0/Installation
+
+Install with [[id:09B4F4F5-8C42-4112-88A8-54A69E404549][brew-install]].
+
+#+begin_src shell :session brew :async
+  brew install --yes dafny
+#+end_src
+
+#+RESULTS:
+#+begin_example
+brew install --yes dafny
+✔︎ JSON API packages.arm64_tahoe.jws.json
+Warning: The following taps are not trusted:
+  kde-mac/kde
+
+Homebrew is currently ignoring formulae, casks and commands from these taps because tap trust is required.
+Prefer trusting only the specific formulae, casks or commands you need.
+Trust installed formulae from these taps with:
+  brew trust --formula kde-mac/kde/kf5-attica kde-mac/kde/kf5-breeze-icons kde-mac/kde/kf5-kactivities kde-mac/kde/kf5-kauth kde-mac/kde/kf5-kcodecs kde-mac/kde/kf5-kcompletion kde-mac/kde/kf5-kconfig kde-mac/kde/kf5-kconfigwidgets kde-mac/kde/kf5-kcoreaddons kde-mac/kde/kf5-kcrash kde-mac/kde/kf5-kdbusaddons kde-mac/kde/kf5-kglobalaccel kde-mac/kde/kf5-kguiaddons kde-mac/kde/kf5-kiconthemes kde-mac/kde/kf5-kirigami2 kde-mac/kde/kf5-kitemmodels kde-mac/kde/kf5-kitemviews kde-mac/kde/kf5-kjobwidgets kde-mac/kde/kf5-knotifications kde-mac/kde/kf5-kpackage kde-mac/kde/kf5-kpty kde-mac/kde/kf5-kservice kde-mac/kde/kf5-kwallet kde-mac/kde/kf5-kwidgetsaddons kde-mac/kde/kf5-kwindowsystem kde-mac/kde/kf5-syntax-highlighting kde-mac/kde/phonon
+Trust other specific casks and commands with:
+  brew trust --cask <user>/<tap>/<cask>
+  brew trust --command <user>/<tap>/<command>
+Whole-tap trust is broader and includes all current and future formulae,
+casks and commands from the listed taps. Trust whole taps with:
+  brew trust kde-mac/kde
+Untap them with:
+  brew untap kde-mac/kde
+To disable trust checks:
+  export HOMEBREW_NO_REQUIRE_TAP_TRUST=1
+This is not recommended and will be removed in a later release.
+For more information, see:
+  https://docs.brew.sh/Tap-Trust
+==> Fetching downloads for: dafny
+✔︎ Bottle Manifest dotnet@8 (8.0.128)
+✔︎ Bottle Manifest z3 (4.16.0)
+✔︎ Bottle z3 (4.16.0)
+✔︎ Bottle dafny (4.11.0)
+✔︎ Bottle dotnet@8 (8.0.128)
+==> Installing dependencies for dafny: dotnet@8 and z3
+==> Installing dafny dependency: dotnet@8
+==> Pouring dotnet@8--8.0.128.arm64_tahoe.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/dotnet@8/8.0.128: 4,082 files, 510.4MB
+==> Installing dafny dependency: z3
+==> Pouring z3--4.16.0.arm64_tahoe.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/z3/4.16.0: 128 files, 33.5MB
+==> Installing dafny
+==> Pouring dafny--4.11.0.arm64_tahoe.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/dafny/4.11.0: 682 files, 59.6MB
+==> Running `brew cleanup dafny`...
+Disable this behaviour by setting `HOMEBREW_NO_INSTALL_CLEANUP=1`.
+Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
+[?2004hecho 'ob_comint_async_shell_end_68e84701-dd16-4b28-8c5a-000fd10e62ca'[?2004l
+#+end_example
+
+* Help
+
+#+begin_src shell :results output
+  dafny
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Description:
+  The Dafny CLI enables working with Dafny, a verification-aware programming language. Use 'dafny -?' to see help for the previous CLI format.
+
+Usage:
+  Dafny [command] [options] [[--] <additional arguments>...]]
+
+Options:
+  --version        Show version information
+  -?, -h, --help   Show help and usage information
+  --help-internal  Show help and usage information, including options designed for developing the Dafny language and toolchain.
+
+Commands:
+  resolve <file>                                   Only check for parse and type resolution errors.
+  verify <file>                                    Verify the program.
+  build <file>                                     Produce an executable binary or a library.
+  run <file> <program-arguments>                   Run the program. []
+  translate                                        Translate Dafny sources to source and build files in a specified language.
+  format <file>                                    Format the dafny file in-place.
+                                                   If no dafny file is provided, will look for every available Dafny file.
+                                                   Use '--print' to output the content of the formatted files instead of overwriting them.
+  doc <file>                                       [Experimental] Create a description page for each module. Files are placed in the folder specified by --output (default is ./docs).
+  measure-complexity <file>                        (Experimental) Measure the complexity of verifying the program.
+  server                                           Start the Dafny language server
+  test <file>                                      (Experimental) Execute every method in the program that's annotated with the {:test} attribute.
+  generate-tests <Block|InlinedBlock|Path> <file>  (Experimental) Generate Dafny tests that ensure block or path coverage of a particular Dafny program.
+  find-dead-code <file>                            (Experimental) Use counterexample generation to warn about potential dead code.
+  audit <file>                                     Report issues in the Dafny code that might limit the soundness claims of verification, emitting them as warnings or in a report document.
+  merge-coverage-reports <outDir> <reports>        Merge several previously generated coverage reports together. []
+Additional Arguments:
+  Arguments passed to the application that is being run.
+
+#+end_example
+
+* Emacs Setup
+
+#+begin_src emacs-lisp
+  (package-install 'boogie-friends)
+#+end_src
+
+#+RESULTS:
+: Package ‘boogie-friends’ installed.
+
+* Basic [[id:7559D25A-A451-46F7-864B-C42C86767B6E][ob-dafny]] support
+
+#+begin_src dafny
+  method Main() {
+  	print "Hello, World!\n";
+  }
+#+end_src
+
+#+RESULTS:
+: 
+: Dafny program verifier finished with 0 verified, 0 errors
+: Hello, World!

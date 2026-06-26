@@ -57,7 +57,7 @@ to populate the appropriate directory at the time of tangling.
 #+end_src
 
 #+RESULTS:
-: /Users/mwhipple/memex/notebooks/org-roam.db
+: ~/.emacs.d/org-roam.db
 
 ** Embedded
 
