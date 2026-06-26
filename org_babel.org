@@ -552,6 +552,35 @@ FILE exists at end of evaluation.
 
 #+end_example
 
+*** org-babel-comint-with-output
+
+This function looks promising for general use.
+Much of the body seems like it could be replaced by generalized logic.
+
+#+begin_src emacs-lisp
+  (describe-function #'org-babel-comint-with-output)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+org-babel-comint-with-output is a Lisp macro in ‘ob-comint.el’.
+
+(org-babel-comint-with-output META &rest BODY)
+
+Evaluate BODY in BUFFER and return process output.
+Will wait until EOE-INDICATOR appears in the output, then return
+all process output.  If REMOVE-ECHO and FULL-BODY are present and
+non-nil, then strip echo’d body from the returned output.  META
+should be a list containing the following where the last two
+elements are optional.
+
+ (BUFFER EOE-INDICATOR REMOVE-ECHO FULL-BODY)
+
+This macro ensures that the filter is removed in case of an error
+or user ‘keyboard-quit’ during execution of body.
+
+#+end_example
+
 * Spelunking
 
 As part of building out [[id:95B942E1-D6F6-42CC-9A8F-E49F23482AB9][ob-tla]] I'll start picking through the standard
