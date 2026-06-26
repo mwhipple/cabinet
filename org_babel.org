@@ -342,6 +342,30 @@ the outer-most code block.
 
 #+end_example
 
+* Implementation Information
+
+** Configuration
+
+*** org-babel-check-evaluate
+
+#+begin_src emacs-lisp
+  (describe-function #'org-babel-check-evaluate)
+#+end_src
+
+The docs for this function are lacking...check how?
+
+#+RESULTS:
+: org-babel-check-evaluate is a byte-code-function in ‘ob-core.el’.
+: 
+: (org-babel-check-evaluate INFO)
+: 
+: Check if code block INFO should be evaluated.
+: Do not query the user, but do display an informative message if
+: evaluation is blocked.  Returns non-nil if evaluation is not blocked.
+: 
+
+Internally this just translates to a wrapped call to
+org-babel-check-confirm-evaluate
 #+begin_src emacs-lisp
   (describe-function #'org-babel-temp-file)
 #+end_src
