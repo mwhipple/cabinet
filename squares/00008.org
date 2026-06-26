@@ -1,0 +1,65 @@
+#+TITLE: Magical Number Seven
+
+A major but often neglected factor in designing systems is the
+limitations of our minds. One of the seminal related works is likely
+"The Magical Number Seven, Plus or Minus Two" which I've not yet read,
+but I have read Dr. David Rock's "Your Brain at Work" which also
+spends a fair amount of time going into the inherent limitations of
+the executive functions of our brains and the wider concerns of biases
+and biological realities.
+
+In practice this suggests that any fairly complicated sysem should be
+able to be "chunke\" up: decomposed in ways that different parts can
+be understood and navigated as necessary. In terms of design itself
+this is largely enabled by a combination of sound modularity and
+abstractions. Cyclic relationships can be the bane of such pursuits,
+as each such connected component may not be able to be understood
+without an understanding of the adjacent components which can easily
+lead to a spaghetti/ball of mud situation where you can't understand
+anything until you understand everything. this pretty obviously makes
+jamming all of the information through your cortex a much less
+efficient process and impedes widespread guidance on being able to
+compose understanding.
+
+This guidance applies not only to the designs themselves, but how
+information is shared. Providing some kind of hierarchy which allows for
+drilling down down and up allows for understanding of assorted layers
+and contexts without vascillating between artifacts that are too high
+level to really have an accurate picture, or so sprawling that there's
+the only a couple people that /seem/ to be able to explain them.
+
+Acknowleding ourand applying commensurate discipline to keep systems
+tractable is enormously beneficial. Unfortunately, however, this is
+often not practiced. Like many other concerns which invite discipline,
+it often suffers from creeping normality. This particular class of issue
+is also very prone to be skewed by the curse of knowledge - where as
+that information has gradually trickled through to longer term memory
+and other parts of the brain it can become implictly presumed. At that
+point the costs are likely to surface in the form of onboarding
+overhead, but this may also be normalized and in the most perverse
+situations misconstrued as a healthy indicator ("our stuff is so
+sophisticated it takes a long time to get up to speed").
+
+Beyond the challenges of making sense of systems, a potentially far
+more pernicious risk is exactly what that sense will look like. While
+defining and describing information in manageable chunks can enable
+working towards a relatively precise shared understanding, the more
+information that spills out of such chunks will require more
+connections that are almost certainly going to be made in different
+ways, and such paths may be misaligned or incompatible. Things that
+cannot be clearly understood invite inferences which may or may not
+actually match how things work or how they are intended to work. While
+some amount of this may be tolerable or even beneficial, on a larger
+scale (e.g., across on organization or even across time on a single
+team) this is a clear invitation for entropy and a loss of conceptual
+integrity.
+
+This can largely be alleviated through discipline and making sure issues
+such as ambiguity and tribal knowledge are not normalized. Whenever
+there is not a clear path to completely and accurately understand
+something (other than slogging through it), it should be taken as a
+defect rather than saddling people with the onus of working through
+their inherent limitations. While there are many cases in which some
+background knowledge can be a precondition, this should be an
+intentional and valuable decision and be a planned part of that path to
+understanding rather than a surprise detour.
