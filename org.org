@@ -383,3 +383,29 @@ Providing it allows for quicker computation.
 This function may modify match data.
 
 #+end_example
+
+** org-element-type
+
+#+begin_src emacs-lisp
+  (describe-function #'org-element-type)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+org-element-type is a byte-code-function in ‘org-element-ast.el’.
+
+(org-element-type NODE &optional ANONYMOUS)
+
+Return type of NODE.
+
+The function returns the type of the node provided.
+It can also return the following special value:
+  ‘plain-text’       for a string
+  nil                in any other case.
+
+When optional argument ANONYMOUS is non-nil, return symbol ‘anonymous’
+when NODE is an anonymous node.
+
+  This function does not change global state, including the match data.
+
+#+end_example
