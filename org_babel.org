@@ -581,6 +581,32 @@ or user ‘keyboard-quit’ during execution of body.
 
 #+end_example
 
+** Process
+
+I'd probably look to avoid this and use comint for all the things.
+
+*** org-babel-eval
+
+#+begin_src emacs-lisp
+  (describe-function #'org-babel-eval)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+org-babel-eval is a byte-code-function in ‘ob-eval.el’.
+
+(org-babel-eval COMMAND QUERY)
+
+Run COMMAND on QUERY.
+Return standard output produced by COMMAND.  If COMMAND exits
+with a non-zero code or produces error output, show it with
+‘org-babel-eval-error-notify’.
+
+Writes QUERY into a temp-buffer that is processed with
+‘org-babel--shell-command-on-region’.
+
+#+end_example
+
 * Spelunking
 
 As part of building out [[id:95B942E1-D6F6-42CC-9A8F-E49F23482AB9][ob-tla]] I'll start picking through the standard
@@ -600,3 +626,7 @@ Not much in the way of interesting process support.
 For supporting async interactions I was mostly expecting to want to
 use comint, so I've appropriately been led to
 [[file:/Applications/Emacs.app/Contents/Resources/lisp/org/ob-comint.el.gz][ob-comint]].
+
+ob-comint is fairly lightweight with a couple functions that should
+likely be generalized, one or two that seem worth decomposing, and
+some that seem worth leaving alone.
