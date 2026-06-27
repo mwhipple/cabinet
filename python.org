@@ -16,6 +16,27 @@ high-level work including working with AI.
 #+RESULTS:
 : ob-python
 
+#+begin_src emacs-lisp
+  (describe-variable 'org-babel-python-command)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+org-babel-python-command is a variable defined in ‘ob-python.el’.
+
+Its value is ‘auto’
+
+Command (including arguments) for interactive and non-interactive Python code.
+When not ‘auto’, it overrides ‘org-babel-python-command-session’
+and ‘org-babel-python-command-nonsession’.
+
+  This variable may be risky if used as a file-local variable.
+  This variable was introduced, or its default value was changed, in
+  version 9.7 of the Org package that is part of Emacs 30.1.
+  You can customize this variable.
+
+#+end_example
+
 * Setting up a Virtual Environment
 :PROPERTIES:
 :ID:       A3C4A953-79CA-4160-AB26-A6EDCCD8AC09

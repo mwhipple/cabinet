@@ -64,3 +64,102 @@ things will be evaluated. This is typically going to amount to whether
 some functionality gets applied and would therefore seem most clearly
 modeled as something equivalent to multiple phases where evaluation is
 an optional phase, but it is currently handled as flags.
+
+To start we'll assume that this will be checked outside of the function
+
+** body
+
+** obi/execute-src-block
+
+This function collects the context which results in an ~info~ object
+that is then used to perform the actual execution.
+
+It looks like the key piece to make this a bit more supple is
+~org-babel-insert-result~, where if we break this up to support async
+flows then that should be trigged by the callback.
+
+#+begin_src emacs-lisp
+  (defun obi/execute-src-block (&optional arg info params executor-type)
+    "Execute the current source code block and return the result.
+  Insert the results of execution into the buffer.  Source code
+  execution and the collection and formatting of results can be
+  controlled through a variety of header arguments.
+
+  With prefix argument ARG, force re-execution even if an existing
+  result cached in the buffer would otherwise have been returned.
+
+  Optionally supply a value for INFO in the form returned by
+  `org-babel-get-src-block-info'.
+
+  Optionally supply a value for PARAMS which will be merged with
+  the header arguments specified at the front of the source code
+  block."
+    (interactive)
+    (let* ((org-babel-current-src-block-location
+            (or org-babel-current-src-block-location
+                (nth 5 info)
+                (org-babel-where-is-src-block-head)))
+  	 (element (org-element-context))
+           (info (if info (copy-tree info) (org-babel-get-src-block-info nil element)))
+  	 (result-params (cdr (assq :result-params params)))
+  	 (exec-start-time (current-time))
+  	 (exec-result (obi/exec-result-for-info info)))
+      (unless (member "none" result-params)
+        (org-babel-insert-result
+         exec-result result-params info
+         (when (member "replace" result-params) new-hash)
+         lang
+         (time-subtract (current-time) exec-start-time)))
+      (run-hooks 'org-babel-after-execute-hook)
+      exec-result))
+
+#+end_src
+
+#+RESULTS:
+: obi/execute-src-block
+
+** obi/exec-result-for-info
+
+~info~ is the object that holds all of the important info (and could be
+extended as needed), so let's use that to drive the actual execution.
+
+#+begin_src emacs-lisp
+  (defun obi/exec-result-for-info (info)
+    (let* ((body (org-babel--expand-body info))
+    	 (lang (nth 0 info))
+    	 (params (nth 2 info))
+    	 (cmd (intern (concat "org-babel-execute:" lang)))
+    	 (result-params (cdr (assq :result-params params)))
+  	 (maybe-wrapped
+  	  (lambda (r)
+  	    (let ((wants-value? (eq (cdr (assq :result-type params)) 'value))
+  		  (wants-collection? (or (member "vector" result-params) (member "table" result-params))))
+  	      (if (and wants-value? wants-collection? (not (listp r)))
+  		  (list (list r))
+  		r)))))
+      (unless (fboundp cmd)
+        (error "No org-babel-execute function for %s!" lang))
+      (let ((exec-result (funcall maybe-wrapped (save-excursion (funcall cmd body params)))))
+        exec-result)))
+#+end_src
+
+#+RESULTS:
+: obi/exec-result-for-info
+
+** Test Element
+
+#+begin_src emacs-lisp
+  "foo"
+#+end_src
+
+#+RESULTS:
+: foo
+
+* TODO obi/comint-filter
+
+Split up org-babel-comint-async-filter
+
+* Notes
+
+Splitting out a closure over params seems potentially helpful...
+May not be any terser in emacs-lisp though.

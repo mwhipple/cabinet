@@ -884,6 +884,43 @@ Finished checking temporal properties in 00s at 2026-06-22 20:49:17
 Finished in 00s at (2026-06-22 20:49:17)
 #+end_example
 
+*** Issues
+
+**** Can't open config file
+
+#+begin_example
+The exception was a tlc2.tool.ConfigFileException
+: TLC encountered the following error when trying to read the configuration file /var/folders/y1/qpq5h9vd44dgw77dx8jb00380000gn/T/tmpix5enxh2/tla.cfg:
+File not found.
+#+end_example
+
+The file certainly seems to exist based on other code added around there.
+
+The comments in the upstream code seem relvant
+# We don't use the temporary module because it closes the file when we're done, and we need to pass a filepath into tlc.
+# BUG: fails if passing in an absolute path (raised)
+
+Changing to random files in /tmp that can be verified, but that still
+doesn't seem to make a difference.
+
+That could be the absolute path issue apparently.
+
+I suspect that most of the issue comes down to the fragility in the
+standard setup that I'm now slamming into since I'm using it in less
+conventional ways - let me make sure I'm in the directory of the spec.
+
+That seems to be the case as changing the working directory addressed
+it. A particularly robust solution (supporting absolute paths) would
+likely require changes in TLA, so I'll plan on just a basic mix of
+DWIMmery and feedback as I stub my toes.
+
+**** Config file issues
+
+The SPECIFICATION block in the config file is required, if it is
+absent then TLC will throw a lower level error (I don't have the
+specific error, but something about Java barfing on a string value).
+
+This feels worth wrapping in better handling if it recurs.
 * Resources
 ** TODO https://github.com/Apress/practical-tla-plus
 ** TODO https://lamport.azurewebsites.net/tla/book-21-07-04.pdf

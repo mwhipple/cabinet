@@ -1,0 +1,16 @@
+:PROPERTIES:
+:ID:       1354F2E3-6D9D-4464-BC05-7B4609F5EA96
+:END:
+#+title: set
+
+Sets are a concept used heavily in mathematics (e.g., set theory) and
+are also a common collection type in programming.
+
+The basic definition is an unordered collection of unique elements. In
+code that can typically leverage technique such as hashing to allow
+for constant time membership checks.
+
+** is-a-set
+:PROPERTIES:
+:ID:       F90CA648-D9E8-4481-A639-3303AFBABEB4
+:END:
