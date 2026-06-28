@@ -1,7 +1,20 @@
 :PROPERTIES:
 :ID:       DD7D894A-4ADC-4808-B24A-C2143B507FEF
+:ROAM_ALIASES: org-mode
 :END:
 #+title: org
+
+* Tweaks
+
+** Content Styling
+
+*** [[id:7F81651F-8535-47C3-81CB-642446A3106C][auto-fill-mode]]
+
+#+begin_src emacs-lisp :results output
+  (add-hook 'org-mode-hook #'auto-fill-mode)
+#+end_src
+
+#+RESULTS:
 
 * Weaving
 
@@ -348,7 +361,6 @@ number of days given here.
 #+end_src
 
 * API
-
 ** org-element-context
 
 #+begin_src emacs-lisp
