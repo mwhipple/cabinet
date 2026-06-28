@@ -4,7 +4,6 @@
 #+title: emacs
 
 * Help
-
 ** man
 
 man should likely be extracted out of emacs.
@@ -963,6 +962,34 @@ The mode’s hook is called both when the mode is enabled and when it is
 disabled.
 
   Probably introduced at or before Emacs version 19.29.
+
+#+end_example
+
+* Shell
+
+There may be several variables of interest for shell management for
+different purposes.
+
+Since my default is bash, I'll override the assorted [[id:516B3C9A-4288-4ACF-8DEE-3526DFD21083][macOS]] values that
+opt for zsh.
+
+** sh-shell
+
+#+begin_src emacs-lisp
+  (describe-variable 'sh-shell)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+sh-shell is a variable defined in ‘sh-script.el’.
+
+Its value is ‘zsh’
+
+The shell being programmed.  This is set by M-x sh-set-shell.
+
+  This variable is safe as a file local variable if its value
+  satisfies the predicate ‘symbolp’.
+  Probably introduced at or before Emacs version 25.1.
 
 #+end_example
 

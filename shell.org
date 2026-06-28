@@ -38,6 +38,8 @@ Though this project also reflects trying to move away from that model.
 
 **** Changing shell
 
+Using shebang for this seems to work synchronously, but not async.
+
 #+begin_src shell
   echo ${0}
 #+end_src
