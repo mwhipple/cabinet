@@ -54,6 +54,25 @@ Not particularly legible results, but clearly different.
 #+RESULTS:
 : /var/folders/y1/qpq5h9vd44dgw77dx8jb00380000gn/T/babel-YPmWu4/sh-script-MIufLw
 
+*** redirecting-in-ob-blocks
+:PROPERTIES:
+:ID:       4BB51003-3806-4D02-8191-A8B596690E33
+:END:
+
+This can be done by adding an appropriate [[id:BDA4C8F0-3B66-4819-B2B1-BBC8FE727EBC][:prologue]].
+
+#+begin_src shell
+  echo "foo" >&2
+#+end_src
+
+#+RESULTS:
+
+#+begin_src shell :prologue "exec 2>&1"
+  echo "foo" >&2
+#+end_src
+
+#+RESULTS:
+: foo
 * Redirections
 
 The use of stdin/stdout along with the ability to do piping and
