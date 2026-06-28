@@ -360,6 +360,32 @@ number of days given here.
   (setq org-scheduled-past-days 999999)
 #+end_src
 
+*** org-deadline-past-days
+
+#+begin_src emacs-lisp
+  (describe-variable 'org-deadline-past-days)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+org-deadline-past-days is a variable defined in ‘org-agenda.el’.
+
+Its value is 999999
+Original value was 10000
+
+Number of days to warn about missed deadlines.
+When an item has deadline on a date, it shows up in the agenda on
+this day and will appear as a reminder until it is marked DONE or
+for the number of days given here.
+
+  This variable is safe as a file local variable if its value
+  satisfies the predicate ‘integerp’.
+  This variable was introduced, or its default value was changed, in
+  version 26.1 of Emacs.
+  You can customize this variable.
+
+#+end_example
+
 * API
 ** org-element-context
 
