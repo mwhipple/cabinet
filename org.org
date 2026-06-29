@@ -4,6 +4,43 @@
 :END:
 #+title: org
 
+* Basics
+
+** org-directory
+
+#+begin_src emacs-lisp
+  (describe-variable 'org-directory)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+org-directory is a variable defined in ‘org.el’.
+
+Its value is "~/org"
+
+Directory with Org files.
+This is just a default location to look for Org files.  There is no need
+at all to put your files into this directory.  It is used in the
+following situations:
+
+1. When a capture template specifies a target file that is not an
+   absolute path.  The path will then be interpreted relative to
+   ‘org-directory’
+2. When the value of variable ‘org-agenda-files’ is a single file, any
+   relative paths in this file will be taken as relative to
+   ‘org-directory’.
+
+  You can customize this variable.
+
+#+end_example
+
+#+begin_src emacs-lisp
+  (setq org-directory (getenv "ROAM_CABINET"))
+#+end_src
+
+#+RESULTS:
+: ~/memex
+
 * Tweaks
 
 ** Content Styling
