@@ -848,6 +848,29 @@ To interactively change the default directory, use the command ‘cd’.
 
 #+end_example
 
+
+** file-in-directory-p
+
+#+begin_src emacs-lisp
+  (describe-function #'file-in-directory-p)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+file-in-directory-p is a byte-code-function in ‘files.el’.
+
+(file-in-directory-p FILE DIR)
+
+Return non-nil if DIR is a parent directory of FILE.
+Value is non-nil if FILE is inside DIR or inside a subdirectory of DIR.
+A directory is considered to be a "parent" of itself.
+DIR must be an existing directory, otherwise the function returns nil.
+
+  Other relevant functions are documented in the file group.
+  Probably introduced at or before Emacs version 24.1.
+
+#+end_example
+
 * generic functions
 
 I'm going to use generic functions a lot with emacs-lisp since they
