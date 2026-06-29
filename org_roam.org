@@ -96,11 +96,7 @@ The INFO, if provided, is passed along to the underlying ‘org-roam-capture-’
 #+begin_example
 org-roam-capture-templates is a variable defined in ‘org-roam-capture.el’.
 
-Its value is
-(("d" "default" plain "%?" :target (file+head
-				    "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}
-")
-  :unnarrowed t))
+Its value is shown below.
 
 Templates for the creation of new entries within Org-roam.
 
@@ -339,5 +335,15 @@ they rely on additional hacks and hooks to achieve the
 streamlined user experience in Org-roam.
 
   You can customize this variable.
+
+Value:
+(("d" "default" plain "%?" :target (file+head "${slug}.org" "#+title: ${title}
+")
+  :unnarrowed t))
+Original value was 
+(("d" "default" plain "%?" :target (file+head
+				    "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}
+")
+  :unnarrowed t))
 
 #+end_example

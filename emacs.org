@@ -965,6 +965,29 @@ disabled.
 
 #+end_example
 
+* XWidgets
+
+** xwidget-webkit-browse-url
+
+#+begin_src emacs-lisp
+  (describe-function #'xwidget-webkit-browse-url)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+xwidget-webkit-browse-url is an autoloaded interactive
+byte-code-function in ‘xwidget.el’.
+
+(xwidget-webkit-browse-url URL &optional NEW-SESSION)
+
+Ask xwidget-webkit to browse URL.
+NEW-SESSION specifies whether to create a new xwidget-webkit session.
+Interactively, URL defaults to the string looking like a url around point.
+
+  Probably introduced at or before Emacs version 25.1.
+
+#+end_example
+
 * Sharing macOS Environment Variables with Emacs
 :PROPERTIES:
 :ID:       4F46C5C5-5999-4BCD-8432-2AE564B64843

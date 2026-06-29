@@ -34,6 +34,7 @@ Post Processing
 #+end_src
 
 #+RESULTS: test-post
+: -post
 
 #+begin_src shell :results output :post test-post(val=*this*)
   echo -n 'foo'
@@ -231,6 +232,8 @@ YOLO
 #+begin_src emacs-lisp
   (setq org-confirm-babel-evaluate nil)
 #+end_src
+
+#+RESULTS:
 
 ** org-src-tab-acts-natively
 
