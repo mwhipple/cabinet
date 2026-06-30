@@ -430,7 +430,11 @@ end algorithm;*)
 
 *** +
 
-*** >=
+*** comparison
+
+**** >=
+
+**** =
 
 *** \in
 
