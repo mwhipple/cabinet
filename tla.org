@@ -475,6 +475,8 @@ variables
 
 *** {,} ([[id:F90CA648-D9E8-4481-A639-3303AFBABEB4][is-a-set]])
 
+**** \X (cross) cartesian product
+
 *** "..." ([[id:3E70CDD5-BB1F-49FF-869D-97E6E7E5309E][is-a-string]])
 
 *** <<, >> sequences ([[id:5505D043-68CB-4DC5-8476-531E2FB07E96][is-a-list]])
