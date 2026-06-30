@@ -476,11 +476,13 @@ optionally calculated from the inputs.
 
 ** Expressions
 
-*** Quantified Propositions
+*** Quantifiers
 
 **** \A <id> \in <set>: <assertion>
 
 Dig out the proper name for this
+
+**** <>[](<expression>) eventually always
 
 
 Here I'll start to pull apart tlacli for extensibility.
