@@ -446,9 +446,12 @@ members of set - will be used for complete coverage when assigned
 
 ** Block types
 
+*** begin
+define an algorithm implementation
+
 *** define ... end define;
 
-*** process <name> \in <set>
+*** process <name> \in <set> .. end process;
 
 *** variables ([[id:48C2CB7A-35F2-40A8-A430-F6F69B2C6F02][is-a-variable-definition]])
 
