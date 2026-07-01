@@ -341,6 +341,29 @@ Other properties affecting publication.
 
 #+end_example
 
+
+** Publish the cabinet
+
+#+begin_src emacs-lisp :results output
+  (setq org-publish-project-alist
+        (list (list "cabinet"
+  		  :base-directory (format "%s/cabinet" org-directory)
+  		  :publishing-function #'org-html-publish-to-html
+  		  :publishing-directory (format "%s/pub" org-directory))))
+#+end_src
+
+#+RESULTS:
+
+** TODO Use Cached Results
+** TODO Display Results in output
+** TODO Backlinks?
+** TODO Site Structure
+** TODO Graph?...navigable?
+
+#+begin_src emacs-lisp
+  (org-publish "cabinet")
+#+end_src
+
 * Agenda
 :PROPERTIES:
 :ID:       5A8DAB59-E431-4E8E-9E7C-6A7CC79C1D3C
