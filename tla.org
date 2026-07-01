@@ -419,6 +419,10 @@ The name must match the file.
 
 ** EXTENDS ([[id:0E93C501-C02F-43A4-8AC8-7337DF071706][is-an-import]])
 
+There can be only one of these...based on the name and that
+restriction it is presumably more similar to inheritance rather than
+more granular importing.
+
 ** PlusCal algorithm block
 
 As block comment...
@@ -489,6 +493,8 @@ variables
 *** {,} ([[id:F90CA648-D9E8-4481-A639-3303AFBABEB4][is-a-set]])
 
 **** <set> \union <set>
+
+**** <set> \ {set} difference
 
 **** \X (cross) cartesian product
 
