@@ -1,5 +1,6 @@
 :PROPERTIES:
 :ID:       F456E71B-7A87-43EB-8BDB-85856E9E136E
+:header-args: :results output
 :END:
 #+title: docker
 
@@ -16,7 +17,7 @@ default to docker but with the plan to swap if anything seems amiss.
 
 ** [[id:61678BF7-A363-45C2-A3E2-54A1EB15EF68][brew]]
 
-#+begin_src shell :results output :session brew :async
+#+begin_src shell :session brew :async
   brew install docker
 #+end_src
 
@@ -29,12 +30,107 @@ default to docker but with the plan to swap if anything seems amiss.
 
 * Verification
 
-#+begin_src shell :results output
+#+begin_src shell
   docker --version
 #+end_src
 
 #+RESULTS:
 : Docker version 29.6.1, build 8900f1d330
+
+* Help
+
+#+begin_src shell
+  docker --help
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Usage:  docker [OPTIONS] COMMAND
+
+A self-sufficient runtime for containers
+
+Common Commands:
+  run         Create and run a new container from an image
+  exec        Execute a command in a running container
+  ps          List containers
+  build       Build an image from a Dockerfile
+  pull        Download an image from a registry
+  push        Upload an image to a registry
+  images      List images
+  login       Authenticate to a registry
+  logout      Log out from a registry
+  search      Search Docker Hub for images
+  version     Show the Docker version information
+  info        Display system-wide information
+
+Management Commands:
+  builder     Manage builds
+  container   Manage containers
+  context     Manage contexts
+  image       Manage images
+  manifest    Manage Docker image manifests and manifest lists
+  network     Manage networks
+  plugin      Manage plugins
+  system      Manage Docker
+  volume      Manage volumes
+
+Swarm Commands:
+  swarm       Manage Swarm
+
+Commands:
+  attach      Attach local standard input, output, and error streams to a running container
+  commit      Create a new image from a container's changes
+  cp          Copy files/folders between a container and the local filesystem
+  create      Create a new container
+  diff        Inspect changes to files or directories on a container's filesystem
+  events      Get real time events from the server
+  export      Export a container's filesystem as a tar archive
+  history     Show the history of an image
+  import      Import the contents from a tarball to create a filesystem image
+  inspect     Return low-level information on Docker objects
+  kill        Kill one or more running containers
+  load        Load an image from a tar archive or STDIN
+  logs        Fetch the logs of a container
+  pause       Pause all processes within one or more containers
+  port        List port mappings or a specific mapping for the container
+  rename      Rename a container
+  restart     Restart one or more containers
+  rm          Remove one or more containers
+  rmi         Remove one or more images
+  save        Save one or more images to a tar archive (streamed to STDOUT by default)
+  start       Start one or more stopped containers
+  stats       Display a live stream of container(s) resource usage statistics
+  stop        Stop one or more running containers
+  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+  top         Display the running processes of a container
+  unpause     Unpause all processes within one or more containers
+  update      Update configuration of one or more containers
+  wait        Block until one or more containers stop, then print their exit codes
+
+Global Options:
+      --config string      Location of client config files (default
+                           "/Users/mwhipple/.docker")
+  -c, --context string     Name of the context to use to connect to the
+                           daemon (overrides DOCKER_HOST env var and
+                           default context set with "docker context use")
+  -D, --debug              Enable debug mode
+  -H, --host string        Daemon socket to connect to
+  -l, --log-level string   Set the logging level ("debug", "info",
+                           "warn", "error", "fatal") (default "info")
+      --tls                Use TLS; implied by --tlsverify
+      --tlscacert string   Trust certs signed only by this CA (default
+                           "/Users/mwhipple/.docker/ca.pem")
+      --tlscert string     Path to TLS certificate file (default
+                           "/Users/mwhipple/.docker/cert.pem")
+      --tlskey string      Path to TLS key file (default
+                           "/Users/mwhipple/.docker/key.pem")
+      --tlsverify          Use TLS and verify the remote
+  -v, --version            Print version information and quit
+
+Run 'docker COMMAND --help' for more information on a command.
+
+For more help on how to use Docker, head to https://docs.docker.com/go/guides/
+#+end_example
 
 * [[id:516B3C9A-4288-4ACF-8DEE-3526DFD21083][macOS]]
 
@@ -46,86 +142,24 @@ been using for a while now is colima.
 
 *** [[id:61678BF7-A363-45C2-A3E2-54A1EB15EF68][brew]]
 
-#+begin_src shell :session brew :async :results output
+#+begin_src shell :session brew :async
   brew install --yes colima
 #+end_src
 
 #+RESULTS:
-#+begin_example
-brew install --yes colima
-colima 0.10.1 is already installed but outdated (so it will be upgraded).
-==> Fetching downloads for: colima
-✔︎ Bottle colima (0.10.3)
-==> Upgrading colima
-  0.10.1 -> 0.10.3 
-==> Pouring colima--0.10.3.arm64_tahoe.bottle.tar.gz
-==> Caveats
-To start colima now and restart at login:
-  brew services start colima
-Or, if you don't want/need a background service you can just run:
-  /opt/homebrew/opt/colima/bin/colima start -f
-==> Summary
-🍺  /opt/homebrew/Cellar/colima/0.10.3: 12 files, 10.6MB
-==> Running `brew cleanup colima`...
-Disable this behaviour by setting `HOMEBREW_NO_INSTALL_CLEANUP=1`.
-Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
-Removing: /opt/homebrew/Cellar/colima/0.10.1... (12 files, 10.5MB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/colima_bottle_manifest--0.10.1... (42.8KB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/colima--0.10.1... (4.1MB)
-==> `brew cleanup` has not been run in the last 30 days, running now...
-Disable this behaviour by setting `HOMEBREW_NO_INSTALL_CLEANUP=1`.
-Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
-Removing: /Users/mwhipple/Library/Caches/Homebrew/perl--5.42.2... (18.7MB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/abcde--WebService::MusicBrainz--1.0.5.tar.gz... (10KB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/python@3.13--3.13.13_1... (18.4MB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/abcde--2.9.3.tar.gz... (160.9KB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/doxygen--1.17.0... (6.0MB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/abcde--MusicBrainz::DiscID--0.06.tar.gz... (6.7KB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/api-source/Homebrew/homebrew-cask/5434a8060d885ad2a27f6f9904d8fdfe358450d2/Cask/inkscape.rb... (1.9KB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/api-source/Homebrew/homebrew-core/8dcc072b72f0f61c3dd0534aa3f4f83f1ede96e8/Formula/a/abcde.rb... (3.7KB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/bootsnap/b652ffca4415f01425a6d96d80cd16a3089b004d15edd0b0b2523e68e8d422ed... (1,031 files, 9.1MB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/bootsnap/16e4b77f396cb05f9c9d7cc3db325ed737f1a41f52ffbca011c77ad70f50850b... (1,041 files, 9.2MB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/bootsnap/24aaff608e3cc55287e5741a1979c3d6749048538b10fbee7df5bb17fb2efb19... (1,027 files, 9.1MB)
-Removing: /Users/mwhipple/Library/Caches/Homebrew/bootsnap/901322dc6519043c0dc5100dc16cf5e4e2663478e9d1fc35fa74caa85406536e... (1,032 files, 9MB)
-Removing: /Users/mwhipple/Library/Logs/Homebrew/goose... (64B)
-Removing: /opt/homebrew/var/homebrew/tmp/.cellar/pango... (68 files, 3.8MB)
-Removing: /opt/homebrew/var/homebrew/tmp/.cellar/gdk-pixbuf... (150 files, 4.2MB)
-Removing: /opt/homebrew/var/homebrew/tmp/.cellar/libarchive... (64 files, 4MB)
-Removing: /opt/homebrew/var/homebrew/tmp/.cellar/libidn... (73 files, 1MB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/__pycache__/__init__.cpython-313.pyc... (237B)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/__pycache__/__main__.cpython-313.pyc... (976B)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/__pycache__/_bdist_wheel.cpython-313.pyc... (26.7KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/__pycache__/_setuptools_logging.cpython-313.pyc... (1.4KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/__pycache__/bdist_wheel.cpython-313.pyc... (755B)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/__pycache__/macosx_libfile.cpython-313.pyc... (16.4KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/__pycache__/metadata.cpython-313.pyc... (8.7KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/__pycache__/util.cpython-313.pyc... (927B)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/__pycache__/wheelfile.cpython-313.pyc... (11.8KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/cli/__pycache__/__init__.cpython-313.pyc... (6.9KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/cli/__pycache__/convert.cpython-313.pyc... (16.4KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/cli/__pycache__/pack.cpython-313.pyc... (4.5KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/cli/__pycache__/tags.cpython-313.pyc... (6.8KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/cli/__pycache__/unpack.cpython-313.pyc... (1.5KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/__pycache__/__init__.cpython-313.pyc... (167B)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/__init__.cpython-313.pyc... (177B)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/_elffile.cpython-313.pyc... (5.2KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/_manylinux.cpython-313.pyc... (10.1KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/_musllinux.cpython-313.pyc... (4.6KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/_parser.cpython-313.pyc... (14.2KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/_structures.cpython-313.pyc... (3.3KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/_tokenizer.cpython-313.pyc... (8KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/markers.cpython-313.pyc... (10.8KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/requirements.cpython-313.pyc... (4.7KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/specifiers.cpython-313.pyc... (38.2KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/tags.cpython-313.pyc... (22.0KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/utils.cpython-313.pyc... (7.4KB)
-Removing: /opt/homebrew/lib/python3.13/site-packages/wheel/vendored/packaging/__pycache__/version.cpython-313.pyc... (19.5KB)
-Removing: /opt/homebrew/lib/python3.14/site-packages/packaging/__pycache__/__init__.cpython-314.pyc... (528B)
-Removing: /opt/homebrew/lib/python3.14/site-packages/packaging/licenses/__pycache__/__init__.cpython-314.pyc... (5.9KB)
-Removing: /opt/homebrew/lib/python3.14/site-packages/packaging/licenses/__pycache__/_spdx.cpython-314.pyc... (54.7KB)
-Pruned 5 symbolic links and 14 directories from /opt/homebrew
-==> Caveats
-zsh completions have been installed to:
-  /opt/homebrew/share/zsh/site-functions
-[?2004hecho 'ob_comint_async_shell_end_dabcfaed-1e4b-4713-bd89-0d1c3dce53ac'[?2004l
-#+end_example
+: brew install --yes colima
+: ✔︎ JSON API packages.arm64_tahoe.jws.json
+: Warning: colima 0.10.3 is already installed and up-to-date.
+: To reinstall 0.10.3, run:
+:   brew reinstall colima
+: [?2004hecho 'ob_comint_async_shell_end_569ed492-740b-4684-82e9-c39a485260da'[?2004l
+
+*** verification
+
+#+begin_src shell
+  colima --version
+#+end_src
+
+#+RESULTS:
+: colima version 0.10.3
+
