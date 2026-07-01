@@ -460,6 +460,8 @@ members of set - will be used for complete coverage when assigned
 
 Define an atomic set of actions within a concurrent process.
 
+**** pc program counter
+
 *** begin
 define an algorithm implementation
 
