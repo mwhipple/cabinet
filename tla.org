@@ -490,6 +490,8 @@ Sequences?
 
 **** <identifier> := Head(<list>);
 
+**** <identifier> := Tail(<list>);
+
 *** functions
 
 Functions in TLA+ unsurprisingly have a very mathematical bent where
