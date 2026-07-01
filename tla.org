@@ -457,6 +457,8 @@ define an algorithm implementation
 
 *** define ... end define;
 
+*** if <test> then <on-true> [elsif <test> then <body>...]+ end if;
+
 *** macro name(<parameter>) begin <body> end macro;                 :pluscal:
 There's no thing in the way of hygienic isolation or lexical scoping
 so this is presumably just simple expansion.
