@@ -309,6 +309,9 @@ The return value of the ‘setq’ form is the value of the last VAL.
 * flow control
 
 ** condition-case
+:PROPERTIES:
+:ID:       0E00106D-1AED-4498-8A15-2511B9B7E830
+:END:
 
 #+begin_src emacs-lisp
   (describe-function #'condition-case)
