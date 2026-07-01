@@ -461,6 +461,8 @@ define an algorithm implementation
 There's no thing in the way of hygienic isolation or lexical scoping
 so this is presumably just simple expansion.
 
+**** macro expansion <macro_name>(<args>);
+
 *** process <name> \in <set> .. end process;                        :pluscal:
 
 *** while <test> do <body> end while;
