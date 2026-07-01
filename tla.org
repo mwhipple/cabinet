@@ -459,6 +459,7 @@ define an algorithm implementation
 
 *** define ... end define;
 
+*** either <arm> or <arm> end either;
 *** if <test> then <on-true> [elsif <test> then <body>...]+ end if;
 
 *** macro name(<parameter>) begin <body> end macro;                 :pluscal:
