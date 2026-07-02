@@ -180,6 +180,58 @@ verify
 which-update
 #+end_example
 
+* Config
+
+** Help
+
+#+begin_src shell
+  brew config --help
+#+end_src
+
+#+RESULTS:
+: Usage: brew config, --config
+: 
+: Show Homebrew and system configuration info useful for debugging. If you file a
+: bug report, you will be required to provide this information.
+: 
+:   -d, --debug                      Display any debugging information.
+:   -q, --quiet                      Make some output more quiet.
+:   -v, --verbose                    Make some output more verbose.
+:   -h, --help                       Show this message.
+
+** usage
+
+#+begin_src shell
+  brew config --verbose
+#+end_src
+
+#+RESULTS:
+#+begin_example
+HOMEBREW_VERSION: 6.0.5
+ORIGIN: https://github.com/Homebrew/brew
+HEAD: fd9b97148a778b9b34fb743ef066af110ae7bff6
+Last commit: 6 days ago
+Branch: stable
+Core tap: N/A
+Core cask tap: N/A
+HOMEBREW_PREFIX: /opt/homebrew
+HOMEBREW_CASK_OPTS: []
+HOMEBREW_DISPLAY: MacBookPro.lan
+HOMEBREW_DOWNLOAD_CONCURRENCY: 20
+HOMEBREW_FORBID_PACKAGES_FROM_PATHS: set
+HOMEBREW_MAKE_JOBS: 10
+HOMEBREW_REQUIRE_TAP_TRUST: set
+Homebrew Ruby: 4.0.5 => /opt/homebrew/Library/Homebrew/vendor/portable-ruby/4.0.5_1/bin/ruby
+CPU: deca-core 64-bit arm_firestorm_icestorm
+Clang: 21.0.0 build 2100
+Git: 2.50.1 => /Library/Developer/CommandLineTools/usr/bin/git
+Curl: 8.7.1 => /usr/bin/curl
+macOS: 26.3.1-arm64
+CLT: 26.4.1.0.1775747724
+Xcode: 26.4
+Metal Toolchain: N/A
+Rosetta 2: false
+#+end_example
 * Info
 
 ** Help
