@@ -87,15 +87,15 @@ brew list gs
 #+end_example
 
 #+begin_src shell
-  brew link gs
+  brew link --verbose gs
 #+end_src
 
 #+RESULTS:
-: brew link gs
+: brew link --verbose gs
 : Warning: Already linked: /opt/homebrew/Cellar/ghostscript/10.07.1
 : To relink, run:
 :   brew unlink ghostscript && brew link ghostscript
-: [?2004hecho 'ob_comint_async_shell_end_63fb7e85-ff63-41c9-b2f2-68ccddd99d70'[?2004l
+: [?2004hecho 'ob_comint_async_shell_end_5fece7e7-9e07-4d6e-bc42-1715b8c3b832'[?2004l
 
 * Wire for [[id:31802476-6810-42C3-BD8D-24F0E7573563][doc-view]]
 
