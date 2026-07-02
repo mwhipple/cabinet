@@ -232,6 +232,52 @@ Xcode: 26.4
 Metal Toolchain: N/A
 Rosetta 2: false
 #+end_example
+* Navigate to Supporting Information
+** Home
+
+*** Help
+
+#+begin_src shell
+  brew home --help
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Usage: brew home, homepage [--formula] [--cask] [formula|cask ...]
+
+Open a formula or cask's homepage in a browser, or open Homebrew's own
+homepage if no argument is provided.
+
+      --formula, --formulae        Treat all named arguments as formulae.
+      --cask, --casks              Treat all named arguments as casks.
+  -d, --debug                      Display any debugging information.
+  -q, --quiet                      Make some output more quiet.
+  -v, --verbose                    Make some output more verbose.
+  -h, --help                       Show this message.
+#+end_example
+
+** source
+#+begin_src shell
+  brew source --help
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Usage: brew source [formula ...]
+
+Open a formula's source repository in a browser, or open Homebrew's own
+repository if no argument is provided.
+
+The repository URL is determined from the formula's head URL, stable URL, or
+homepage. Supports GitHub, GitLab, Bitbucket, Codeberg and SourceHut
+repositories.
+
+  -d, --debug                      Display any debugging information.
+  -q, --quiet                      Make some output more quiet.
+  -v, --verbose                    Make some output more verbose.
+  -h, --help                       Show this message.
+#+end_example
+
 * Info
 
 ** Help
