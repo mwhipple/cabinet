@@ -282,7 +282,7 @@ repositories.
 
 ** Help
 
-#+begin_src shell :results output
+#+begin_src shell
   brew info --help
 #+end_src
 

@@ -504,6 +504,76 @@ langchain_protocol.protocol
 [?2004hecho 'ob_comint_async_shell_end_15577b15-56c4-4dad-a490-bc4b92646eaa'[?2004l
 #+end_example
 
+* langchain_core
+
+#+begin_src python :results output 
+  import langchain_core
+  help(langchain_core)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Help on package langchain_core:
+
+NAME
+    langchain_core - `langchain-core` defines the base abstractions for the LangChain ecosystem.
+
+DESCRIPTION
+    The interfaces for core components like chat models, LLMs, vector stores, retrievers,
+    and more are defined here. The universal invocation protocol (Runnables) along with
+    a syntax for combining components are also defined here.
+
+    ,**No third-party integrations are defined here.** The dependencies are kept purposefully
+    very lightweight.
+
+PACKAGE CONTENTS
+    _api (package)
+    _import_utils
+    _security (package)
+    agents
+    caches
+    callbacks (package)
+    chat_history
+    chat_loaders
+    chat_sessions
+    cross_encoders
+    document_loaders (package)
+    documents (package)
+    embeddings (package)
+    env
+    example_selectors (package)
+    exceptions
+    globals
+    indexing (package)
+    language_models (package)
+    load (package)
+    messages (package)
+    output_parsers (package)
+    outputs (package)
+    prompt_values
+    prompts (package)
+    rate_limiters
+    retrievers
+    runnables (package)
+    stores
+    structured_query
+    sys_info
+    tools (package)
+    tracers (package)
+    utils (package)
+    vectorstores (package)
+    version
+
+DATA
+    VERSION = '1.4.8'
+
+VERSION
+    1.4.8
+
+FILE
+    /private/tmp/langchain/lib/python3.14/site-packages/langchain_core/__init__.py
+#+end_example
+
 * Using Ollama
 
 Ollama can be used from the provided library.
