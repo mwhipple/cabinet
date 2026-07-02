@@ -1,6 +1,6 @@
 :PROPERTIES:
 :ID:       ED17C5B4-4002-4CC0-9FD0-4A72FD845229
-:header-args: :results output :session o365 :async :var host_py="python3" :var venv="/tmp/o365" :var venv_py="/tmp/o365/bin/python" :python "/tmp/o365/bin/python"
+:header-args: :results output :session o365 :async :var venv="/tmp/o365" :python "/tmp/o365/bin/python"
 :END:
 #+title: office365
 
@@ -60,18 +60,18 @@ This page does mention mail as another API.
 https://learn.microsoft.com/en-us/entra/identity-platform/scopes-oidc
 ** Installation
 
+* Installation
+
 #+begin_src shell :session venv-setup :results output
-  ${host_py} -m venv ${venv}
-  ${venv_py} -m pip install msgraph-sdk
+  python3 -m venv ${venv}
+  ${venv}/bin/python -m pip install msgraph-sdk
 #+end_src
 
 #+RESULTS:
 #+begin_example
-host_py='python3'
 venv='/tmp/o365'
-venv_py='/tmp/o365/bin/python'
-${host_py} -m venv ${venv}
-${venv_py} -m pip install msgraph-sdk
+python3 -m venv ${venv}
+${venv}/bin/python -m pip install msgraph-sdk
 Requirement already satisfied: msgraph-sdk in /private/tmp/o365/lib/python3.14/site-packages (1.58.0)
 Requirement already satisfied: azure-identity>=1.12.0 in /private/tmp/o365/lib/python3.14/site-packages (from msgraph-sdk) (1.25.3)
 Requirement already satisfied: microsoft-kiota-serialization-json<2.0.0,>=1.8.0 in /private/tmp/o365/lib/python3.14/site-packages (from msgraph-sdk) (1.11.6)
@@ -114,7 +114,7 @@ Requirement already satisfied: multidict<7.0,>=4.5 in /private/tmp/o365/lib/pyth
 Requirement already satisfied: propcache>=0.2.0 in /private/tmp/o365/lib/python3.14/site-packages (from aiohttp>=3.8.0->microsoft-kiota-authentication-azure<2.0.0,>=1.10.1->msgraph_core>=1.3.1->msgraph-sdk) (0.5.2)
 Requirement already satisfied: yarl<2.0,>=1.17.0 in /private/tmp/o365/lib/python3.14/site-packages (from aiohttp>=3.8.0->microsoft-kiota-authentication-azure<2.0.0,>=1.10.1->msgraph_core>=1.3.1->msgraph-sdk) (1.24.2)
 Requirement already satisfied: opentelemetry-semantic-conventions==0.64b0 in /private/tmp/o365/lib/python3.14/site-packages (from opentelemetry-sdk>=1.27.0->microsoft-kiota-abstractions<2.0.0,>=1.11.1->microsoft-kiota-serialization-form<2.0.0,>=1.8.0->msgraph-sdk) (0.64b0)
-[?2004hecho 'ob_comint_async_shell_end_d82eb090-ef13-4bde-837b-a5213db33af7'[?2004l
+[?2004hecho 'ob_comint_async_shell_end_7b072c34-6f25-40db-aae2-1fa1db90fe31'[?2004l
 #+end_example
 
 ** azure
@@ -544,6 +544,37 @@ Navigate to https://entra.microsoft.com/#home
 App Registrations
 
 
+* msgraph
+
+#+begin_src python :results output
+  import msgraph
+  help(msgraph)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Help on package msgraph:
+
+NAME
+    msgraph - Python client for the Microsoft Graph API
+
+PACKAGE CONTENTS
+    _version
+    graph_request_adapter
+    graph_service_client
+
+SUBMODULES
+    generated
+
+DATA
+    VERSION = '1.58.0'
+
+VERSION
+    1.58.0
+
+FILE
+    /private/tmp/o365/lib/python3.14/site-packages/msgraph/__init__.py
+#+end_example
 * Try Example
 
 This is finally working...
