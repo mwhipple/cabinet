@@ -87,6 +87,27 @@ brew list gs
 #+end_example
 
 #+begin_src shell
+  brew link gs
+#+end_src
+
+#+RESULTS:
+: brew link gs
+: Warning: Already linked: /opt/homebrew/Cellar/ghostscript/10.07.1
+: To relink, run:
+:   brew unlink ghostscript && brew link ghostscript
+: [?2004hecho 'ob_comint_async_shell_end_63fb7e85-ff63-41c9-b2f2-68ccddd99d70'[?2004l
+
+* Wire for [[id:31802476-6810-42C3-BD8D-24F0E7573563][doc-view]]
+
+There should likely be a more stable symlink that should be preferred.
+
+#+begin_src emacs-lisp
+  (setq doc-view-ghostscript-program "/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gs")
+#+end_src
+
+* Verification
+
+#+begin_src shell
   gs --version
 #+end_src
 
