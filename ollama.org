@@ -119,3 +119,33 @@ Environment Variables:
 - [[id:265230C1-96C3-4C5B-8CE3-050F471FCFF2][qwen3]]
 
 ** TODO gemma4 seems to be a more promising default than gpt-oss...
+
+* ps
+
+** Help
+#+begin_src shell
+  ollama ps --help
+#+end_src
+
+#+RESULTS:
+#+begin_example
+List running models
+
+Usage:
+  ollama ps [flags]
+
+Flags:
+  -h, --help   help for ps
+
+Environment Variables:
+      OLLAMA_HOST                   IP Address for the ollama server (default 127.0.0.1:11434)
+#+end_example
+
+** Usage
+
+#+begin_src shell
+  ollama ps
+#+end_src
+
+#+RESULTS:
+: NAME    ID    SIZE    PROCESSOR    CONTEXT    UNTIL 
