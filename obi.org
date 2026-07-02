@@ -84,8 +84,11 @@ This function collects the context which results in an ~info~ object
 that is then used to perform the actual execution.
 
 It looks like the key piece to make this a bit more supple is
-~org-babel-insert-result~, where if we break this up to support async
+[[id:D9D6DA14-C18F-43AD-A16B-7C9E1E6E9782][org-babel-insert-result]], where if we break this up to support async
 flows then that should be trigged by the callback.
+
+Unfortunately [[id:D9D6DA14-C18F-43AD-A16B-7C9E1E6E9782][org-babel-insert-result]] is also pretty sprawling and
+should be broken up.
 
 #+begin_src emacs-lisp
   (defun obi/execute-src-block (&optional arg info params executor-type)
@@ -164,9 +167,27 @@ extended as needed), so let's use that to drive the actual execution.
 #+RESULTS:
 : foo
 
-* TODO obi/comint-filter
+** obi/insert-result
 
-Split up org-babel-comint-async-filter
+Start to split up [[id:D9D6DA14-C18F-43AD-A16B-7C9E1E6E9782][org-babel-insert-result]].
+
+Perform some basic result filtering...also includes file handling
+which should likely be split out a bit more.
+
+#+begin_src emacs-lisp
+  (cond ((stringp result)
+	 (setq result (substring-no-properties result))
+	 (when (member "file" result-params)
+	   (setq result
+                 (org-babel-result-to-file
+		  result
+		  (org-babel--file-desc (nth 2 info) result)
+                  'attachment))))
+	((listp result))
+	(t (setq result (format "%S" result))))
+
+#+end_src
+
 
 * Notes
 
