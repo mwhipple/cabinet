@@ -1209,7 +1209,13 @@ We also still support the deprecated calling convention:
 
 #+end_example
 
-* doc-view-mode
+
+* doc-view
+:PROPERTIES:
+:ID:       31802476-6810-42C3-BD8D-24F0E7573563
+:END:
+
+** doc-view-mode
 
 #+begin_src emacs-lisp
   (describe-function #'doc-view-mode)
@@ -1344,6 +1350,26 @@ i o		image-save
 i x		image-cut
 
   Probably introduced at or before Emacs version 28.1.
+
+#+end_example
+** doc-view-ghostscript-program
+
+#+begin_src emacs-lisp
+  (describe-variable 'doc-view-ghostscript-program)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+doc-view-ghostscript-program is a variable defined in ‘doc-view.el’.
+
+Its value is "gs"
+
+Program to convert PS and PDF files to PNG.
+
+  This variable may be risky if used as a file-local variable.
+  This variable was introduced, or its default value was changed, in
+  version 27.1 of Emacs.
+  You can customize this variable.
 
 #+end_example
 
