@@ -893,6 +893,53 @@ text is flanked by slashes, it is interpreted as a regular expression.
   -v, --verbose                    Make some output more verbose.
   -h, --help                       Show this message.
 #+end_example
+* services
+
+#+begin_src shell
+  brew help services
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Usage: brew services [subcommand]
+
+Manage background services with macOS' launchctl(1) daemon manager or Linux's
+systemctl(1) service manager.
+
+If sudo is passed, operate on /Library/LaunchDaemons or
+/usr/lib/systemd/system (started at boot). Otherwise, operate on
+~/Library/LaunchAgents or ~/.config/systemd/user (started at login).
+
+Subcommands:
+  stop:
+    Stop the service formula immediately and unregister it from launching at
+login (or boot),
+  start:
+    Start the service formula immediately and register it to launch at login
+(or boot).
+  run:
+    Run the service formula without registering to launch at login (or boot).
+  restart:
+    Stop (if necessary) and start the service formula immediately and register
+it to launch at login (or boot).
+  list:
+    List information about all managed services for the current user (or root).
+  kill:
+    Stop the service formula immediately but keep it registered to launch at
+login (or boot).
+  info:
+    List all managed services for the current user (or root).
+  cleanup:
+    Remove all unused services.
+
+  -d, --debug                      Display any debugging information.
+  -q, --quiet                      Make some output more quiet.
+  -v, --verbose                    Make some output more verbose.
+  -h, --help                       Show this message.
+      --sudo-service-user          When run as root on macOS, run the service(s)
+                                   as this user.
+#+end_example
+
 * shellenv
 #+begin_src shell
   brew help shellenv
@@ -924,3 +971,17 @@ correct). Unknown shells will output POSIX exports.
   -v, --verbose                    Make some output more verbose.
   -h, --help                       Show this message.
 #+end_example
+
+#+begin_src shell
+  brew shellenv
+#+end_src
+
+#+RESULTS:
+: export HOMEBREW_PREFIX="/opt/homebrew";
+: export HOMEBREW_CELLAR="/opt/homebrew/Cellar";
+: export HOMEBREW_REPOSITORY="/opt/homebrew";
+: fpath[1,0]="/opt/homebrew/share/zsh/site-functions";
+: export FPATH;
+: eval "$(/usr/bin/env PATH_HELPER_ROOT="/opt/homebrew" /usr/libexec/path_helper -s)"
+: [ -z "${MANPATH-}" ] || export MANPATH=":${MANPATH#:}";
+: export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";

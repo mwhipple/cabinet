@@ -1,6 +1,6 @@
 :PROPERTIES:
 :ID:       E90FFACF-AD6F-4214-9990-F224641552A1
-:header-args: :results output :async :session gs
+:header-args: :results output :async :cache yes
 :END:
 #+title: ghostscript
 * Installation
@@ -770,11 +770,19 @@ HTTP status: 000
 
 * Wire for [[id:31802476-6810-42C3-BD8D-24F0E7573563][doc-view]]
 
-There should likely be a more stable symlink that should be preferred.
-
-#+begin_src emacs-lisp
-  (setq doc-view-ghostscript-program "/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gs")
+#+name: which-gs
+#+begin_src bash :async no :session none :cache yes
+  which gs
 #+end_src
+
+#+RESULTS[85265c7afa7fe3bd73a16f0f6ba00d5eda8256d3]: which-gs
+: /opt/homebrew/bin//gs
+
+#+begin_src emacs-lisp :var gs=which-gs()
+  (setq doc-view-ghostscript-program gs)
+#+end_src
+
+#+RESULTS[e6cf812bb84bb800c598b246169dedac8abb70a3]:
 
 * Verification
 

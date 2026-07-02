@@ -42,17 +42,26 @@ those.
 Tweak [[id:B11A5ECF-B961-4722-885E-B9965938E615][switch-to-prev-buffer-skip]] to add [[id:58A82522-0B48-4714-BE1D-6B53393C716E][org-roam-node-buffer-p]].
 Also skip any bufffers already in windows.
 
-This should likely be rewritten to be a hook or similar so it can be decomposed.
+This should likely be rewritten to be a hook or similar so it can be
+decomposed.
+
+*** TODO It looks as though this doesn't get along with xwidgets
+
+Wrap in a [[id:0E00106D-1AED-4498-8A15-2511B9B7E830][condition-case]] to surface information when some buffer or
+other causes issues.
 
 #+begin_src emacs-lisp
   (setq switch-to-prev-buffer-skip
-        (lambda (window buffer bury-or-kill)
-  	(or (get-buffer-window buffer t)
-  	    (cabinet-buffer-p buffer))))
+    (lambda (window buffer bury-or-kill)
+      (condition-case nil
+  	(save-excursion
+  	  (or (get-buffer-window buffer t)
+                (cabinet-buffer-p buffer)))
+        (t (message "%s" buffer)))))
 #+end_src
 
 #+RESULTS:
-: #[(window buffer bury-or-kill) ((or (get-buffer-window buffer t) (org-roam-node-buffer-p buffer))) nil]
+: #[(window buffer bury-or-kill) ((save-excursion (or (get-buffer-window buffer t) (cabinet-buffer-p buffer)))) nil]
 
 ** org-roam-node-find
 
