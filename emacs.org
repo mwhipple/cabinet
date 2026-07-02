@@ -1136,7 +1136,6 @@ disabled.
 
 #+end_example
 
-
 * Content Styling
 
 ** auto-fill-mode

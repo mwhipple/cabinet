@@ -1,0 +1,97 @@
+:PROPERTIES:
+:ID:       E90FFACF-AD6F-4214-9990-F224641552A1
+:header-args: :results output :async :session gs
+:END:
+#+title: ghostscript
+* Installation
+** [[id:61678BF7-A363-45C2-A3E2-54A1EB15EF68][brew]]
+
+#+begin_src shell
+  brew install gs
+#+end_src
+
+#+RESULTS:
+#+begin_example
+brew install gs
+==> Auto-updating Homebrew...
+Adjust how often this is run with `$HOMEBREW_AUTO_UPDATE_SECS` or disable with
+`$HOMEBREW_NO_AUTO_UPDATE=1`. Hide these hints with `$HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
+Error: Failed to download https://formulae.brew.sh/api/internal/packages.arm64_tahoe.jws.json!
+==> Auto-updated Homebrew!
+Updated 2 taps (homebrew/core and homebrew/cask).
+==> New Formulae
+==> Downloading https://formulae.brew.sh/api/formula.jws.json
+Error: Failure while executing; `/usr/bin/env /opt/homebrew/Library/Homebrew/shims/shared/curl --disable --cookie /dev/null --globoff --user-agent Homebrew/6.0.5\ \(Macintosh\;\ arm64\ Mac\ OS\ X\ 26.3.1\)\ curl/8.7.1 --header Accept-Language:\ en --fail --progress-bar --remote-time --output /Users/mwhipple/Library/Caches/Homebrew/api/formula.jws.json --location --disable --cookie /dev/null --globoff --show-error --user-agent Homebrew/6.0.5\ \(Macintosh\;\ arm64\ Mac\ OS\ X\ 26.3.1\)\ curl/8.7.1 --header Accept-Language:\ en --fail --progress-bar --compressed --speed-limit 100 --speed-time 5 --write-out \%\{stderr\}HTTP\ status:\ \%\{http_code\} https://formulae.brew.sh/api/formula.jws.json` exited with 6. Here's the output:
+curl: (6) Could not resolve host: formulae.brew.sh
+
+HTTP status: 000
+Warning: packages.arm64_tahoe.jws.json: update failed, falling back to cached version.
+✔︎ JSON API packages.arm64_tahoe.jws.json
+Warning: ghostscript 10.07.1 is already installed and up-to-date.
+To reinstall 10.07.1, run:
+  brew reinstall ghostscript
+[?2004hecho 'ob_comint_async_shell_end_b6a1d2ca-7cfd-4036-91c8-9a264e0e21ee'[?2004l
+#+end_example
+
+#+begin_src shell
+  brew list gs
+#+end_src
+
+#+RESULTS:
+#+begin_example
+brew list gs
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/dvipdf
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/eps2eps
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gpcl6
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gpcl6c
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gpdlc
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gs
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gsbj
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gsc
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gsdj
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gsdj500
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gslj
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gslp
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gsnd
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gsx
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gxps
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/gxpsc
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/lprsetup.sh
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/pdf2dsc
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/pdf2ps
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/pf2afm
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/pfbtopfa
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/pphs
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/printafm
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/ps2ascii
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/ps2epsi
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/ps2pdf
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/ps2pdf12
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/ps2pdf13
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/ps2pdf14
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/ps2pdfwr
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/ps2ps
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/ps2ps2
+/opt/homebrew/Cellar/ghostscript/10.07.1/bin/unix-lpr.sh
+/opt/homebrew/Cellar/ghostscript/10.07.1/include/ghostscript/ (5 files)
+/opt/homebrew/Cellar/ghostscript/10.07.1/lib/libgpcl6.10.07.dylib
+/opt/homebrew/Cellar/ghostscript/10.07.1/lib/libgpdl.10.07.dylib
+/opt/homebrew/Cellar/ghostscript/10.07.1/lib/libgs.10.07.dylib
+/opt/homebrew/Cellar/ghostscript/10.07.1/lib/libgxps.10.07.dylib
+/opt/homebrew/Cellar/ghostscript/10.07.1/lib/ (8 other files)
+/opt/homebrew/Cellar/ghostscript/10.07.1/sbom.spdx.json
+/opt/homebrew/Cellar/ghostscript/10.07.1/share/doc/ (4 files)
+/opt/homebrew/Cellar/ghostscript/10.07.1/share/ghostscript/ (561 files)
+/opt/homebrew/Cellar/ghostscript/10.07.1/share/man/ (21 files)
+[?2004hecho 'ob_comint_async_shell_end_10998cfc-9bd8-47dd-9d4c-66d1eae90060'[?2004l
+#+end_example
+
+#+begin_src shell
+  gs --version
+#+end_src
+
+#+RESULTS:
+: gs --version
+: 10.07.1
+: [?2004hecho 'ob_comint_async_shell_end_b4031d8b-b13f-4c43-b6a2-4927e6975179'[?2004l
+
