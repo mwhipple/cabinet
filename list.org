@@ -18,3 +18,8 @@ sum types provide typed heterogeneity anyway).
 
 The underlying storage can be virtually anything, though variations of
 contiguous arrays and [[id:3B936526-69D4-4C9D-AE47-D76AA3997388][linked-lists]] are particularly common.
+
+* is-a-list
+:PROPERTIES:
+:ID:       5505D043-68CB-4DC5-8476-531E2FB07E96
+:END:

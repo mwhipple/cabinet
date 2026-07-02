@@ -287,6 +287,23 @@ Most of the packages define the header args, but for the languages themsleves
 the need/value is unclear (there's likely more info within the core org-babel code).
 
 * Usage
+
+** org-babel-after-execute-hook
+
+#+begin_src emacs-lisp
+  (describe-variable 'org-babel-after-execute-hook)
+#+end_src
+
+#+RESULTS:
+: org-babel-after-execute-hook is a variable defined in ‘ob-core.el’.
+: 
+: Its value is nil
+: 
+: Hook for functions to be called after ‘org-babel-execute-src-block’.
+: 
+:   This variable may be risky if used as a file-local variable.
+: 
+
 ** org-babel-execute-src-block
 :PROPERTIES:
 :ID:       D7816316-280D-4B7B-9420-3E33264E24D2

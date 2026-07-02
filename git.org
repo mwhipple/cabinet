@@ -1,6 +1,6 @@
 :PROPERTIES:
 :ID:       F3E6007F-409B-47C4-8881-48BCAE48F81B
-:header-args: :results output
+:header-args: :results output :session git :async
 :END:
 #+title: git
 
@@ -274,12 +274,13 @@ Developer-facing file formats, protocols and other interfaces
 
 ** Help
 
-#+begin_src emacs-lisp :results value
-  (->string nil (man "git-add"))
+#+begin_src shell
+  man -P cat git-add
 #+end_src
 
 #+RESULTS:
 #+begin_example
+man -P cat git-add
 GIT-ADD(1)                        Git Manual                        GIT-ADD(1)
 
 NAME
@@ -673,20 +674,20 @@ GIT
        Part of the git(1) suite
 
 Git 2.50.1.428.g0e8243            2025-07-22                        GIT-ADD(1)
+[?2004hecho 'ob_comint_async_shell_end_8bee5aef-a3e4-4cb3-a7b9-6631acfe0366'[?2004l
 #+end_example
-
-#+RESULTS:
 
 * Config
 
 ** Help
 
-#+begin_src emacs-lisp :results value
-  (->string nil (man "git-config"))
+#+begin_src shell
+  man -P cat git-config
 #+end_src
 
 #+RESULTS:
 #+begin_example
+man -P cat git-config
 GIT-CONFIG(1)                     Git Manual                     GIT-CONFIG(1)
 
 NAME
@@ -8072,6 +8073,7 @@ NOTES
            git-htmldocs/technical/bundle-uri.html
 
 Git 2.50.1.428.g0e8243            2025-07-22                     GIT-CONFIG(1)
+[?2004hecho 'ob_comint_async_shell_end_3cb3b4cc-e515-421d-a9c0-5f94f2b7a661'[?2004l
 #+end_example
 
 

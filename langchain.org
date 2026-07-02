@@ -1,6 +1,6 @@
 :PROPERTIES:
 :ID:       9D4EC4DC-FC1D-430D-B834-CB0916949915
-:header-args: :results output :session langchain :async :var host_py="python3" :var venv="/tmp/langchain" :var venv_py="/tmp/langchain/bin/python" :python "/tmp/langchain/bin/python"
+:header-args: :results output :session langchain :async :var venv="/tmp/langchain" :python "/tmp/langchain/bin/python"
 :END:
 #+title: langchain
 
@@ -11,67 +11,92 @@ and local inference using [[id:D87B9E33-CA56-4301-A59A-6FC951966D08][ollama]].
 * [[id:A3C4A953-79CA-4160-AB26-A6EDCCD8AC09][Setup the Environment]]
 
 #+begin_src shell :session venv-setup :results output
-  ${host_py} -m venv ${venv}
-  ${venv_py} -m pip install langchain-ollama deepagents pydantic
+  python3.14 -m venv ${venv}
+  ${venv}/bin/python -m pip install langchain-ollama deepagents pydantic
 #+end_src
 
 #+RESULTS:
 #+begin_example
-host_py='python3'
 venv='/tmp/langchain'
-venv_py='/tmp/langchain/bin/python'
-${host_py} -m venv ${venv}
-${venv_py} -m pip install langchain-ollama deepagents pydantic
+python3.14 -m venv ${venv}
+${venv}/bin/python -m pip install langchain-ollama deepagents pydantic
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting langchain-ollama
   Using cached langchain_ollama-1.1.0-py3-none-any.whl.metadata (3.0 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting deepagents
-  Using cached deepagents-0.6.11-py3-none-any.whl.metadata (8.3 kB)
+  Using cached deepagents-0.6.12-py3-none-any.whl.metadata (8.4 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting pydantic
   Using cached pydantic-2.13.4-py3-none-any.whl.metadata (109 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting langchain-core<2.0.0,>=1.2.21 (from langchain-ollama)
   Using cached langchain_core-1.4.8-py3-none-any.whl.metadata (4.7 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting ollama<1.0.0,>=0.6.1 (from langchain-ollama)
   Using cached ollama-0.6.2-py3-none-any.whl.metadata (5.8 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting jsonpatch<2.0.0,>=1.33.0 (from langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached jsonpatch-1.33-py2.py3-none-any.whl.metadata (3.0 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting langchain-protocol>=0.0.17 (from langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached langchain_protocol-0.0.18-py3-none-any.whl.metadata (2.4 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting langsmith<1.0.0,>=0.3.45 (from langchain-core<2.0.0,>=1.2.21->langchain-ollama)
-  Using cached langsmith-0.8.18-py3-none-any.whl.metadata (21 kB)
+  Downloading langsmith-0.9.5-py3-none-any.whl.metadata (21 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting packaging>=23.2.0 (from langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting pyyaml<7.0.0,>=5.3.0 (from langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached pyyaml-6.0.3-cp314-cp314-macosx_11_0_arm64.whl.metadata (2.4 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting tenacity!=8.4.0,<10.0.0,>=8.1.0 (from langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached tenacity-9.1.4-py3-none-any.whl.metadata (1.2 kB)
 Collecting typing-extensions<5.0.0,>=4.7.0 (from langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting uuid-utils<1.0,>=0.12.0 (from langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached uuid_utils-0.16.2-cp314-cp314-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl.metadata (6.4 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting annotated-types>=0.6.0 (from pydantic)
   Using cached annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting pydantic-core==2.46.4 (from pydantic)
   Using cached pydantic_core-2.46.4-cp314-cp314-macosx_11_0_arm64.whl.metadata (6.6 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting typing-inspection>=0.4.2 (from pydantic)
   Using cached typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting jsonpointer>=1.9 (from jsonpatch<2.0.0,>=1.33.0->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached jsonpointer-3.1.1-py3-none-any.whl.metadata (2.4 kB)
+Collecting anyio>=3.5.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
+  Using cached anyio-4.14.1-py3-none-any.whl.metadata (4.6 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting distro>=1.7.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
+  Using cached distro-1.9.0-py3-none-any.whl.metadata (6.8 kB)
 Collecting httpx<1,>=0.23.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting orjson>=3.9.14 (from langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached orjson-3.11.9-cp314-cp314-macosx_15_0_arm64.whl.metadata (41 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting requests-toolbelt>=1.0.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached requests_toolbelt-1.0.0-py2.py3-none-any.whl.metadata (14 kB)
 Collecting requests>=2.0.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting sniffio>=1.1 (from langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
+  Using cached sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting websockets>=15.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached websockets-16.0-cp314-cp314-macosx_11_0_arm64.whl.metadata (6.8 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting xxhash>=3.0.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
-  Using cached xxhash-3.7.0-cp314-cp314-macosx_11_0_arm64.whl.metadata (13 kB)
+  Downloading xxhash-3.8.0-cp314-cp314-macosx_11_0_arm64.whl.metadata (14 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting zstandard>=0.23.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached zstandard-0.25.0-cp314-cp314-macosx_11_0_arm64.whl.metadata (3.3 kB)
-Collecting anyio (from httpx<1,>=0.23.0->langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
-  Using cached anyio-4.14.0-py3-none-any.whl.metadata (4.6 kB)
 Collecting certifi (from httpx<1,>=0.23.0->langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached certifi-2026.6.17-py3-none-any.whl.metadata (2.5 kB)
 Collecting httpcore==1.* (from httpx<1,>=0.23.0->langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
@@ -80,43 +105,55 @@ Collecting idna (from httpx<1,>=0.23.0->langsmith<1.0.0,>=0.3.45->langchain-core
   Using cached idna-3.18-py3-none-any.whl.metadata (6.1 kB)
 Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.23.0->langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
-Collecting langchain-anthropic<2.0.0,>=1.4.6 (from deepagents)
-  Using cached langchain_anthropic-1.4.6-py3-none-any.whl.metadata (3.2 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting langchain-anthropic<2.0.0,>=1.4.7 (from deepagents)
+  Downloading langchain_anthropic-1.4.8-py3-none-any.whl.metadata (3.5 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting langchain-google-genai<5.0.0,>=4.2.5 (from deepagents)
-  Using cached langchain_google_genai-4.2.5-py3-none-any.whl.metadata (2.7 kB)
-Collecting langchain<2.0.0,>=1.3.9 (from deepagents)
-  Using cached langchain-1.3.10-py3-none-any.whl.metadata (6.0 kB)
+  Using cached langchain_google_genai-4.2.6-py3-none-any.whl.metadata (2.7 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting langchain<2.0.0,>=1.3.11 (from deepagents)
+  Using cached langchain-1.3.11-py3-none-any.whl.metadata (6.0 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting wcmatch>=10.1 (from deepagents)
-  Using cached wcmatch-10.1-py3-none-any.whl.metadata (5.1 kB)
-Collecting langgraph<1.3.0,>=1.2.5 (from langchain<2.0.0,>=1.3.9->deepagents)
-  Using cached langgraph-1.2.6-py3-none-any.whl.metadata (4.9 kB)
-Collecting anthropic<1.0.0,>=0.96.0 (from langchain-anthropic<2.0.0,>=1.4.6->deepagents)
-  Using cached anthropic-0.111.0-py3-none-any.whl.metadata (3.2 kB)
-Collecting distro<2,>=1.7.0 (from anthropic<1.0.0,>=0.96.0->langchain-anthropic<2.0.0,>=1.4.6->deepagents)
-  Using cached distro-1.9.0-py3-none-any.whl.metadata (6.8 kB)
-Collecting docstring-parser<1,>=0.15 (from anthropic<1.0.0,>=0.96.0->langchain-anthropic<2.0.0,>=1.4.6->deepagents)
+  Downloading wcmatch-10.2-py3-none-any.whl.metadata (4.8 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting langgraph<1.3.0,>=1.2.5 (from langchain<2.0.0,>=1.3.11->deepagents)
+  Downloading langgraph-1.2.7-py3-none-any.whl.metadata (4.9 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting anthropic<1.0.0,>=0.96.0 (from langchain-anthropic<2.0.0,>=1.4.7->deepagents)
+  Downloading anthropic-0.115.1-py3-none-any.whl.metadata (3.2 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting docstring-parser<1,>=0.15 (from anthropic<1.0.0,>=0.96.0->langchain-anthropic<2.0.0,>=1.4.7->deepagents)
   Using cached docstring_parser-0.18.0-py3-none-any.whl.metadata (3.5 kB)
-Collecting jiter<1,>=0.4.0 (from anthropic<1.0.0,>=0.96.0->langchain-anthropic<2.0.0,>=1.4.6->deepagents)
-  Using cached jiter-0.15.0-cp314-cp314-macosx_11_0_arm64.whl.metadata (5.2 kB)
-Collecting sniffio (from anthropic<1.0.0,>=0.96.0->langchain-anthropic<2.0.0,>=1.4.6->deepagents)
-  Using cached sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting jiter<1,>=0.4.0 (from anthropic<1.0.0,>=0.96.0->langchain-anthropic<2.0.0,>=1.4.7->deepagents)
+  Downloading jiter-0.16.0-cp314-cp314-macosx_11_0_arm64.whl.metadata (5.2 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting filetype<2.0.0,>=1.2.0 (from langchain-google-genai<5.0.0,>=4.2.5->deepagents)
   Using cached filetype-1.2.0-py2.py3-none-any.whl.metadata (6.5 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting google-genai<3.0.0,>=1.65.0 (from langchain-google-genai<5.0.0,>=4.2.5->deepagents)
-  Using cached google_genai-2.9.0-py3-none-any.whl.metadata (53 kB)
+  Using cached google_genai-2.10.0-py3-none-any.whl.metadata (53 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting google-auth<3.0.0,>=2.48.1 (from google-auth[requests]<3.0.0,>=2.48.1->google-genai<3.0.0,>=1.65.0->langchain-google-genai<5.0.0,>=4.2.5->deepagents)
-  Using cached google_auth-2.55.0-py3-none-any.whl.metadata (5.1 kB)
+  Using cached google_auth-2.55.1-py3-none-any.whl.metadata (5.1 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting pyasn1-modules>=0.2.1 (from google-auth<3.0.0,>=2.48.1->google-auth[requests]<3.0.0,>=2.48.1->google-genai<3.0.0,>=1.65.0->langchain-google-genai<5.0.0,>=4.2.5->deepagents)
   Using cached pyasn1_modules-0.4.2-py3-none-any.whl.metadata (3.5 kB)
 Collecting cryptography>=38.0.3 (from google-auth<3.0.0,>=2.48.1->google-auth[requests]<3.0.0,>=2.48.1->google-genai<3.0.0,>=1.65.0->langchain-google-genai<5.0.0,>=4.2.5->deepagents)
   Using cached cryptography-49.0.0-cp311-abi3-macosx_11_0_arm64.whl.metadata (4.3 kB)
-Collecting langgraph-checkpoint<5.0.0,>=4.1.0 (from langgraph<1.3.0,>=1.2.5->langchain<2.0.0,>=1.3.9->deepagents)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting langgraph-checkpoint<5.0.0,>=4.1.0 (from langgraph<1.3.0,>=1.2.5->langchain<2.0.0,>=1.3.11->deepagents)
   Using cached langgraph_checkpoint-4.1.1-py3-none-any.whl.metadata (5.2 kB)
-Collecting langgraph-prebuilt<1.2.0,>=1.1.0 (from langgraph<1.3.0,>=1.2.5->langchain<2.0.0,>=1.3.9->deepagents)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting langgraph-prebuilt<1.2.0,>=1.1.0 (from langgraph<1.3.0,>=1.2.5->langchain<2.0.0,>=1.3.11->deepagents)
   Using cached langgraph_prebuilt-1.1.0-py3-none-any.whl.metadata (5.2 kB)
-Collecting langgraph-sdk<0.5.0,>=0.4.2 (from langgraph<1.3.0,>=1.2.5->langchain<2.0.0,>=1.3.9->deepagents)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting langgraph-sdk<0.5.0,>=0.4.2 (from langgraph<1.3.0,>=1.2.5->langchain<2.0.0,>=1.3.11->deepagents)
   Using cached langgraph_sdk-0.4.2-py3-none-any.whl.metadata (3.6 kB)
-Collecting ormsgpack>=1.12.0 (from langgraph-checkpoint<5.0.0,>=4.1.0->langgraph<1.3.0,>=1.2.5->langchain<2.0.0,>=1.3.9->deepagents)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting ormsgpack>=1.12.0 (from langgraph-checkpoint<5.0.0,>=4.1.0->langgraph<1.3.0,>=1.2.5->langchain<2.0.0,>=1.3.11->deepagents)
   Using cached ormsgpack-1.12.2-cp314-cp314-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl.metadata (3.2 kB)
 Collecting websockets>=15.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2.0.0,>=1.2.21->langchain-ollama)
   Using cached websockets-15.0.1-py3-none-any.whl.metadata (6.8 kB)
@@ -128,16 +165,20 @@ Collecting cffi>=2.0.0 (from cryptography>=38.0.3->google-auth<3.0.0,>=2.48.1->g
   Using cached cffi-2.0.0-cp314-cp314-macosx_11_0_arm64.whl.metadata (2.6 kB)
 Collecting pycparser (from cffi>=2.0.0->cryptography>=38.0.3->google-auth<3.0.0,>=2.48.1->google-auth[requests]<3.0.0,>=2.48.1->google-genai<3.0.0,>=1.65.0->langchain-google-genai<5.0.0,>=4.2.5->deepagents)
   Using cached pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting pyasn1<0.7.0,>=0.6.1 (from pyasn1-modules>=0.2.1->google-auth<3.0.0,>=2.48.1->google-auth[requests]<3.0.0,>=2.48.1->google-genai<3.0.0,>=1.65.0->langchain-google-genai<5.0.0,>=4.2.5->deepagents)
   Using cached pyasn1-0.6.3-py3-none-any.whl.metadata (8.4 kB)
+WARNING: Cache entry deserialization failed, entry ignored
 Collecting bracex>=2.1.1 (from wcmatch>=10.1->deepagents)
-  Using cached bracex-2.6-py3-none-any.whl.metadata (3.6 kB)
+  Downloading bracex-3.0-py3-none-any.whl.metadata (3.3 kB)
 Using cached langchain_ollama-1.1.0-py3-none-any.whl (31 kB)
 Using cached langchain_core-1.4.8-py3-none-any.whl (557 kB)
 Using cached pydantic-2.13.4-py3-none-any.whl (472 kB)
 Using cached pydantic_core-2.46.4-cp314-cp314-macosx_11_0_arm64.whl (2.0 MB)
 Using cached jsonpatch-1.33-py2.py3-none-any.whl (12 kB)
-Using cached langsmith-0.8.18-py3-none-any.whl (508 kB)
+Downloading langsmith-0.9.5-py3-none-any.whl (603 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 603.9/603.9 kB 1.7 MB/s  0:00:00
+
 Using cached httpx-0.28.1-py3-none-any.whl (73 kB)
 Using cached httpcore-1.0.9-py3-none-any.whl (78 kB)
 Using cached ollama-0.6.2-py3-none-any.whl (15 kB)
@@ -145,19 +186,21 @@ Using cached pyyaml-6.0.3-cp314-cp314-macosx_11_0_arm64.whl (173 kB)
 Using cached tenacity-9.1.4-py3-none-any.whl (28 kB)
 Using cached typing_extensions-4.15.0-py3-none-any.whl (44 kB)
 Using cached uuid_utils-0.16.2-cp314-cp314-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl (566 kB)
-Using cached deepagents-0.6.11-py3-none-any.whl (230 kB)
-Using cached langchain-1.3.10-py3-none-any.whl (133 kB)
-Using cached langchain_anthropic-1.4.6-py3-none-any.whl (51 kB)
-Using cached anthropic-0.111.0-py3-none-any.whl (929 kB)
-Using cached anyio-4.14.0-py3-none-any.whl (123 kB)
+Using cached deepagents-0.6.12-py3-none-any.whl (236 kB)
+Using cached langchain-1.3.11-py3-none-any.whl (133 kB)
+Downloading langchain_anthropic-1.4.8-py3-none-any.whl (52 kB)
+Downloading anthropic-0.115.1-py3-none-any.whl (957 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 957.0/957.0 kB 1.9 MB/s  0:00:00
+
+Using cached anyio-4.14.1-py3-none-any.whl (124 kB)
 Using cached distro-1.9.0-py3-none-any.whl (20 kB)
 Using cached docstring_parser-0.18.0-py3-none-any.whl (22 kB)
-Using cached jiter-0.15.0-cp314-cp314-macosx_11_0_arm64.whl (310 kB)
-Using cached langchain_google_genai-4.2.5-py3-none-any.whl (69 kB)
+Downloading jiter-0.16.0-cp314-cp314-macosx_11_0_arm64.whl (308 kB)
+Using cached langchain_google_genai-4.2.6-py3-none-any.whl (70 kB)
 Using cached filetype-1.2.0-py2.py3-none-any.whl (19 kB)
-Using cached google_genai-2.9.0-py3-none-any.whl (950 kB)
-Using cached google_auth-2.55.0-py3-none-any.whl (252 kB)
-Using cached langgraph-1.2.6-py3-none-any.whl (246 kB)
+Using cached google_genai-2.10.0-py3-none-any.whl (957 kB)
+Using cached google_auth-2.55.1-py3-none-any.whl (252 kB)
+Downloading langgraph-1.2.7-py3-none-any.whl (246 kB)
 Using cached langgraph_checkpoint-4.1.1-py3-none-any.whl (56 kB)
 Using cached langgraph_prebuilt-1.1.0-py3-none-any.whl (41 kB)
 Using cached langgraph_sdk-0.4.2-py3-none-any.whl (160 kB)
@@ -179,21 +222,18 @@ Using cached packaging-26.2-py3-none-any.whl (100 kB)
 Using cached pyasn1_modules-0.4.2-py3-none-any.whl (181 kB)
 Using cached pyasn1-0.6.3-py3-none-any.whl (83 kB)
 Using cached requests_toolbelt-1.0.0-py2.py3-none-any.whl (54 kB)
+Using cached sniffio-1.3.1-py3-none-any.whl (10 kB)
 Using cached typing_inspection-0.4.2-py3-none-any.whl (14 kB)
-Using cached wcmatch-10.1-py3-none-any.whl (39 kB)
-Using cached bracex-2.6-py3-none-any.whl (11 kB)
-Using cached xxhash-3.7.0-cp314-cp314-macosx_11_0_arm64.whl (30 kB)
+Downloading wcmatch-10.2-py3-none-any.whl (39 kB)
+Downloading bracex-3.0-py3-none-any.whl (11 kB)
+Downloading xxhash-3.8.0-cp314-cp314-macosx_11_0_arm64.whl (32 kB)
 Using cached zstandard-0.25.0-cp314-cp314-macosx_11_0_arm64.whl (640 kB)
 Using cached pycparser-3.0-py3-none-any.whl (48 kB)
-Using cached sniffio-1.3.1-py3-none-any.whl (10 kB)
 Installing collected packages: filetype, zstandard, xxhash, websockets, uuid-utils, urllib3, typing-extensions, tenacity, sniffio, pyyaml, pycparser, pyasn1, packaging, ormsgpack, orjson, jsonpointer, jiter, idna, h11, docstring-parser, distro, charset_normalizer, certifi, bracex, annotated-types, wcmatch, typing-inspection, requests, pydantic-core, pyasn1-modules, langchain-protocol, jsonpatch, httpcore, cffi, anyio, requests-toolbelt, pydantic, httpx, cryptography, ollama, langsmith, google-auth, anthropic, langchain-core, langgraph-sdk, langgraph-checkpoint, langchain-ollama, langchain-anthropic, google-genai, langgraph-prebuilt, langchain-google-genai, langgraph, langchain, deepagents
 
 
-Successfully installed annotated-types-0.7.0 anthropic-0.111.0 anyio-4.14.0 bracex-2.6 certifi-2026.6.17 cffi-2.0.0 charset_normalizer-3.4.7 cryptography-49.0.0 deepagents-0.6.11 distro-1.9.0 docstring-parser-0.18.0 filetype-1.2.0 google-auth-2.55.0 google-genai-2.9.0 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.18 jiter-0.15.0 jsonpatch-1.33 jsonpointer-3.1.1 langchain-1.3.10 langchain-anthropic-1.4.6 langchain-core-1.4.8 langchain-google-genai-4.2.5 langchain-ollama-1.1.0 langchain-protocol-0.0.18 langgraph-1.2.6 langgraph-checkpoint-4.1.1 langgraph-prebuilt-1.1.0 langgraph-sdk-0.4.2 langsmith-0.8.18 ollama-0.6.2 orjson-3.11.9 ormsgpack-1.12.2 packaging-26.2 pyasn1-0.6.3 pyasn1-modules-0.4.2 pycparser-3.0 pydantic-2.13.4 pydantic-core-2.46.4 pyyaml-6.0.3 requests-2.34.2 requests-toolbelt-1.0.0 sniffio-1.3.1 tenacity-9.1.4 typing-extensions-4.15.0 typing-inspection-0.4.2 urllib3-2.7.0 uuid-utils-0.16.2 wcmatch-10.1 websockets-15.0.1 xxhash-3.7.0 zstandard-0.25.0
-
-[notice] A new release of pip is available: 26.1.1 -> 26.1.2
-[notice] To update, run: /private/tmp/langchain/bin/python -m pip install --upgrade pip
-[?2004hecho 'ob_comint_async_shell_end_8504a6a3-a15f-4251-96ab-f31102f08fb8'[?2004l
+Successfully installed annotated-types-0.7.0 anthropic-0.115.1 anyio-4.14.1 bracex-3.0 certifi-2026.6.17 cffi-2.0.0 charset_normalizer-3.4.7 cryptography-49.0.0 deepagents-0.6.12 distro-1.9.0 docstring-parser-0.18.0 filetype-1.2.0 google-auth-2.55.1 google-genai-2.10.0 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.18 jiter-0.16.0 jsonpatch-1.33 jsonpointer-3.1.1 langchain-1.3.11 langchain-anthropic-1.4.8 langchain-core-1.4.8 langchain-google-genai-4.2.6 langchain-ollama-1.1.0 langchain-protocol-0.0.18 langgraph-1.2.7 langgraph-checkpoint-4.1.1 langgraph-prebuilt-1.1.0 langgraph-sdk-0.4.2 langsmith-0.9.5 ollama-0.6.2 orjson-3.11.9 ormsgpack-1.12.2 packaging-26.2 pyasn1-0.6.3 pyasn1-modules-0.4.2 pycparser-3.0 pydantic-2.13.4 pydantic-core-2.46.4 pyyaml-6.0.3 requests-2.34.2 requests-toolbelt-1.0.0 sniffio-1.3.1 tenacity-9.1.4 typing-extensions-4.15.0 typing-inspection-0.4.2 urllib3-2.7.0 uuid-utils-0.16.2 wcmatch-10.2 websockets-15.0.1 xxhash-3.8.0 zstandard-0.25.0
+[?2004hecho 'ob_comint_async_shell_end_37bdd4cf-5037-490b-904c-91a9e688efc0'[?2004l
 #+end_example
 
 * Module
@@ -3014,7 +3054,7 @@ The above sample therefore becomes replaced with something like:
 #+end_src
 
 #+RESULTS:
-: Hi there!
+: b25a284f-350f-4c07-a386-85552eb32850
 
 ** Help
 *** Modules
@@ -6814,327 +6854,6 @@ FILE
 ** System Prompts
 
 A system prompt can be provided as an additional argument to the ~create_deep_agent~ function.
-
-#+begin_src python
-  from deepagents import create_deep_agent
-  print(help(create_deep_agent))
-#+end_src
-
-#+RESULTS:
-#+begin_example
-Help on function create_deep_agent in module deepagents.graph:
-
-create_deep_agent(
-    model: str | BaseChatModel | None = None,
-    tools: Sequence[BaseTool | Callable | dict[str, Any]] | None = None,
-    ,*,
-    system_prompt: str | SystemMessage | None = None,
-    middleware: Sequence[AgentMiddleware] = (),
-    subagents: Sequence[SubAgent | CompiledSubAgent | AsyncSubAgent] | None = None,
-    skills: list[str] | None = None,
-    memory: list[str] | None = None,
-    permissions: list[FilesystemPermission] | None = None,
-    backend: BackendProtocol | BackendFactory | None = None,
-    interrupt_on: dict[str, bool | InterruptOnConfig] | None = None,
-    response_format: ResponseFormat[ResponseT] | type[ResponseT] | dict[str, Any] | None = None,
-    state_schema: type[DeepAgentState] | None = None,
-    context_schema: type[ContextT] | None = None,
-    checkpointer: Checkpointer | None = None,
-    store: BaseStore | None = None,
-    debug: bool = False,
-    name: str | None = None,
-    cache: BaseCache | None = None
-) -> CompiledStateGraph[AgentState[ResponseT], ContextT, InputAgentState, OutputAgentState[ResponseT]]
-    Create a deep agent.
-
-    !!! warning "Deep agents require a LLM that supports tool calling!"
-
-    By default, this agent has access to the following tools:
-
-    - `write_todos`: manage a todo list
-    - `ls`, `read_file`, `write_file`, `edit_file`, `glob`, `grep`: file operations
-    - `execute`: run shell commands
-    - `task`: call subagents
-
-    The `execute` tool allows running shell commands if the backend implements
-    [`SandboxBackendProtocol`][deepagents.backends.protocol.SandboxBackendProtocol].
-    For non-sandbox backends, the `execute` tool will return an error message.
-
-    Args:
-        model: The model to use.
-
-            !!! deprecated
-
-                Specify a model explicitly.
-
-                Passing `model=None` (relying on the default
-                `claude-sonnet-4-6`) is deprecated since `0.5.3` and will
-                be removed in `deepagents==1.0.0`. The parameter type
-                will change from `BaseChatModel | str | None` to
-                `BaseChatModel | str`. See
-                [Models](https://docs.langchain.com/oss/python/deepagents/models).
-
-            Accepts a `provider:model` string (e.g., `openai:gpt-5.5`); see
-            [`init_chat_model`][langchain.chat_models.init_chat_model(model_provider)]
-            for supported values. You can also pass a pre-initialized
-            [`BaseChatModel`][langchain.chat_models.BaseChatModel] instance directly.
-
-            !!! note "OpenAI Models and Data Retention"
-
-                If an `openai:` model is used, the agent will use the OpenAI
-                Responses API by default. To use OpenAI chat completions
-                instead, initialize the model with
-                `init_chat_model("openai:...", use_responses_api=False)` and
-                pass the initialized model instance here.
-
-                To disable data retention with the Responses API, use
-                `init_chat_model("openai:...", use_responses_api=True, store=False, include=["reasoning.encrypted_content"])`
-                and pass the initialized model instance here.
-        tools: Additional tools the agent should have access to.
-
-            These are merged with the built-in tool suite listed above
-            (`write_todos`, filesystem tools, `execute`, and `task`).
-
-            Passing tools here is additive — it never removes a built-in.
-            To drop a built-in tool, register a
-            [`HarnessProfile`][deepagents.HarnessProfile] with
-            `excluded_tools`.
-        system_prompt: Custom system instructions placed at the front of
-            the system prompt sent to the model.
-
-            Whatever you pass here always sits before the SDK's default
-            deep-agent prompt and any model-tuning suffix from a
-            registered `HarnessProfile`. With `system_prompt=None`, the
-            SDK default is used on its own (plus the profile suffix
-            when one applies). Sections are joined by a blank line.
-
-            Passing a `SystemMessage` instead of a string preserves any
-            `cache_control` markers on the message's content blocks —
-            useful for placing explicit Anthropic prompt-cache
-            breakpoints. The same ordering applies (caller's blocks
-            first, SDK content appended as an additional text block).
-
-            See [Prompt assembly](https://docs.langchain.com/oss/deepagents/customization#prompt-assembly)
-            for the full case-by-case breakdown.
-        middleware: Additional middleware to apply after the base stack
-            but before the tail middleware. The full ordering is:
-
-            Base stack:
-
-            - [`TodoListMiddleware`][langchain.agents.middleware.TodoListMiddleware]
-            - [`SkillsMiddleware`][deepagents.middleware.skills.SkillsMiddleware] (if `skills` is provided)
-            - [`FilesystemMiddleware`][deepagents.middleware.filesystem.FilesystemMiddleware]
-            - [`SubAgentMiddleware`][deepagents.middleware.subagents.SubAgentMiddleware]
-                (if any inline subagents — declarative
-                [`SubAgent`][deepagents.middleware.subagents.SubAgent] or
-                [`CompiledSubAgent`][deepagents.middleware.subagents.CompiledSubAgent]
-                — are available)
-            - [`SummarizationMiddleware`][langchain.agents.middleware.SummarizationMiddleware]
-            - [`PatchToolCallsMiddleware`][deepagents.middleware.patch_tool_calls.PatchToolCallsMiddleware]
-            - [`AsyncSubAgentMiddleware`][deepagents.middleware.async_subagents.AsyncSubAgentMiddleware] (if async `subagents` are provided)
-
-            ,*User middleware is inserted here.*
-
-            Tail stack:
-
-            - Harness profile `extra_middleware` (if any)
-            - `_ToolExclusionMiddleware` (if profile has `excluded_tools`)
-            - [`AnthropicPromptCachingMiddleware`][langchain_anthropic.middleware.AnthropicPromptCachingMiddleware] (unconditional; no-ops for
-                non-Anthropic models)
-            - [`MemoryMiddleware`][deepagents.middleware.memory.MemoryMiddleware] (if `memory` is provided)
-            - [`HumanInTheLoopMiddleware`][langchain.agents.middleware.HumanInTheLoopMiddleware] (if `interrupt_on` is provided)
-
-            After assembly, any entries in the profile's
-            `excluded_middleware` are filtered from the final stack. Class
-            entries match exact type; string entries match
-            `AgentMiddleware.name` exactly (e.g. `"SummarizationMiddleware"`
-            drops the summarization middleware via its public alias).
-            Entries that match nothing in the assembled stack raise
-            `ValueError`, as does excluding any class in the harness's
-            protected scaffolding set (e.g.,
-            [`FilesystemMiddleware`][deepagents.middleware.filesystem.FilesystemMiddleware]
-            or [`SubAgentMiddleware`][deepagents.middleware.subagents.SubAgentMiddleware]).
-
-            To run without the `task` tool, set
-            `general_purpose_subagent=GeneralPurposeSubagentProfile(enabled=False)`
-            on the active harness profile and pass no synchronous
-            subagents via `subagents=`. Async subagents are unaffected.
-        subagents: Subagent specs available to the main agent.
-
-            This collection supports three forms:
-
-            - [`SubAgent`][deepagents.middleware.subagents.SubAgent]: A declarative synchronous subagent spec.
-            - [`CompiledSubAgent`][deepagents.middleware.subagents.CompiledSubAgent]: A pre-compiled runnable subagent.
-            - [`AsyncSubAgent`][deepagents.middleware.async_subagents.AsyncSubAgent]: A remote/background subagent spec.
-
-            `SubAgent` entries are invoked through the `task` tool. They should
-            provide `name`, `description`, and `system_prompt`, and may also
-            override `tools`, `model`, `middleware`, `interrupt_on`, and
-            `skills`. See `interrupt_on` below for inheritance and override
-            behavior.
-
-            `CompiledSubAgent` entries are also exposed through the `task` tool,
-            but provide a pre-built `runnable` instead of a declarative prompt
-            and tool configuration.
-
-            `AsyncSubAgent` entries are identified by their async-subagent
-            fields (`graph_id`, and optionally `url`/`headers`) and are routed
-            into `AsyncSubAgentMiddleware` instead of `SubAgentMiddleware`.
-            They should provide `name`, `description`, and `graph_id`, and may
-            optionally include `url` and `headers`. These subagents run as
-            background tasks and expose the async subagent tools for launching,
-            checking, updating, cancelling, and listing tasks.
-
-            If no subagent named `general-purpose` is provided, a default
-            general-purpose synchronous subagent is added automatically unless
-            the active harness profile disables it. With no synchronous
-            subagents in play — none passed and the default disabled via
-            `general_purpose_subagent=GeneralPurposeSubagentProfile(enabled=False)`
-            — the `task` tool is not exposed. Async subagents are independent.
-
-        skills: List of skill source paths (e.g., `["/skills/user/", "/skills/project/"]`).
-
-            Paths must be specified using POSIX conventions (forward slashes)
-            and are relative to the backend's root. When using
-            `StateBackend` (default), provide skill files via
-            `invoke(files={...})`. With `FilesystemBackend`, skills are loaded
-            from disk relative to the backend's `root_dir`. Later sources
-            override earlier ones for skills with the same name (last one wins).
-        memory: List of memory file paths (`AGENTS.md` files) to load
-            (e.g., `["/memory/AGENTS.md"]`).
-
-            Display names are automatically derived from paths.
-
-            Memory is loaded at agent startup and added into the system prompt.
-        permissions: List of `FilesystemPermission` rules for the main agent
-            and its subagents.
-
-            Rules are evaluated in declaration order; the first match wins.
-            If no rule matches, the call is allowed.
-
-            Each rule's ``mode`` can be:
-
-            - ``"allow"`` (default): the call proceeds.
-            - ``"deny"``: the tool returns a permission-denied error.
-            - ``"interrupt"``: the call pauses for human approval via
-              `HumanInTheLoopMiddleware`. A `HumanInTheLoopMiddleware` is
-              auto-installed when any interrupt-mode rule is present, and the
-              generated `interrupt_on` entries are merged with the
-              `interrupt_on` argument below (user-supplied entries win per
-              tool name). Requires a `langchain` version that supports the
-              ``when`` predicate on `InterruptOnConfig`.
-
-            Subagents inherit these rules unless they specify their own
-            `permissions` field, which replaces the parent's rules entirely.
-
-            `FilesystemMiddleware` applies these permissions at the tool
-            level for its built-in filesystem tools, not at the backend
-            level. Direct backend usage does not currently incorporate
-            `permissions`.
-        backend: Optional backend for file storage and execution.
-
-            Pass a `Backend` instance (e.g. `StateBackend()`).
-
-            For execution support, use a backend that
-            implements [`SandboxBackendProtocol`][deepagents.backends.protocol.SandboxBackendProtocol].
-        interrupt_on: Mapping of tool names to interrupt configs.
-
-            Pass to pause agent execution at specified tool calls for human
-            approval or modification.
-
-            This config always applies to the main agent.
-
-            For subagents:
-            - Declarative `SubAgent` specs inherit the top-level `interrupt_on`
-                config by default.
-            - If a declarative `SubAgent` provides its own `interrupt_on`, that
-                subagent-specific config overrides the inherited
-                top-level config.
-            - `CompiledSubAgent` runnables do not inherit top-level
-                `interrupt_on`; configure human-in-the-loop behavior inside the
-                compiled runnable itself.
-            - Remote `AsyncSubAgent` specs do not inherit top-level
-                `interrupt_on`; configure any approval behavior on the remote
-                subagent itself.
-
-            For example, `interrupt_on={"edit_file": True}` pauses before
-            every edit.
-        response_format: A structured output response format to use for the agent.
-        state_schema: Custom state schema for the agent graph. Must be a
-            `TypedDict` subclass of
-            [`DeepAgentState`][deepagents.graph.DeepAgentState] so the
-            built-in `DeltaChannel` reducer on `messages` is preserved.
-
-            Generally, prefer defining state extensions with middleware so
-            the extra fields stay scoped to the hooks and tools that use
-            them.
-
-            When provided, this schema is used as the base graph schema and
-            is merged with state schemas contributed by middleware. It is
-            also forwarded when compiling declarative
-            [`SubAgent`][deepagents.middleware.subagents.SubAgent] specs for
-            the `task` tool, so subagents see the same custom fields as the
-            parent.
-
-            [`CompiledSubAgent`][deepagents.middleware.subagents.CompiledSubAgent]
-            runnables do not inherit this schema because they are already
-            compiled — compile those runnables with a compatible state
-            schema if they need access to the same custom state fields.
-            Remote
-            [`AsyncSubAgent`][deepagents.middleware.async_subagents.AsyncSubAgent]
-            specs likewise use the schema configured on the remote graph.
-
-            ```python
-            from deepagents.graph import DeepAgentState
-
-
-            class MyState(DeepAgentState):
-                page_url: str
-                file_urls: list[str]
-
-
-            agent = create_deep_agent(model=..., state_schema=MyState)
-            ```
-        context_schema: Schema class that defines immutable run-scoped context.
-
-            Passed through to [`create_agent`][langchain.agents.create_agent].
-        checkpointer: Optional `Checkpointer` for persisting agent state
-            between runs.
-
-            Passed through to [`create_agent`][langchain.agents.create_agent].
-        store: Optional store for persistent storage (required if backend
-            uses `StoreBackend`).
-
-            Passed through to [`create_agent`][langchain.agents.create_agent].
-        debug: Whether to enable debug mode.
-
-            Passed through to [`create_agent`][langchain.agents.create_agent].
-        name: The name of the agent.
-
-            Passed through to [`create_agent`][langchain.agents.create_agent].
-        cache: The cache to use for the agent.
-
-            Passed through to [`create_agent`][langchain.agents.create_agent].
-
-    Returns:
-        A configured deep agent.
-
-    Raises:
-        ImportError: If a required provider package is missing or below the
-            minimum supported version (e.g., `langchain-openrouter`).
-        ValueError: If the active `HarnessProfile.excluded_middleware`
-            references a class in the harness's protected scaffolding set
-            (e.g.,
-            [`FilesystemMiddleware`][deepagents.middleware.filesystem.FilesystemMiddleware]
-            or
-            [`SubAgentMiddleware`][deepagents.middleware.subagents.SubAgentMiddleware]),
-            uses a private (underscore-prefixed) name, collides with multiple
-            distinct middleware classes, or matches no entry in the assembled
-            stack.
-
-None
-#+end_example
-
 #+begin_src python
   from deepagents import create_deep_agent
 
@@ -7147,12 +6866,12 @@ None
       """)
   results = tnega_agent.invoke({"messages": [{
       "role": "user",
-      "content": "What project helped reduce the time to sail around the world?"}]})
+      "content": "You are a serious researcher. What project helped reduce the time to sail around the world?"}]})
   print(results["messages"][-1].content)
 #+end_src
 
 #+RESULTS:
-: A man, a plan, a canal – Panama
+: A man, a plan, a canal: Panama
 
 ** Accessing Files
 
@@ -7210,7 +6929,6 @@ The root directory contains:
 
 All Emacs temporary backups ending with a trailing `~` have been omitted.
 #+end_example
-
 
 ** Structured Outputs
 
