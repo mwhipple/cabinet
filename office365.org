@@ -1215,6 +1215,47 @@ FILE
     /private/tmp/o365/lib/python3.14/site-packages/msgraph/generated/base_graph_service_client.py
 #+end_example
 
+** Inspecting Operations
+
+The generated properties appear to only be populated on instantiation,
+so help can be collected from instances.
+
+For example:
+#+begin_src python :results output
+  from msgraph import GraphServiceClient
+  from azure.identity import EnvironmentCredential
+
+  credential = EnvironmentCredential()
+
+  scopes = ['https://graph.microsoft.com/.default']
+  client = GraphServiceClient(credentials=credential, scopes=scopes)
+
+  help(client.users)
+#+end_src
+
+*** generated
+
+#+begin_src python :results output
+  from msgraph import generated
+  help(generated)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Help on package msgraph.generated in msgraph:
+
+NAME
+    msgraph.generated
+
+PACKAGE CONTENTS
+    base_graph_service_client
+
+SUBMODULES
+    users
+
+FILE
+    (built-in)
+#+end_example
 * Try Example
 
 This is finally working...
