@@ -22,7 +22,7 @@ may be project specific I'd probably go with nix.
 * Help
 
 #+begin_src shell :results output
-  brew --help
+  brew help
 #+end_src
 
 #+RESULTS:
@@ -185,7 +185,7 @@ which-update
 ** Help
 
 #+begin_src shell
-  brew config --help
+  brew help config
 #+end_src
 
 #+RESULTS:
@@ -238,7 +238,7 @@ Rosetta 2: false
 *** Help
 
 #+begin_src shell
-  brew home --help
+  brew help home
 #+end_src
 
 #+RESULTS:
@@ -258,7 +258,7 @@ homepage if no argument is provided.
 
 ** source
 #+begin_src shell
-  brew source --help
+  brew help source
 #+end_src
 
 #+RESULTS:
@@ -283,7 +283,7 @@ repositories.
 ** Help
 
 #+begin_src shell
-  brew info --help
+  brew help info
 #+end_src
 
 #+RESULTS:
@@ -339,7 +339,7 @@ cask is provided, show summary of information about it.
 :END:
 
 #+begin_src shell :results output
-  brew install --help
+  brew help install
 #+end_src
 
 #+RESULTS:
@@ -499,7 +499,7 @@ upgrade formula if it is already installed but outdated.
 
 ** help
 #+begin_src shell
-  brew link --help
+  brew help link
 #+end_src
 
 #+RESULTS:
@@ -888,6 +888,37 @@ text is flanked by slashes, it is interpreted as a regular expression.
       --archlinux                  Search for text in the given database.
       --debian                     Search for text in the given database.
       --ubuntu                     Search for text in the given database.
+  -d, --debug                      Display any debugging information.
+  -q, --quiet                      Make some output more quiet.
+  -v, --verbose                    Make some output more verbose.
+  -h, --help                       Show this message.
+#+end_example
+* shellenv
+#+begin_src shell
+  brew help shellenv
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Usage: brew shellenv [shell ...]
+
+Valid shells: bash|csh|fish|pwsh|sh|tcsh|zsh
+
+Print export statements. When run in a shell, this installation of Homebrew will
+be added to your $PATH, $MANPATH, and $INFOPATH.
+
+The variables $HOMEBREW_PREFIX, $HOMEBREW_CELLAR and $HOMEBREW_REPOSITORY
+are also exported to avoid querying them multiple times. To help guarantee
+idempotence, this command produces no output when Homebrew's bin and sbin
+directories are first and second respectively in your $PATH. Consider adding
+evaluation of this command's output to your dotfiles (e.g. ~/.bash_profile or
+~/.zprofile on macOS and ~/.bashrc or ~/.zshrc on Linux) with e.g.:
+  eval "$(brew shellenv zsh)" or eval "$(brew shellenv bash)"`
+
+The shell should be specified explicitly with a supported shell name parameter
+but will be detected automatically if not provided (but this may not be
+correct). Unknown shells will output POSIX exports.
+
   -d, --debug                      Display any debugging information.
   -q, --quiet                      Make some output more quiet.
   -v, --verbose                    Make some output more verbose.
