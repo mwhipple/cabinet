@@ -8,12 +8,30 @@ Ollama provides support for running some models (LLM/foundational) locally.
 
 * Installation
 
+** [[id:61678BF7-A363-45C2-A3E2-54A1EB15EF68][brew]]
+
+#+begin_src shell :session brew :async
+  brew install --yes ollama
+#+end_src
+
+#+RESULTS:
+: 0e31e4eb-5475-4c9f-98b8-31ba5db23f19
+
+#+begin_src shell
+  brew services start ollama
+#+end_src
+
+#+RESULTS:
+: ==> Successfully started `ollama` (label: homebrew.mxcl.ollama)
+
+* Verification
+
 #+begin_src shell
   ollama --version
 #+end_src
 
 #+RESULTS:
-: ollama version is 0.24.0
+: ollama version is 0.31.1
 
 * Help
 
@@ -61,6 +79,31 @@ Ollama supports listing installed models - support for querying
 available models should be built out using something like curl.
 
 This list therefore reflects what I currently have on one my workstations.
+
+** Help
+
+#+begin_src shell
+  ollama list --help
+#+end_src
+
+#+RESULTS:
+#+begin_example
+List models
+
+Usage:
+  ollama list [flags]
+
+Aliases:
+  list, ls
+
+Flags:
+  -h, --help   help for list
+
+Environment Variables:
+      OLLAMA_HOST                   IP Address for the ollama server (default 127.0.0.1:11434)
+#+end_example
+
+** Usage
 
 #+begin_src shell
   ollama list
