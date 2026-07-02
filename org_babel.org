@@ -633,6 +633,105 @@ Writes QUERY into a temp-buffer that is processed with
 
 #+end_example
 
+** org-babel-insert-result
+:PROPERTIES:
+:ID:       D9D6DA14-C18F-43AD-A16B-7C9E1E6E9782
+:END:
+
+#+begin_src emacs-lisp
+  (describe-function #'org-babel-insert-result)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+org-babel-insert-result is a byte-code-function in ‘ob-core.el’.
+
+(org-babel-insert-result RESULT &optional RESULT-PARAMS INFO HASH LANG
+EXEC-TIME)
+
+Insert RESULT into the current buffer.
+
+By default RESULT is inserted after the end of the current source
+block.  The RESULT of an inline source block usually will be
+wrapped inside a ‘results’ macro and placed on the same line as
+the inline source block.  The macro is stripped upon export.
+Multiline and non-scalar RESULTS from inline source blocks are
+not allowed.  When EXEC-TIME is provided it may be included in a
+generated message.  With optional argument RESULT-PARAMS controls
+insertion of results in the Org mode file.  RESULT-PARAMS is a list
+that can contain the following values:
+
+replace - (default option) insert results after the source block
+          or inline source block replacing any previously
+          inserted results.
+
+silent -- no results are inserted into the Org buffer but
+          the results are echoed to the minibuffer and are
+          ingested by Emacs (a potentially time consuming
+          process).
+
+none ---- no results are inserted into the Org buffer nor
+          echoed to the minibuffer.  They are not processed into
+          Emacs-lisp objects at all.
+
+file ---- the results are interpreted as a file path, and are
+          inserted into the buffer using the Org file syntax.
+
+list ---- the results are interpreted as an Org list.
+
+raw ----- results are added directly to the Org file.  This is
+          a good option if you code block will output Org
+          formatted text.
+
+drawer -- results are added directly to the Org file as with
+          "raw", but are wrapped in a RESULTS drawer or results
+          macro, allowing them to later be replaced or removed
+          automatically.
+
+org ----- results are added inside of a "src_org{}" or "#+BEGIN_SRC
+          org" block depending on whether the current source block is
+          inline or not.  They are not comma-escaped when inserted,
+          but Org syntax here will be discarded when exporting the
+          file.
+
+html ---- results are added inside of a #+BEGIN_EXPORT HTML block
+          or html export snippet depending on whether the current
+          source block is inline or not.  This is a good option
+          if your code block will output html formatted text.
+
+latex --- results are added inside of a #+BEGIN_EXPORT LATEX
+          block or latex export snippet depending on whether the
+          current source block is inline or not.  This is a good
+          option if your code block will output latex formatted
+          text.
+
+code ---- the results are extracted in the syntax of the source
+          code of the language being evaluated and are added
+          inside of a source block with the source-code language
+          set appropriately.  Also, source block inlining is
+          preserved in this case.  Note this relies on the
+          optional LANG argument.
+
+list ---- the results are rendered as a list.  This option not
+          allowed for inline source blocks.
+
+table --- the results are rendered as a table.  This option not
+          allowed for inline source blocks.
+
+INFO is the src block info, as returned by
+‘org-babel-get-src-block-info’ (which see).  Some values from its
+PARAMETERS part (header argument alist) can affect the inserted
+result:
+
+:file-desc - when RESULT-PARAMS contains "file", use it as
+             description of the inserted link.
+
+:wrap        the effect is similar to ‘latex’ in RESULT-PARAMS but
+             using the argument supplied to specify the export block
+             or snippet type.
+
+#+end_example
+
 * Spelunking
 
 As part of building out [[id:95B942E1-D6F6-42CC-9A8F-E49F23482AB9][ob-tla]] I'll start picking through the standard

@@ -543,6 +543,526 @@ Top-level directory of LilyPond's data tree:
 
 #+end_example
 
+#+begin_src shell
+  curl https://lilypond.org
+#+end_src
+
+That the docs are produced from info suggests those info files are around...
+
+#+RESULTS:
+#+begin_example
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- Copyright © 2003-2026 by the authors.
+
+This file documents the LilyPond website.
+
+Permission is granted to copy, distribute and/or modify this
+document under the terms of the GNU Free Documentation License,
+Version 1.1 or any later version published by the Free Software
+Foundation; with no Invariant Sections.  A copy of the license is
+included in the section entitled "GNU Free Documentation
+License". -->
+<title>LilyPond &ndash; Music notation for everyone</title>
+
+<meta name="description" content="LilyPond &ndash; Music notation for everyone">
+<meta name="keywords" content="LilyPond &ndash; Music notation for everyone">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="#top" rel="start" title="LilyPond &ndash; Music notation for everyone">
+<link href="web_toc.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="#index" rel="next" title="LilyPond">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+pre.menu-comment-preformatted {font-family: serif}
+span:hover a.copiable-link {visibility: visible}
+td.menu-entry-description {vertical-align: top}
+td.menu-entry-destination {vertical-align: top}
+th.menu-comment {text-align:left}
+ul.toc-numbered-mark {list-style: none}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="css/lilypond-website.css">
+
+
+</head>
+
+<body lang="en" class="web">
+<div id="main">
+<div class="top-level-extent" id="top">
+<hr>
+<h1 class="top" id="LilyPond-_002d_002d-Music-notation-for-everyone"><span>LilyPond &ndash; Music notation for everyone<a class="copiable-link" href="#LilyPond-_002d_002d-Music-notation-for-everyone"> &para;</a></span></h1>
+<table class="menu" border="0" cellspacing="0">
+<tr><td class="menu-entry-destination"><a href="#index" accesskey="1">LilyPond</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="introduction.html" accesskey="2">Introduction</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="download.html" accesskey="3">Download</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="manuals.html" accesskey="4">Manuals</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="community.html" accesskey="5">Community</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><th class="menu-comment" colspan="3"><pre class="menu-comment-preformatted">
+
+</pre></th></tr><tr><th class="menu-comment" colspan="3"><pre class="menu-comment-preformatted"> &mdash; The Detailed Node Listing &mdash;
+
+LilyPond
+
+</pre></th></tr><tr><td class="menu-entry-destination"><a href="introduction.html" accesskey="6">Introduction</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Start here to creating sheet music.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="download.html" accesskey="7">Download</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Get LilyPond.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="manuals.html" accesskey="8">Manuals</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Read The Fine Manuals (RTFM).
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="community.html" accesskey="9">Community</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Contact other users.
+</td></tr>
+<tr><th class="menu-comment" colspan="3"><pre class="menu-comment-preformatted">
+
+Introduction
+
+</pre></th></tr><tr><td class="menu-entry-destination"><a href="features.html">Features</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">What can LilyPond do?
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="examples.html">Examples</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">I want to see some music!
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="freedom.html">Freedom</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Freedom and the GPL.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="background.html">Background</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Computational aesthetics.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="productions.html">Productions</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Real-life use of LilyPond.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="reviews.html">Reviews</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">What do people say about it?
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="text-input.html">Text input</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">You write music as text?!
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="easier-editing.html">Easier editing</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Other ways of working with LilyPond.
+</td></tr>
+<tr><th class="menu-comment" colspan="3"><pre class="menu-comment-preformatted">
+
+Download
+
+</pre></th></tr><tr><td class="menu-entry-destination"><a href="source.html">Source</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="old-downloads.html">Old downloads</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="gpl.html">GPL</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><th class="menu-comment" colspan="3"><pre class="menu-comment-preformatted">
+
+Manuals
+
+</pre></th></tr><tr><td class="menu-entry-destination"><a href="learning.html">Learning</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Learning.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="glossary.html">Glossary</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Glossary.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="essay.html">Essay</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Essay.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="notation.html">Notation</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Reference.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="usage.html">Usage</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Usage.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="snippets.html">Snippets</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Snippets.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="faq.html">FAQ</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">FAQ.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="web.html">Web</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Web.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="changes.html">Changes</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">NEWS.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="extending.html">Extending</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Programming.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="internals.html">Internals</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Internals.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="all.html">All</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">All manuals.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="fdl.html">FDL</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Licence.
+</td></tr>
+<tr><th class="menu-comment" colspan="3"><pre class="menu-comment-preformatted">
+
+Community
+
+</pre></th></tr><tr><td class="menu-entry-destination"><a href="contact.html">Contact</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="tiny-examples.html">Tiny examples</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="bug-reports.html">Bug reports</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="help-us.html">Help us</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="sponsoring.html">Sponsoring</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="development.html">Development</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="google-summer-of-code.html">Google Summer of Code</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="authors.html">Authors</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="publications.html">Publications</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="news.html">News</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="attic.html">Attic</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><th class="menu-comment" colspan="3"><pre class="menu-comment-preformatted">
+
+Introduction
+
+</pre></th></tr><tr><td class="menu-entry-destination"><a href="features.html">Features</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">What can LilyPond do?
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="examples.html">Examples</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">I want to see some music!
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="freedom.html">Freedom</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Freedom and the GPL.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="background.html">Background</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Computational aesthetics.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="productions.html">Productions</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Real-life use of LilyPond.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="reviews.html">Reviews</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">What do people say about it?
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="text-input.html">Text input</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">You write music as text?!
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="easier-editing.html">Easier editing</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Other ways of working with LilyPond.
+</td></tr>
+<tr><th class="menu-comment" colspan="3"><pre class="menu-comment-preformatted">
+
+Download
+
+</pre></th></tr><tr><td class="menu-entry-destination"><a href="source.html">Source</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="old-downloads.html">Old downloads</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="gpl.html">GPL</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><th class="menu-comment" colspan="3"><pre class="menu-comment-preformatted">
+
+Manuals
+
+</pre></th></tr><tr><td class="menu-entry-destination"><a href="learning.html">Learning</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Learning.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="glossary.html">Glossary</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Glossary.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="essay.html">Essay</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Essay.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="notation.html">Notation</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Reference.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="usage.html">Usage</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Usage.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="snippets.html">Snippets</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Snippets.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="faq.html">FAQ</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">FAQ.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="web.html">Web</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Web.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="changes.html">Changes</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">NEWS.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="extending.html">Extending</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Programming.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="internals.html">Internals</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Internals.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="all.html">All</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">All manuals.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="fdl.html">FDL</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Licence.
+</td></tr>
+<tr><th class="menu-comment" colspan="3"><pre class="menu-comment-preformatted">
+
+Community
+
+</pre></th></tr><tr><td class="menu-entry-destination"><a href="contact.html">Contact</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="tiny-examples.html">Tiny examples</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="bug-reports.html">Bug reports</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="help-us.html">Help us</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="sponsoring.html">Sponsoring</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="development.html">Development</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="google-summer-of-code.html">Google Summer of Code</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="authors.html">Authors</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="publications.html">Publications</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="news.html">News</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="attic.html">Attic</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">
+</td></tr>
+</table>
+<hr>
+<div class="unnumbered-level-extent" id="index">
+<hr>
+<h2 class="unnumbered" id="LilyPond"><span>LilyPond<a class="copiable-link" href="#LilyPond"> &para;</a></span></h2>
+
+<div id="pageHeader">
+<h3 class="heading" id="LilyPond-1"><span>LilyPond<a class="copiable-link" href="#LilyPond-1"> &para;</a></span></h3>
+
+<p>... music notation for everyone
+</p>
+</div>
+
+<div id="lilylogo">
+  <img src="pictures/double-lily-modified3.png" alt="LilyPond logo">
+</div>
+
+<div id="quickSummary">
+<p>LilyPond is a music engraving program, devoted to producing the
+highest-quality sheet music possible.  It brings the aesthetics of
+traditionally engraved music to computer printouts.  LilyPond is free
+software and part of the <a class="uref" href="https://gnu.org">GNU Project</a>.
+</p>
+
+<div class="align-right">
+<p>Read more in our <a class="ref" href="introduction.html">Introduction</a>!
+</p>
+
+</div>
+
+</div>
+
+
+<div id="homepage-main">
+
+<div class="column-center-top">
+
+<h4 class="subheading" id="Beautiful-Sheet-Music"><span>Beautiful Sheet Music<a class="copiable-link" href="#Beautiful-Sheet-Music"> &para;</a></span></h4>
+
+<div id="homepage-example-image-wrapper">
+<div class="float-center">
+  <a class="clickable" href="pictures/bwv861-lilypond-large.png">
+    <img src="pictures/bwv861-lilypond.png" alt="bwv861-lilypond">
+  </a>
+  <p style="text-align: center">
+    
+  </p>
+</div>
+
+</div>
+
+
+<p>LilyPond is a powerful and flexible tool for engraving tasks of
+all kinds, for example
+<a class="uref" href="examples.html#Classical-Music">classical music</a>
+(like the example above by J.S. Bach),
+<a class="uref" href="examples.html#Complex-Notation">complex notation</a>,
+<a class="uref" href="examples.html#Early-Music">early music</a>,
+<a class="uref" href="examples.html#Modern-Music">modern music</a>,
+<a class="uref" href="examples.html#Tablature">tablature</a>,
+<a class="uref" href="examples.html#Vocal-Music">vocal music</a>,
+<a class="uref" href="examples.html#Lead-Sheets">lead sheets</a>,
+<a class="uref" href="examples.html#Educational-Applications">educational materials</a>,
+<a class="uref" href="examples.html#Large-Projects">large orchestral projects</a>,
+<a class="uref" href="examples.html#Customized-Output">customized output</a>,
+and even
+<a class="uref" href="examples.html#Schenker-Graphs">Schenker graphs</a>.
+</p>
+
+<p>Browse our gallery of <a class="ref" href="examples.html">Examples</a> and be inspired!
+</p>
+
+</div>
+
+<div class="column-center-middle-color2">
+<h4 class="subheading" id="News-1"><span>News<a class="copiable-link" href="#News-1"> &para;</a></span></h4>
+
+
+
+
+<p><a class="ref" href="news.html">LilyPond 2.27.1 released - <em class="emph">June 6, 2026</em></a>
+</p>
+<p><a class="ref" href="news.html">LilyPond 2.26.0 released - <em class="emph">April 21, 2026</em></a>
+</p>
+<p><a class="ref" href="news.html">More news...</a>
+</p>
+
+</div>
+
+
+</div>
+
+
+<div id="homepage-sidebar">
+<h4 class="subheading" id="Stable-Release"><span>Stable Release<a class="copiable-link" href="#Stable-Release"> &para;</a></span></h4>
+
+
+<p><a class="ref" href="download.html">Download 2.26.0</a>
+</p>
+<p><a class="ref" href="manuals.html">Manuals 2.26.0</a>
+</p>
+<h4 class="subheading" id="Unstable-Release"><span>Unstable Release<a class="copiable-link" href="#Unstable-Release"> &para;</a></span></h4>
+
+<p><a class="ref" href="development.html">Download 2.27.1</a>
+</p>
+<p><a class="ref" href="development.html">Manuals 2.27.1</a>
+</p>
+<h4 class="subheading" id="Pondings"><span>Pondings<a class="copiable-link" href="#Pondings"> &para;</a></span></h4>
+<div id="pondingsText">
+
+
+</div>
+
+
+</div>
+
+
+
+<script language="JavaScript" type="text/javascript">
+  function loadXMLDoc(dname)
+    {
+      if (window.XMLHttpRequest)
+        {
+          xhttp=new XMLHttpRequest();
+        }
+      else
+        {
+          xhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+      xhttp.open("GET",dname,false);
+      xhttp.send();
+      return xhttp.responseXML;
+    }
+
+  var xmlDoc = loadXMLDoc("tweets.xml");
+  var tweets = xmlDoc.getElementsByTagName("tweet");
+  var index = Math.floor(Math.random() * tweets.length);
+  var tweet = tweets[index];
+  var text = tweet.childNodes[0];
+  document.getElementById("pondingsText").innerHTML = text.nodeValue;
+</script>
+
+
+
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td class="menu-entry-destination"><a href="introduction.html" accesskey="1">Introduction</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Start here to creating sheet music.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="download.html" accesskey="2">Download</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Get LilyPond.
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="manuals.html" accesskey="3">Manuals</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Read The Fine Manuals (RTFM).
+</td></tr>
+<tr><td class="menu-entry-destination"><a href="community.html" accesskey="4">Community</a></td><td>&nbsp;&nbsp;</td><td class="menu-entry-description">Contact other users.
+</td></tr>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+</div>
+<hr>
+
+<div id="footer">
+<p id="languages">
+Other languages: <a href="index.ca.html">Català</a>, <a href="index.de.html">Deutsch</a>, <a href="index.es.html">Español</a>, <a href="index.fr.html">Français</a>, <a href="index.it.html">Italiano</a>, <a href="index.ja.html">日本語</a>, <a href="index.tr.html">Türkçe</a>, <a href="index.zh.html">中文</a>.
+<br>
+About <a href="http://www.lilypond.org/misc/browser-language">automatic language selection</a>.
+</p>
+</div>
+<!-- FOOTER -->
+</div>
+
+<div id="tocframe">
+
+<div class="contents">
+
+<ul class="toc-numbered-mark">
+  <li class="toc_current"><a id="toc-LilyPond" href="#index">LilyPond</a></li>
+  <li><a id="toc-Introduction" href="introduction.html">Introduction</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Features" href="features.html">Features</a></li>
+    <li><a id="toc-Examples" href="examples.html">Examples</a></li>
+    <li><a id="toc-Freedom" href="freedom.html">Freedom</a></li>
+    <li><a id="toc-Background" href="background.html">Background</a></li>
+    <li><a id="toc-Productions" href="productions.html">Productions</a></li>
+    <li><a id="toc-Reviews" href="reviews.html">Reviews</a></li>
+    <li><a id="toc-Text-input" href="text-input.html">Text input</a></li>
+    <li><a id="toc-Easier-editing" href="easier-editing.html">Easier editing</a></li>
+  </ul></li>
+  <li><a id="toc-Download" href="download.html">Download</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Source" href="source.html">Source</a></li>
+    <li><a id="toc-Old-downloads" href="old-downloads.html">Old downloads</a></li>
+    <li><a id="toc-GPL" href="gpl.html">GPL</a></li>
+  </ul></li>
+  <li><a id="toc-Manuals" href="manuals.html">Manuals</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Learning" href="learning.html">Learning</a></li>
+    <li><a id="toc-Glossary" href="glossary.html">Glossary</a></li>
+    <li><a id="toc-Essay" href="essay.html">Essay</a></li>
+    <li><a id="toc-Notation" href="notation.html">Notation</a></li>
+    <li><a id="toc-Usage" href="usage.html">Usage</a></li>
+    <li><a id="toc-Snippets" href="snippets.html">Snippets</a></li>
+    <li><a id="toc-FAQ" href="faq.html">FAQ</a></li>
+    <li><a id="toc-Web" href="web.html">Web</a></li>
+    <li><a id="toc-Changes" href="changes.html">Changes</a></li>
+    <li><a id="toc-Extending" href="extending.html">Extending</a></li>
+    <li><a id="toc-Internals" href="internals.html">Internals</a></li>
+    <li><a id="toc-All" href="all.html">All</a></li>
+    <li><a id="toc-FDL" href="fdl.html">FDL</a></li>
+  </ul></li>
+  <li><a id="toc-Community" href="community.html">Community</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Contact" href="contact.html">Contact</a></li>
+    <li><a id="toc-Tiny-examples" href="tiny-examples.html">Tiny examples</a></li>
+    <li><a id="toc-Bug-reports" href="bug-reports.html">Bug reports</a></li>
+    <li><a id="toc-Help-us" href="help-us.html">Help us</a></li>
+    <li><a id="toc-Sponsoring" href="sponsoring.html">Sponsoring</a></li>
+    <li><a id="toc-Development" href="development.html">Development</a></li>
+    <li><a id="toc-Google-Summer-of-Code" href="google-summer-of-code.html">Google Summer of Code</a></li>
+    <li><a id="toc-Authors" href="authors.html">Authors</a></li>
+    <li><a id="toc-Publications" href="publications.html">Publications</a></li>
+    <li><a id="toc-News" href="news.html">News</a></li>
+    <li><a id="toc-Attic" href="attic.html">Attic</a></li>
+  </ul></li>
+</ul>
+</div>
+
+<!--
+    Translation of GIT committish: FILL-IN-HEAD-COMMITTISH
+
+    When revising a translation, copy the HEAD committish of the
+    version that you are working on.  For details, see the Contributors'
+    Guide, node Updating translation committishes.
+-->
+
+<form action="https://www.google.com/search"
+      method="get"
+      name="search"
+      onSubmit="search.q.value='site:lilypond.org ' + search.brute_query.value"
+      onMouseMove="search.q.value='site:lilypond.org ' + search.brute_query.value"
+      onKeyUp="search.q.value='site:lilypond.org ' + search.brute_query.value">
+  <input type="hidden" name="btnG" value="Google Search">
+  <input type="text" name="brute_query" onfocus="this.value=''" value="Search">
+  <input type="hidden" name="q" value="">
+</form>
+
+</div>
+
+</body>
+</html>
+#+end_example
+
 * [[id:04B03591-50E7-41E2-A2A5-0C2893FAD39C][org-babel]]
 
 There's some support built-in
@@ -555,18 +1075,21 @@ https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-lilypond.html
 #+end_src
 
 #+RESULTS:
-#+begin_example
-org-babel-lilypond-ly-command is a variable defined in ‘ob-lilypond.el’.
+: org-babel-lilypond-ly-command is a variable defined in ‘ob-lilypond.el’.
+: 
+: Its value is "/opt/homebrew/Cellar/lilypond/2.26.0/bin/lilypond"
+: 
+: Command to execute lilypond on your system.
+: Do not set it directly.  Customize ‘org-babel-lilypond-commands’ instead.
+: 
+:   This variable may be risky if used as a file-local variable.
+: 
 
-Its value is
-"/Applications/lilypond.app/Contents/Resources/bin/lilypond"
+#+begin_src emacs-lisp
+  (setq org-babel-lilypond-ly-command "/opt/homebrew/Cellar/lilypond/2.26.0/bin/lilypond")
+#+end_src
 
-Command to execute lilypond on your system.
-Do not set it directly.  Customize ‘org-babel-lilypond-commands’ instead.
-
-  This variable may be risky if used as a file-local variable.
-
-#+end_example
+#+RESULTS:
 
 ** org-babel-execute:lilypond
 
@@ -587,3 +1110,158 @@ When in arrange mode, tangle all blocks and process the result.
 Otherwise, execute block according to header settings.
 
 #+end_example
+
+#+begin_src shell
+  brew info lilypond --verbose
+#+end_src
+
+#+RESULTS:
+#+begin_example
+==> lilypond: stable 2.26.0 (bottled), HEAD
+Music engraving system
+https://lilypond.org
+Installed (on request)
+From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/l/lilypond.rb
+License: GPL-3.0-or-later AND GPL-3.0-only AND OFL-1.1-RFN AND GFDL-1.3-no-invariants-or-later AND LicenseRef-Homebrew-public-domain AND MIT AND AGPL-3.0-only AND LPPL-1.3c
+==> Installed Kegs and Versions
+lilypond 2.26.0 (447 files, 30.3MB) [Linked]
+  Poured from bottle using the internal formulae.brew.sh API on 2026-06-27 at 09:39:59
+==> Dependencies
+Required (12): bdw-gc, cairo, fontconfig, freetype, ghostscript, glib, guile, libpng, pango, python@3.14, gettext, harfbuzz
+Recursive Runtime (52): all installed ✔
+==> Options
+--HEAD
+	Install HEAD version
+==> Binaries
+abc2ly
+convert-ly
+etf2ly
+lilymidi
+lilypond
+lilypond-book
+lilypond-invoke-editor
+midi2ly
+musicxml2ly
+==> Analytics
+==> install (30 days)
+Index | Name (with options)                                   | Count |  Percent
+-----:|-------------------------------------------------------|------:|--------:
+1     | lilypond                                              |   418 |   99.52%
+2     | lilypond --HEAD                                       |     2 |    0.48%
+Total |                                                       |   420 |  100.00%
+==> install (90 days)
+Index | Name (with options)                                   | Count |  Percent
+-----:|-------------------------------------------------------|------:|--------:
+1     | lilypond                                              | 1,241 |   99.44%
+2     | lilypond --HEAD                                       |     7 |    0.56%
+Total |                                                       | 1,248 |  100.00%
+==> install (365 days)
+Index | Name (with options)                                   | Count |  Percent
+-----:|-------------------------------------------------------|------:|--------:
+1     | lilypond                                              | 3,114 |   99.43%
+2     | lilypond --HEAD                                       |    18 |    0.57%
+Total |                                                       | 3,132 |  100.00%
+==> install-on-request (30 days)
+Index | Name (with options)                                   | Count |  Percent
+-----:|-------------------------------------------------------|------:|--------:
+1     | lilypond                                              |   418 |   99.52%
+2     | lilypond --HEAD                                       |     2 |    0.48%
+Total |                                                       |   420 |  100.00%
+==> install-on-request (90 days)
+Index | Name (with options)                                   | Count |  Percent
+-----:|-------------------------------------------------------|------:|--------:
+1     | lilypond                                              | 1,241 |   99.44%
+2     | lilypond --HEAD                                       |     7 |    0.56%
+Total |                                                       | 1,248 |  100.00%
+==> install-on-request (365 days)
+Index | Name (with options)                                   | Count |  Percent
+-----:|-------------------------------------------------------|------:|--------:
+1     | lilypond                                              | 3,110 |   99.42%
+2     | lilypond --HEAD                                       |    18 |    0.58%
+Total |                                                       | 3,128 |  100.00%
+==> build-error (30 days)
+Index | Name (with options)                                   | Count |  Percent
+-----:|-------------------------------------------------------|------:|--------:
+1     | lilypond                                              |     0 |    0.00%
+#+end_example
+
+#+begin_src bash
+  lilypond-book
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Usage: lilypond-book [OPTION]... FILE
+
+Process LilyPond snippets in hybrid HTML, LaTeX, texinfo or DocBook document.
+
+Examples:
+ $ lilypond-book --format=latex --pdf FILE
+ $ lilypond-book --process='lilypond -I include' FILE
+ $ lilypond-book -F "convert-ly --no-version --from=2.0.0 -" FILE
+
+Options:
+  -F, --filter=FILTER   pipe snippets through FILTER [default: `convert-ly -n
+                        -']
+  -f, --format=FORMAT   use output format FORMAT (texi [default], texi-html,
+                        latex, html, docbook)
+  -h, --help            show this help and exit
+  -I, --include=DIR     add DIR to include path
+      --info-images-dir=DIR
+                        format Texinfo output so that Info will look for
+                        images of music in DIR
+      --left-padding=PAD
+                        set minimum distance between left margin and staff to
+                        PAD (in mm) [default: 3.0]
+      --lily-loglevel=LOGLEVEL
+                        print lilypond log messages according to LOGLEVEL
+                        [default: none]
+      --lily-output-dir=DIR
+                        write lily-XXX files to DIR, link into --output dir
+  -l, --loglevel=LOGLEVEL
+                        print log messages according to LOGLEVEL (NONE, ERROR,
+                        WARN, PROGRESS [default], DEBUG)
+  -o, --output=DIR      write output to DIR
+  -P, --process=COMMAND
+                        process ly_files using COMMAND FILE...
+      --redirect-lilypond-output
+                        redirect lilypond output messages to log files
+  -s, --safe            removed; using this option results in an error
+      --skip-lily-check
+                        do not fail if no lilypond output is found
+      --skip-png-check  do not fail if no PNG images are found for EPS files
+      --use-source-file-names
+                        write snippet output files with the same base name as
+                        their source file
+  -V, --verbose         be verbose
+      --version         show version number and exit
+  -w, --warranty        show warranty and copyright
+
+Options only for the latex and texinfo backends:
+      --pdf             create PDF files for use with pdftex
+
+Options only for the latex backend:
+      --inline-vshift=VSHIFT
+                        shift inline images vertically by VSHIFT (a factor of
+                        an image's height) [default: -0.3]
+      --latex-program=PROG
+                        run executable PROG instead of latex or, in case --pdf
+                        option is set, instead of pdflatex
+
+Options only for the texinfo backend:
+      --texinfo-program=PROG
+                        run executable PROG instead of texi2pdf
+
+Report bugs via bug-lilypond@gnu.org
+#+end_example
+
+** Source Retrieval
+
+I'll likely just retrieve the source since I would at some point
+anyway (again) and that will address the question of where to find the documentation.
+
+#+begin_src bash :dir ~/memex/vendor/
+  git clone https://git.savannah.gnu.org/git/lilypond.git
+#+end_src
+
+#+RESULTS:
