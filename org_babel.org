@@ -186,6 +186,26 @@ For this case parentheses can optionally be included after the block name.
 #+RESULTS:
 : bizbaz
 
+* LOB
+
+The library of babel provides some library/sharing functionality.
+
+** org-babel-lob-ingest
+#+begin_src emacs-lisp
+  (describe-function #'org-babel-lob-ingest)
+#+end_src
+
+#+RESULTS:
+: org-babel-lob-ingest is an interactive byte-code-function in
+: ‘ob-lob.el’.
+: 
+: It is bound to C-c C-v i.
+: 
+: (org-babel-lob-ingest &optional FILE)
+: 
+: Add all named source blocks defined in FILE to ‘org-babel-library-of-babel’.
+: 
+
 * Configuration
 
 ** org-confirm-babel-evaluate
