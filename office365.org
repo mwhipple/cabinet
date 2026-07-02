@@ -1256,6 +1256,168 @@ SUBMODULES
 FILE
     (built-in)
 #+end_example
+
+**** users
+
+#+begin_src python :results output
+  from msgraph.generated.users import users_request_builder
+  help(users_request_builder)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Help on module msgraph.generated.users.users_request_builder in msgraph.generated.users:
+
+NAME
+    msgraph.generated.users.users_request_builder
+
+CLASSES
+    kiota_abstractions.base_request_builder.BaseRequestBuilder(builtins.object)
+        UsersRequestBuilder
+
+    class UsersRequestBuilder(kiota_abstractions.base_request_builder.BaseRequestBuilder)
+     |  UsersRequestBuilder(
+     |      request_adapter: RequestAdapter,
+     |      path_parameters: Union[str, dict[str, Any]]
+     |  ) -> None
+     |
+     |  Provides operations to manage the collection of user entities.
+     |
+     |  Method resolution order:
+     |      UsersRequestBuilder
+     |      kiota_abstractions.base_request_builder.BaseRequestBuilder
+     |      builtins.object
+     |
+     |  Methods defined here:
+     |
+     |  __init__(
+     |      self,
+     |      request_adapter: RequestAdapter,
+     |      path_parameters: Union[str, dict[str, Any]]
+     |  ) -> None
+     |      Instantiates a new UsersRequestBuilder and sets the default values.
+     |      param path_parameters: The raw url or the url-template parameters for the request.
+     |      param request_adapter: The request adapter to use to execute the requests.
+     |      Returns: None
+     |
+     |  by_user_id(self, user_id: str) -> UserItemRequestBuilder
+     |      Provides operations to manage the collection of user entities.
+     |      param user_id: The unique identifier of user
+     |      Returns: UserItemRequestBuilder
+     |
+     |  async get(
+     |      self,
+     |      request_configuration: Optional[RequestConfiguration[UsersRequestBuilderGetQueryParameters]] = None
+     |  ) -> Optional[UserCollectionResponse]
+     |      Retrieve a list of user objects.
+     |      param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
+     |      Returns: Optional[UserCollectionResponse]
+     |      Find more info here: https://learn.microsoft.com/graph/api/user-list?view=graph-rest-1.0
+     |
+     |  async post(
+     |      self,
+     |      body: User,
+     |      request_configuration: Optional[RequestConfiguration[QueryParameters]] = None
+     |  ) -> Optional[User]
+     |      Create a new user.The request body contains the user to create. At a minimum, you must specify the required properties for the user. You can optionally specify any other writable properties.
+     |      param body: The request body
+     |      param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
+     |      Returns: Optional[User]
+     |      Find more info here: https://learn.microsoft.com/graph/api/user-post-users?view=graph-rest-1.0
+     |
+     |  to_get_request_information(
+     |      self,
+     |      request_configuration: Optional[RequestConfiguration[UsersRequestBuilderGetQueryParameters]] = None
+     |  ) -> RequestInformation
+     |      Retrieve a list of user objects.
+     |      param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
+     |      Returns: RequestInformation
+     |
+     |  to_post_request_information(
+     |      self,
+     |      body: User,
+     |      request_configuration: Optional[RequestConfiguration[QueryParameters]] = None
+     |  ) -> RequestInformation
+     |      Create a new user.The request body contains the user to create. At a minimum, you must specify the required properties for the user. You can optionally specify any other writable properties.
+     |      param body: The request body
+     |      param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
+     |      Returns: RequestInformation
+     |
+     |  with_url(self, raw_url: str) -> UsersRequestBuilder
+     |      Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
+     |      param raw_url: The raw URL to use for the request builder.
+     |      Returns: UsersRequestBuilder
+     |
+     |  ----------------------------------------------------------------------
+     |  Readonly properties defined here:
+     |
+     |  count
+     |      Provides operations to count the resources in the collection.
+     |
+     |  delta
+     |      Provides operations to call the delta method.
+     |
+     |  get_available_extension_properties
+     |      Provides operations to call the getAvailableExtensionProperties method.
+     |
+     |  get_by_ids
+     |      Provides operations to call the getByIds method.
+     |
+     |  validate_properties
+     |      Provides operations to call the validateProperties method.
+     |
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |
+     |  UsersRequestBuilderGetQueryParameters = <class 'msgraph.generated.user...
+     |      Retrieve a list of user objects.
+     |
+     |
+     |  UsersRequestBuilderGetRequestConfiguration = <class 'msgraph.generated...
+     |      Configuration for the request such as headers, query parameters, and middleware options.
+     |
+     |
+     |  UsersRequestBuilderPostRequestConfiguration = <class 'msgraph.generate...
+     |      Configuration for the request such as headers, query parameters, and middleware options.
+     |
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors inherited from kiota_abstractions.base_request_builder.BaseRequestBuilder:
+     |
+     |  __dict__
+     |      dictionary for instance variables
+     |
+     |  __weakref__
+     |      list of weak references to the object
+
+FUNCTIONS
+    warn(message, category=None, stacklevel=1, source=None, *,
+         skip_file_prefixes=<unrepresentable>)
+        Issue a warning, or maybe ignore it or raise an exception.
+
+        message
+          Text of the warning message.
+        category
+          The Warning category subclass. Defaults to UserWarning.
+        stacklevel
+          How far up the call stack to make this warning appear. A value of 2 for
+          example attributes the warning to the caller of the code calling warn().
+        source
+          If supplied, the destroyed object which emitted a ResourceWarning
+        skip_file_prefixes
+          An optional tuple of module filename prefixes indicating frames to skip
+          during stacklevel computations for stack frame attribution.
+
+DATA
+    Optional = typing.Optional
+        Optional[X] is equivalent to X | None.
+
+    TYPE_CHECKING = False
+    __warningregistry__ = {'version': 10}
+
+FILE
+    /private/tmp/o365/lib/python3.14/site-packages/msgraph/generated/users/users_request_builder.py
+#+end_example
 * Try Example
 
 This is finally working...
