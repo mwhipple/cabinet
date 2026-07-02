@@ -1210,6 +1210,144 @@ We also still support the deprecated calling convention:
 
 #+end_example
 
+* doc-view-mode
+
+#+begin_src emacs-lisp
+  (describe-function #'doc-view-mode)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+doc-view-mode is an autoloaded interactive byte-code-function in
+‘doc-view.el’.
+
+(doc-view-mode)
+
+Major mode in DocView buffers.
+
+DocView Mode is an Emacs document viewer.  It displays PDF, PS
+and DVI files (as PNG or SVG images) in Emacs buffers.
+
+You can use C-c C-c to
+toggle between displaying the document or editing it as text.
+
+Key             Binding
+
+RET		image-next-line
+C-n		doc-view-next-line-or-next-page
+C-p		doc-view-previous-line-or-previous-page
+C-r		doc-view-search-backward
+C-s		doc-view-search
+C-t		doc-view-show-tooltip
+SPC		doc-view-scroll-up-or-next-page
+'		doc-view-jump-to-register
++		doc-view-enlarge
+-		doc-view-shrink
+0		doc-view-scale-reset
+1 .. 9		digit-argument
+<		beginning-of-buffer
+=		doc-view-enlarge
+>		end-of-buffer
+?		describe-mode
+F		doc-view-fit-window-to-page
+H		doc-view-fit-height-to-window
+K		doc-view-kill-proc
+P		doc-view-fit-page-to-window
+W		doc-view-fit-width-to-window
+b		image-previous-frame
+f		image-next-frame
+g		revert-buffer
+h		describe-mode
+k		image-kill-buffer
+m		doc-view-page-to-register
+n		doc-view-next-page
+p		doc-view-previous-page
+q		quit-window
+r		revert-buffer
+u		image-mode-unmark-file
+w		image-mode-copy-file-name-as-kill
+DEL		doc-view-scroll-down-or-previous-page
+S-SPC		doc-view-scroll-down-or-previous-page
+C-<mouse-4>	image-mouse-increase-size
+C-<mouse-5>	image-mouse-decrease-size
+C-<wheel-down>	image-mouse-decrease-size
+C-<wheel-up>	image-mouse-increase-size
+<down>		doc-view-next-line-or-next-page
+<find>		doc-view-search
+<next>		forward-page
+<prior>		backward-page
+<up>		doc-view-previous-line-or-previous-page
+
+C-c C-c		doc-view-toggle-display
+C-c C-t		doc-view-open-text
+
+c b		doc-view-set-slice-from-bounding-box
+c h		doc-view-center-page-horizontally
+c m		doc-view-set-slice-using-mouse
+c r		doc-view-reset-slice
+c s		doc-view-set-slice
+c v		doc-view-center-page-vertically
+
+M-<		doc-view-first-page
+M->		doc-view-last-page
+
+<remap> <backward-page>		doc-view-previous-page
+<remap> <forward-page>		doc-view-next-page
+<remap> <goto-line>		doc-view-goto-page
+<remap> <text-scale-adjust>	doc-view-scale-adjust
+
+<remap> <backward-char>		 image-backward-hscroll
+<remap> <beginning-of-buffer>	 image-bob
+<remap> <end-of-buffer>		 image-eob
+<remap> <forward-char>		 image-forward-hscroll
+<remap> <left-char>		 image-backward-hscroll
+<remap> <move-beginning-of-line> image-bol
+<remap> <move-end-of-line>	 image-eol
+<remap> <next-line>		 image-next-line
+<remap> <previous-line>		 image-previous-line
+<remap> <right-char>		 image-forward-hscroll
+<remap> <scroll-down>		 image-scroll-down
+<remap> <scroll-down-command>	 image-scroll-down
+<remap> <scroll-left>		 image-scroll-left
+<remap> <scroll-right>		 image-scroll-right
+<remap> <scroll-up>		 image-scroll-up
+<remap> <scroll-up-command>	 image-scroll-up
+
+a +		image-increase-speed
+a -		image-decrease-speed
+a 0		image-reset-speed
+a r		image-reverse-speed
+
+s 0		image-transform-reset-to-initial
+s b		image-transform-fit-both
+s f		image-mode-fit-frame
+s h		image-transform-fit-to-height
+s i		image-transform-fit-to-width
+s m		image-transform-set-smoothing
+s o		image-transform-reset-to-original
+s p		image-transform-set-percent
+s r		image-transform-set-rotation
+s s		image-transform-set-scale
+s w		image-transform-fit-to-window
+
+C-c C-c		image-toggle-display
+  (this binding is currently shadowed)
+C-c C-x		image-toggle-hex-display
+
+i h		image-flip-horizontally
+i r		image-rotate
+i v		image-flip-vertically
+
+i +		image-increase-size
+i -		image-decrease-size
+i c		image-crop
+i o		image-save
+i x		image-cut
+
+  Probably introduced at or before Emacs version 28.1.
+
+#+end_example
+
 * XWidgets
 
 ** xwidget-webkit-browse-url
