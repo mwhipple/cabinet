@@ -1899,6 +1899,31 @@ characters; nil stands for the empty string.
 
 #+end_example
 * elisp-urls
+:PROPERTIES:
+:ID:       F1DEB8D0-02EE-4856-9C59-A2D6B51D698D
+:END:
+** url-encode-url
+:PROPERTIES:
+:ID:       2140D11D-1066-4B77-9062-0B8A1C5A287D
+:END:
+
+#+begin_src emacs-lisp
+  (describe-function #'url-encode-url)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+url-encode-url is an autoloaded byte-code-function in ‘url-util.el’.
+
+(url-encode-url URL)
+
+Return a properly URI-encoded version of URL.
+This function also performs URI normalization, e.g. converting
+the scheme to lowercase if it is uppercase.  Apart from
+normalization, if URL is already URI-encoded, this function
+should return it unchanged.
+
+  Probably introduced at or before Emacs version 24.3.
 
 #+end_example
 
