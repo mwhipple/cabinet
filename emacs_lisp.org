@@ -18,7 +18,7 @@ describe-function is an autoloaded interactive byte-code-function in
 
 It is bound to C-h f, <f1> f and <help> f.
 It can also be invoked from the menu: Help → Describe → Describe
-Function...
+Function....
 
 (describe-function FUNCTION)
 
@@ -45,7 +45,7 @@ describe-mode is an autoloaded interactive byte-code-function in
 
 It is bound to C-h m, <f1> m and <help> m.
 It can also be invoked from the menu: Help → Describe → Describe
-Buffer Modes
+Buffer Modes.
 
 (describe-mode &optional BUFFER)
 
@@ -84,7 +84,7 @@ describe-package is an autoloaded interactive byte-code-function in
 
 It is bound to C-h P, <f1> P and <help> P.
 It can also be invoked from the menu: Help → Describe → Describe
-Package...
+Package....
 
 (describe-package PACKAGE)
 
@@ -124,6 +124,7 @@ captures and returns that content.
    Requires: emacs-24.4
     Website: https://github.com/jwiegley/emacs-async
    Keywords: async 
+ Maintainer: Thierry Volpiatto <thievol@posteo.net>
      Author: John Wiegley <jwiegley@gmail.com>
 Other versions: 20260318.1803 (melpa), 1.9.9 (melpa-stable), 1.9.9 (gnu).
 
@@ -144,7 +145,7 @@ describe-variable is an autoloaded interactive byte-code-function in
 
 It is bound to C-h v, <f1> v and <help> v.
 It can also be invoked from the menu: Help → Describe → Describe
-Variable...
+Variable....
 
 (describe-variable VARIABLE &optional BUFFER FRAME)
 
@@ -184,7 +185,7 @@ it is displayed along with the global value.
 
 #+RESULTS:
 #+begin_example
-message is a primitive-function in ‘C source code’.
+message is a primitive-function in ‘src/editfns.c’.
 
 (message FORMAT-STRING &rest ARGS)
 
@@ -222,9 +223,10 @@ also ‘current-message’.
 
 #+RESULTS:
 #+begin_example
-debug-on-error is a variable defined in ‘C source code’.
+debug-on-error is a variable defined in ‘src/eval.c’.
 
-Its value is nil
+Its value is t
+Original value was nil
 
 Non-nil means enter debugger if an error is signaled.
 Does not apply to errors handled by ‘condition-case’ or those
@@ -319,7 +321,7 @@ The return value of the ‘setq’ form is the value of the last VAL.
 
 #+RESULTS:
 #+begin_example
-condition-case is a special-form in ‘C source code’.
+condition-case is a special-form in ‘src/eval.c’.
 
 (condition-case VAR BODYFORM &rest HANDLERS)
 
@@ -402,6 +404,18 @@ Making Lists
     ⇒ ("foo")
   (ensure-list '(1 2 3))
     ⇒ (1 2 3)
+  (ensure-list '(1 . 2))
+    ⇒ (1 . 2)
+
+
+(ensure-proper-list object)
+  Return OBJECT as a list.
+  (ensure-proper-list "foo")
+    ⇒ ("foo")
+  (ensure-proper-list '(1 2 3))
+    ⇒ (1 2 3)
+  (ensure-proper-list '(1 . 2))
+    ⇒ ((1 . 2))
 
 Operations on Lists
 
@@ -483,6 +497,32 @@ Operations on Lists
   Modify LIST to keep only the first N elements.
   (ntake 3 (list 'one 'two 'three 'four))
     ⇒ (one two three)
+
+
+(take-while pred list)
+  Return the longest prefix of LIST whose elements satisfy PRED.
+  (take-while #'numberp '(1 2 three 4 five))
+    ⇒ (1 2)
+
+
+(drop-while pred list)
+  Skip initial elements of LIST satisfying PRED and return the rest.
+  (drop-while #'numberp '(1 2 three 4 five))
+    ⇒ (three 4 five)
+
+
+(any pred list)
+  Non-nil if PRED is true for at least one element in LIST.
+  (any #'symbolp '(1 2 three 4 five))
+    ⇒ (three 4 five)
+
+
+(all pred list)
+  Non-nil if PRED is true for all elements in LIST.
+  (all #'symbolp '(one 2 three))
+    ⇒ nil
+  (all #'symbolp '(one two three))
+    ⇒ t
 
 
 (elt sequence n)
@@ -801,7 +841,7 @@ Data About Lists
 
 #+RESULTS:
 #+begin_example
-list is a primitive-function in ‘C source code’.
+list is a primitive-function in ‘src/alloc.c’.
 
 (list &rest OBJECTS)
 
@@ -883,7 +923,7 @@ Manipulating Alists
 
 (alist-get key alist &optional default remove testfn)
   Find the first element of ALIST whose ‘car’ equals KEY and return its ‘cdr’.
-  (let ((foo '((bar . zot)))) (setf (alist-get 'bar foo) 'zot) foo)
+  (let ((foo '((bar . baz)))) (setf (alist-get 'bar foo) 'zot) foo)
     ⇒ ((bar . zot))
 
 Misc
@@ -902,7 +942,7 @@ Misc
 
 (let-alist alist &rest body)
   Let-bind dotted symbols to their cdrs in ALIST and execute BODY.
-  (let ((colors '((rose . red) (lily . white)))) (let-alist colors (if (eq \.rose 'red) \.lily)))
+  (let ((colors '((rose . red) (lily . white)))) (let-alist colors (if (eq .rose 'red) .lily)))
     ⇒ white
 #+end_example
 
@@ -914,7 +954,7 @@ Misc
 
 #+RESULTS:
 #+begin_example
-assoc is a primitive-function in ‘C source code’.
+assoc is a primitive-function in ‘src/fns.c’.
 
 (assoc KEY ALIST &optional TESTFN)
 
@@ -1061,6 +1101,9 @@ and moves this towards a [[id:7EA4F965-0CDF-4937-8C2F-B152685870F4][richer-model
 Rather than add any composite operations here, that will just be left
 to client code.
 
+This could certainly be modeled as a more generic data structure but
+right now that seems premature.
+
 *** get
 
 Get the path environment variable as a list of parsed options.
@@ -1080,7 +1123,7 @@ Get the path environment variable as a list of parsed options.
 #+end_src
 
 #+RESULTS:
-| foo | /usr/bin | /bin | /usr/sbin | /sbin | /opt/homebrew/bin/ |
+| /Users/mwhipple/.local/bin | /usr/bin | /bin | /usr/sbin | /sbin | /opt/homebrew/bin/ |
 
 *** set
 
@@ -1101,7 +1144,7 @@ Set the path from a provided list.
 #+end_src
 
 #+RESULTS:
-: foo:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin/
+: foo:/Users/mwhipple/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin/
 
 *** delete
 
@@ -1123,7 +1166,33 @@ while messing around.
 #+end_src
 
 #+RESULTS:
-: /usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin/
+: /Users/mwhipple/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin/
+
+*** member
+
+#+begin_src emacs-lisp
+  (defun mw/path/member (path)
+    (member path (mw/path/get)))
+#+end_src
+
+#+RESULTS:
+: mw/path/member
+
+**** Sandbox
+
+#+begin_src emacs-lisp
+  (mw/path/member "/usr/bin")
+#+end_src
+
+#+RESULTS:
+| /usr/bin | /bin | /usr/sbin | /sbin | /opt/homebrew/bin/ |
+
+#+begin_src emacs-lisp
+  (mw/path/member "/ur/bin")
+#+end_src
+
+#+RESULTS:
+
 
 * Filesystem
 
