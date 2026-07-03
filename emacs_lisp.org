@@ -473,6 +473,33 @@ String
     ⇒ t
 #+end_example
 
+** eq
+
+#+begin_src emacs-lisp
+  (describe-function #'eq)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+eq is a primitive-function in ‘src/data.c’.
+
+(eq OBJ1 OBJ2)
+
+Declared type: (function (t t) boolean)
+
+Return t if the two args are the same Lisp object.
+
+  Other relevant functions are documented in the comparison and symbol
+  groups.
+  Probably introduced at or before Emacs version 1.6.
+  This function does not change global state, including the match
+    data.
+  This function has a compiler macro ‘bytecomp--check-eq-args’ and a
+    ‘byte-compile’ property ‘byte-compile-two-args’ and a byte-code
+    optimizer ‘byte-optimize-eq’.  See the manual for details.
+
+#+end_example
+
 * flow control
 
 ** condition-case
@@ -2089,6 +2116,160 @@ normalization, if URL is already URI-encoded, this function
 should return it unchanged.
 
   Probably introduced at or before Emacs version 24.3.
+
+#+end_example
+
+* mw/dict
+
+Define some generic [[id:083CCE11-4732-459E-81FE-3738C8920016][dictionary]] behavior.
+This could potentially overlap with an existing library like ~a~, but
+that will be chased down later.
+
+** For alists and plists
+
+The core types used for dictionaries in elisp are alists and
+plists...both of which are just lists. This /could/ simply be left as
+generalized and rely on logic that resolves keys in whatever way
+works, but it seems better to provide a bit more control both for the
+sake of optimization and to allow for preventing unexpected behavior.
+
+This will therefore make use of a struct which wraps the object with a
+corresponding implementation. Unless otherwise indicated this is
+likely to make use of intentional aliasing/mutability so the struct
+can act as a dictionary handle to a structure which may have new or
+existing direct references.
+
+** protocol
+
+*** get
+
+Lookup a value by a key. This will only return the value itself
+(rather than something like a cons cell). This will return nil if no
+key is found.
+
+#+begin_src emacs-lisp
+  (cl-defgeneric mw/dict/get (ctx dict key)
+    "Return the value associated with key within dict.")
+#+end_src
+
+#+RESULTS:
+
+** implementations
+
+*** lists
+
+**** Wrapper
+
+Define the support for generic lists using a wrapper.
+
+To start, ~impl~ will be an alist where the cdrs are functions.
+The general signature of the functions will be of the form:
+~dict key [value]~.
+
+#+begin_src emacs-lisp
+  (cl-defstruct mw/dict/list
+    "Wrap a list with defined dictionary behavior."
+    impl data)
+#+end_src
+
+#+RESULTS:
+: mw/dict/list
+
+**** Method
+
+Define the method which leverages the impl.
+
+#+begin_src emacs-lisp
+  (cl-defmethod mw/dict/get (ctx (l mw/dict/list) key)
+    (funcall (alist-get :get (mw/dict/list-impl l)) (mw/dict/list-data l) key))
+#+end_src
+
+#+RESULTS:
+: mw/dict/get
+
+**** alist impl
+
+#+begin_src emacs-lisp
+  (defconst mw/dict/list/alist-impl
+    (list (cons :get (lambda (dict key) (alist-get key dict)))))
+#+end_src
+
+#+RESULTS:
+: mw/dict/list/alist-impl
+
+***** Sandbox
+
+#+begin_src emacs-lisp
+  (alist-get "a" '(("a" . 2)))
+  (mw/dict/get nil
+         (make-mw/dict/list
+  	:impl mw/dict/list/alist-impl
+  	:data '(("a" . 1)))
+  	"a")
+
+#+end_src
+
+**** alist
+
+* put
+
+#+begin_src emacs-lisp
+  (describe-function #'put)
+#+end_src
+
+#+RESULTS:
+: put is a primitive-function in ‘C source code’.
+: 
+: (put SYMBOL PROPNAME VALUE)
+: 
+: Store SYMBOL’s PROPNAME property with value VALUE and return that value.
+: It can later be retrieved with ‘(get SYMBOL PROPNAME)’.
+: 
+:   Probably introduced at or before Emacs version 1.6.
+: 
+* with-current-buffer
+:PROPERTIES:
+:ID:       9A9596F0-8138-47F1-8002-91B0474FE107
+:END:
+
+#+begin_src emacs-lisp
+  (describe-function #'with-current-buffer)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+with-current-buffer is a Lisp macro in ‘subr.el’.
+
+(with-current-buffer BUFFER-OR-NAME &rest BODY)
+
+Execute the forms in BODY with BUFFER-OR-NAME temporarily current.
+BUFFER-OR-NAME must be a buffer or the name of an existing buffer.
+The value returned is the value of the last form in BODY.  See
+also ‘with-temp-buffer’.
+
+  Other relevant functions are documented in the buffer group.
+  Probably introduced at or before Emacs version 20.1.
+
+#+end_example
+
+* with-temp-buffer
+
+#+begin_src emacs-lisp
+  (describe-function #'with-temp-buffer)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+with-temp-buffer is a Lisp macro in ‘subr.el’.
+
+(with-temp-buffer &rest BODY)
+
+Create a temporary buffer, and evaluate BODY there like ‘progn’.
+The buffer does not run the hooks ‘kill-buffer-hook’,
+‘kill-buffer-query-functions’, and ‘buffer-list-update-hook’.
+See also ‘with-temp-file’ and ‘with-output-to-string’.
+
+  Probably introduced at or before Emacs version 20.1.
 
 #+end_example
 
