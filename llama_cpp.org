@@ -1,0 +1,142 @@
+:PROPERTIES:
+:ID:       701C146E-FE50-4C4D-9332-7B8BA81DAC25
+:header-args: :results output
+:END:
+#+title: llama.cpp
+
+https://github.com/ggml-org/llama.cpp
+* Installation
+** [[id:61678BF7-A363-45C2-A3E2-54A1EB15EF68][brew]]
+
+#+begin_src shell :session brew :async yes
+  brew install -y llama.cpp
+#+end_src
+
+#+RESULTS:
+#+begin_example
+brew install -y llama.cpp
+==> Auto-updating Homebrew...
+Adjust how often this is run with `$HOMEBREW_AUTO_UPDATE_SECS` or disable with
+`$HOMEBREW_NO_AUTO_UPDATE=1`. Hide these hints with `$HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
+==> Auto-updated Homebrew!
+==> Updated Homebrew from 8d94d5c7cf to b69e6b30e7.
+Updated 1 tap (homebrew/core).
+==> New Formulae
+==> Downloading https://formulae.brew.sh/api/formula.jws.json
+ai-cli: Generate images, video, audio, and text from the terminal
+
+You have 46 outdated formulae and 1 outdated cask installed.
+
+==> Fetching downloads for: llama.cpp
+✔︎ Bottle Manifest llama.cpp (9850)
+✔︎ Bottle Manifest libomp (22.1.8)
+✔︎ Bottle Manifest ggml (0.15.3)
+✔︎ Bottle ggml (0.15.3)
+✔︎ Bottle libomp (22.1.8)
+✔︎ Bottle llama.cpp (9850)
+==> Installing dependencies for llama.cpp: libomp and ggml
+==> Installing llama.cpp dependency: libomp
+==> Pouring libomp--22.1.8.arm64_tahoe.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/libomp/22.1.8: 11 files, 1.8MB
+==> Installing llama.cpp dependency: ggml
+==> Pouring ggml--0.15.3.arm64_tahoe.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/ggml/0.15.3: 38 files, 3.3MB
+==> Installing llama.cpp
+==> Pouring llama.cpp--9850.arm64_tahoe.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/llama.cpp/9850: 71 files, 21MB
+==> Running `brew cleanup llama.cpp`...
+Disable this behaviour by setting `HOMEBREW_NO_INSTALL_CLEANUP=1`.
+Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
+[?2004hecho 'ob_comint_async_shell_end_65d1576f-71f1-4352-8468-bdf4efbebe9c'[?2004l
+#+end_example
+
+#+begin_src shell
+  brew list llama.cpp
+#+end_src
+
+#+RESULTS:
+#+begin_example
+/opt/homebrew/Cellar/llama.cpp/9850/INSTALL_RECEIPT.json
+/opt/homebrew/Cellar/llama.cpp/9850/LICENSE
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-tokenize
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-cli
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-batched-bench
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-lookup-merge
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-gguf-hash
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-eval-callback
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-lookahead
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-simple-chat
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-debug
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-embedding
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-debug-template-parser
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-results
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-speculative
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-gguf-split
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-perplexity
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-imatrix
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-fit-params
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-retrieval
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-batched
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-finetune
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-mtmd-cli
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-gguf
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-completion
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-bench
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-template-analysis
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-speculative-simple
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-diffusion-cli
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-lookup-create
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-server
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-lookup
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-idle
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-tts
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-lookup-stats
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-simple
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-quantize
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-gen-docs
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-parallel
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama
+/opt/homebrew/Cellar/llama.cpp/9850/bin/llama-passkey
+/opt/homebrew/Cellar/llama.cpp/9850/.brew/llama.cpp.rb
+/opt/homebrew/Cellar/llama.cpp/9850/AUTHORS
+/opt/homebrew/Cellar/llama.cpp/9850/include/mtmd.h
+/opt/homebrew/Cellar/llama.cpp/9850/include/mtmd-debug.h
+/opt/homebrew/Cellar/llama.cpp/9850/include/llama-cpp.h
+/opt/homebrew/Cellar/llama.cpp/9850/include/mtmd-helper.h
+/opt/homebrew/Cellar/llama.cpp/9850/include/llama.h
+/opt/homebrew/Cellar/llama.cpp/9850/sbom.spdx.json
+/opt/homebrew/Cellar/llama.cpp/9850/README.md
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libmtmd.0.0.9850.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/pkgconfig/llama.pc
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama.0.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libmtmd.0.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/cmake/llama/llama-config.cmake
+/opt/homebrew/Cellar/llama.cpp/9850/lib/cmake/llama/llama-version.cmake
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libmtmd.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama-server-impl.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama.0.0.9850.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama-completion-impl.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama-bench-impl.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama-common.0.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama-perplexity-impl.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama-quantize-impl.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama-common.0.0.9850.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama-cli-impl.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama-batched-bench-impl.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama-common.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/lib/libllama-fit-params-impl.dylib
+/opt/homebrew/Cellar/llama.cpp/9850/share/llama.cpp/test-sampling.cpp
+#+end_example
+* Verification
+
+#+begin_src shell :session llama-cli :async yes
+  llama-cli --version
+#+end_src
+
+#+RESULTS:
+: llama-cli --version
+: version: 9850 (4f31eedb0)
+: built with AppleClang 21.0.0.21000099 for Darwin arm64
+: [?2004hecho 'ob_comint_async_shell_end_74b04f8e-c713-4eb2-977c-eb78d93c628b'[?2004l
+* Help
