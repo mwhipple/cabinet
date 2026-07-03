@@ -129,6 +129,46 @@ Learn more
   https://huggingface.co/docs/huggingface_hub/en/guides/cli
 #+end_example
 
+* auth
+
+#+begin_src shell
+  hf auth --help
+#+end_src
+
+#+RESULTS:
+#+begin_example
+hf auth --help
+Usage: hf auth [OPTIONS] COMMAND [ARGS]...
+
+  Manage authentication (login, logout, etc.).
+
+Options:
+  -h, --help  Show this message and exit.
+
+Main commands:
+  list    List all stored access tokens. [alias: ls]
+  login   Login from your browser, or using a token from
+          huggingface.co/settings/tokens.
+  logout  Logout from a specific token.
+  switch  Switch between access tokens.
+  token   Print the current access token to stdout.
+  whoami  Find out which huggingface.co account you are logged in as.
+
+Examples
+  $ hf auth list
+  $ hf auth login
+  $ hf auth logout
+  $ hf auth switch
+  $ hf auth token
+  $ hf auth whoami
+
+Learn more
+  Use `hf <command> --help` for more information about a command.
+  Read the documentation at
+  https://huggingface.co/docs/huggingface_hub/en/guides/cli
+<hell_end_fa1bf961-aec1-4ecd-b287-e06e5b6daa9d'[?2004l
+#+end_example
+
 * models
 
 #+begin_src shell
