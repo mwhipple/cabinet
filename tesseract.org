@@ -1,0 +1,70 @@
+:PROPERTIES:
+:ID:       430E0509-84E4-4C32-A2B7-8EA0A4BB7200
+:header-args: :results output
+:END:
+#+title: tesseract
+* Installation
+
+#+begin_src shell :session brew :async
+  brew install tesseract
+#+end_src
+
+#+RESULTS:
+#+begin_example
+brew install tesseract
+==> Auto-updating Homebrew...
+Adjust how often this is run with `$HOMEBREW_AUTO_UPDATE_SECS` or disable with
+`$HOMEBREW_NO_AUTO_UPDATE=1`. Hide these hints with `$HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
+✔︎ JSON API packages.arm64_tahoe.jws.json
+==> Auto-updated Homebrew!
+Updated 2 taps (homebrew/core and homebrew/cask).
+==> New Formulae
+asccli: App Store Connect CLI to manage apps, versions, and screenshots
+avisynthplus: Improved version of the AviSynth frameserver
+bttf: CLI tool for datetime arithmetic, parsing, formatting and more
+container-use: Dev envs for coding agents. Run multiple agents safely with your stack
+eas-cli: Command-line tool for working with Expo Application Services
+kdash: Simple and fast dashboard for Kubernetes
+keyd: Key remapping daemon for Linux
+libcext: C utility library for Common Pipeline Library (CPL)
+md-tui: Markdown renderer in the terminal written in rust
+merman-cli: Mermaid.js, but headless, in Rust
+mimo-code: AI coding agent with cross-session memory
+netwatch: Cross-platform realtime network diagnostics TUI
+officecli: Read, edit, and automate Office documents (.docx, .xlsx, .pptx)
+pdf.tocgen: CLI toolset to generate table of contents for PDF files automatically
+pkgsite: Documentation server for Go packages
+pup: CLI companion with 200+ commands across 33+ Datadog products
+safestringlib: Safe string operations and memory routines
+swgp-go: Simple WireGuard proxy with minimal overhead for WireGuard traffic
+syswatch: Cross-platform system diagnostics TUI
+vulcain: Fast and idiomatic client-driven REST APIs
+zot: Lightweight coding agent harness written in Go
+==> New Casks
+flow5: Potential flow solver for preliminary aerodynamic and hydrofoil design
+r-rig-app: R Installation Manager
+shade: AI-powered media storage and asset management platform
+terax: Terminal-first AI-native developer workspace
+
+You have 22 outdated formulae and 1 outdated cask installed.
+Warning: Skipping kde-mac/kde because it is not trusted. Run `brew trust kde-mac/kde` to trust it.
+Warning: Skipping kde-mac/kde because it is not trusted. Run `brew trust kde-mac/kde` to trust it.
+
+Warning: tesseract 5.5.2 is already installed and up-to-date.
+To reinstall 5.5.2, run:
+  brew reinstall tesseract
+[?2004hecho 'ob_comint_async_shell_end_76393d17-f98f-4563-b9b3-f4b1c7169410'[?2004l
+#+end_example
+
+#+begin_src shell
+  tesseract --version
+#+end_src
+
+#+RESULTS:
+: tesseract 5.5.2
+:  leptonica-1.87.0
+:   libgif 5.2.2 : libjpeg 8d (libjpeg-turbo 3.1.3) : libpng 1.6.58 : libtiff 4.7.1 : zlib 1.2.12 : libwebp 1.6.0 : libopenjp2 2.5.4
+:  Found NEON
+:  Found libarchive 3.8.7 zlib/1.2.12 liblzma/5.8.3 bz2lib/1.0.8 liblz4/1.10.0 libzstd/1.5.7 expat/expat_2.7.3 CommonCrypto/system libb2/system
+:  Found libcurl/8.7.1 SecureTransport (LibreSSL/3.3.6) zlib/1.2.12 nghttp2/1.68.0
+
