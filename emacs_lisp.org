@@ -1004,6 +1004,37 @@ a side-effect.
 
 #+end_example
 
+** mw/path
+
+Provide helpers for working with PATHs as a list.
+
+The utility of this is associated with things like membership tests
+and moves this towards a [[id:7EA4F965-0CDF-4937-8C2F-B152685870F4][richer-model]].
+
+Rather than add any composite operations here, that will just be left
+to client code.
+
+*** get
+
+Get the path environment variable as a list of parsed options.
+
+#+begin_src emacs-lisp
+  (defun mw/path/get ()
+    (split-string (getenv "PATH") ":"))
+#+end_src
+
+#+RESULTS:
+: mw/path/get
+
+**** Sandbox
+
+#+begin_src emacs-lisp
+  (mw/path/get)
+#+end_src
+
+#+RESULTS:
+| foo | /usr/bin | /bin | /usr/sbin | /sbin | /opt/homebrew/bin/ |
+
 * Filesystem
 
 ** default-directory ([[id:5BA060A7-6674-4523-BC6F-6D34C230B12B][is-a-cwd]])
