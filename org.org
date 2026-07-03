@@ -383,7 +383,6 @@ Other properties affecting publication.
 
 #+end_example
 
-
 ** Publish the cabinet
 
 #+begin_src emacs-lisp :results output
@@ -601,7 +600,6 @@ number of days given here.
 
 #+RESULTS:
 : 999999
-
 
 *** Diplay tweaks
 
