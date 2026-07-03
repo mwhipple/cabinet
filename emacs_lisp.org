@@ -1406,41 +1406,441 @@ These match if the argument is the name of a subclass of CLASS.
   Probably introduced at or before Emacs version 25.1.
 
 #+end_example
-* Describe Things
-** describe-mode
+* elisp-strings
+:PROPERTIES:
+:ID:       5DD46C39-060E-44A3-A144-7CC64BDA27FC
+:END:
+
+** group
 
 #+begin_src emacs-lisp
-  (describe-function #'describe-mode)
+  (save-excursion
+    (shortdoc 'string)
+    (buffer-substring-no-properties (point-min) (point-max)))
 #+end_src
 
 #+RESULTS:
 #+begin_example
-describe-mode is an autoloaded interactive byte-code-function in
-‘help-fns.el’.
+Making Strings
 
-It is bound to C-h m, <f1> m and <help> m.
-It can also be invoked from the menu: Help → Describe → Describe
-Buffer Modes
+(make-string length init)
+  Return a newly created string of length LENGTH, with INIT in each element.
+  (make-string 5 ?x)
+    ⇒ "xxxxx"
 
-(describe-mode &optional BUFFER)
 
-Display documentation of current major mode and minor modes.
-A brief summary of the minor modes comes first, followed by the
-major mode description.  This is followed by detailed
-descriptions of the minor modes, each on a separate page.
+(string &rest characters)
+  Concatenate all the argument characters and make the result a string.
+  (string ?a ?b ?c)
+    ⇒ "abc"
 
-For this to work correctly for a minor mode, the mode’s indicator
-variable (listed in ‘minor-mode-alist’) must also be a function
-whose documentation describes the minor mode.
 
-If called from Lisp with a non-nil BUFFER argument, display
-documentation for the major and minor modes of that buffer.
+(concat &rest sequences)
+  Concatenate all the arguments and make the result a string.
+  (concat "foo" "bar" "zot")
+    ⇒ "foobarzot"
 
-When ‘describe-mode-outline’ is non-nil, Outline minor mode
-is enabled in the Help buffer.
 
-  Probably introduced at or before Emacs version 29.1.
+(string-join strings &optional separator)
+  Join all STRINGS using SEPARATOR.
+  (string-join '("foo" "bar" "zot") " ")
+    ⇒ "foo bar zot"
 
+
+(mapconcat function sequence &optional separator)
+  Apply FUNCTION to each element of SEQUENCE, and concat the results as strings.
+  (mapconcat (lambda (a) (concat "[" a "]")) '("foo" "bar" "zot") " ")
+    ⇒ "[foo] [bar] [zot]"
+
+
+(string-pad string length &optional padding start)
+  Pad STRING to LENGTH using PADDING.
+  (string-pad "foo" 5)
+    ⇒ "foo  "
+  (string-pad "foobar" 5)
+    ⇒ "foobar"
+  (string-pad "foo" 5 45 t)
+    ⇒ "--foo"
+
+
+(mapcar function sequence)
+  Apply FUNCTION to each element of SEQUENCE, and make a list of the results.
+  (mapcar #'identity "123")
+    ⇒ (49 50 51)
+
+
+(format string &rest objects)
+  Format a string out of a format-string and arguments.
+  (format "This number is %d" 4)
+    ⇒ "This number is 4"
+
+Manipulating Strings
+
+(substring string &optional from to)
+  Return a new string whose contents are a substring of STRING.
+  (substring "abcde" 1 3)
+    ⇒ "bc"
+  (substring "abcde" 2)
+    ⇒ "cde"
+  (substring "abcde" 1 -1)
+    ⇒ "bcd"
+  (substring "abcde" -4 4)
+    ⇒ "bcd"
+
+
+(string-limit string length &optional end coding-system)
+  Return a substring of STRING that is (up to) LENGTH characters long.
+  (string-limit "foobar" 3)
+    ⇒ "foo"
+  (string-limit "foobar" 3 t)
+    ⇒ "bar"
+  (string-limit "foobar" 10)
+    ⇒ "foobar"
+  (string-limit "fo好" 3 nil 'utf-8)
+    ⇒ "fo"
+
+
+(truncate-string-to-width str end-column &optional start-column padding ellipsis ellipsis-text-property)
+  Truncate string STR to end at column END-COLUMN.
+  (truncate-string-to-width "foobar" 3)
+    ⇒ "foo"
+  (truncate-string-to-width "你好bar" 5)
+    ⇒ "你好b"
+
+
+(split-string string &optional separators omit-empty trim)
+  Split STRING into substrings bounded by matches for SEPARATORS.
+  (split-string "foo bar")
+    ⇒ ("foo" "bar")
+  (split-string "|foo|bar|" "|")
+    ⇒ ("" "foo" "bar" "")
+  (split-string "|foo|bar|" "|" t)
+    ⇒ ("foo" "bar")
+
+
+(split-string-and-unquote string &optional separator)
+  Split the STRING into a list of strings.
+  (split-string-and-unquote "foo \"bar zot\"")
+    ⇒ ("foo" "bar zot")
+
+
+(split-string-shell-command string)
+  Split STRING (a shell command) into a list of strings.
+  (split-string-shell-command "ls /tmp/'foo bar'")
+    ⇒ ("ls" "/tmp/foo bar")
+
+
+(string-lines string &optional omit-empty keep-newlines)
+  Split STRING into a list of lines.
+  (string-lines "foo\n\nbar")
+    ⇒ ("foo" "" "bar")
+  (string-lines "foo\n\nbar" t)
+    ⇒ ("foo" "bar")
+
+
+(string-replace from-string to-string in-string)
+  Replace FROM-STRING with TO-STRING in IN-STRING each time it occurs.
+  (string-replace "foo" "bar" "foozot")
+    ⇒ "barzot"
+
+
+(replace-regexp-in-string regexp rep string &optional fixedcase literal subexp start)
+  Replace all matches for REGEXP with REP in STRING.
+  (replace-regexp-in-string "[a-z]+" "_" "*foo*")
+    ⇒ "*_*"
+
+
+(string-trim string)
+  Trim STRING of leading and trailing white space.
+  (string-trim " foo ")
+    ⇒ "foo"
+
+
+(string-trim-left string &optional regexp)
+  Trim STRING of leading string matching REGEXP.
+  (string-trim-left "oofoo" "o+")
+    ⇒ "foo"
+
+
+(string-trim-right string &optional regexp)
+  Trim STRING of trailing string matching REGEXP.
+  (string-trim-right "barkss" "s+")
+    ⇒ "bark"
+
+
+(string-truncate-left string length)
+  If STRING is longer than LENGTH, return a truncated version.
+  (string-truncate-left "longstring" 8)
+    ⇒ "...tring"
+
+
+(string-remove-suffix suffix string)
+  Remove SUFFIX from STRING if present.
+  (string-remove-suffix "bar" "foobar")
+    ⇒ "foo"
+
+
+(string-remove-prefix prefix string)
+  Remove PREFIX from STRING if present.
+  (string-remove-prefix "foo" "foobar")
+    ⇒ "bar"
+
+
+(string-chop-newline string)
+  Remove the final newline (if any) from STRING.
+  (string-chop-newline "foo\n")
+    ⇒ "foo"
+
+
+(string-clean-whitespace string)
+  Clean up whitespace in STRING.
+  (string-clean-whitespace " foo   bar   ")
+    ⇒ "foo bar"
+
+
+(string-fill string width)
+  Try to word-wrap STRING so that it displays with lines no wider than WIDTH.
+  (string-fill "Three short words" 12)
+    ⇒ "Three short\nwords"
+  (string-fill "Long-word" 3)
+    ⇒ "Long-word"
+
+
+(reverse seq)
+  Return the reversed copy of list, vector, or string SEQ.
+  (reverse "foo")
+    ⇒ "oof"
+
+
+(substring-no-properties string &optional from to)
+  Return a substring of STRING, without text properties.
+  (substring-no-properties (propertize "foobar" 'face 'bold) 0 3)
+    ⇒ "foo"
+
+
+(try-completion string collection &optional predicate)
+  Return longest common substring of all completions of STRING in COLLECTION.
+  (try-completion "foo" '("foobar" "foozot" "gazonk"))
+    ⇒ "foo"
+
+Unicode Strings
+
+(string-glyph-split string)
+  Split STRING into a list of strings representing separate glyphs.
+  (string-glyph-split "Hello, 👼🏻🧑🏼‍🤝‍🧑🏻")
+    ⇒ ("H" "e" "l" "l" "o" "," " " "👼" "🏻" "🧑" "🏼" "‍" "🤝" "‍" "🧑" "🏻")
+
+
+(string-glyph-compose string)
+  Compose STRING according to the Unicode NFC.
+  (string-glyph-compose "Å")
+    ⇒ "Å"
+
+
+(string-glyph-decompose string)
+  Decompose STRING according to the Unicode NFD.
+  (string-glyph-decompose "Å")
+    ⇒ "Å"
+
+Predicates for Strings
+
+(string-equal s1 s2)
+  Return t if two strings have identical contents.
+  (string-equal "abc" "abc")
+    ⇒ t
+  (string-equal "abc" "ABC")
+    ⇒ nil
+
+
+(string-equal-ignore-case string1 string2)
+  Compare STRING1 and STRING2 case-insensitively.
+  (string-equal-ignore-case "foo" "FOO")
+    ⇒ t
+
+
+(equal o1 o2)
+  Return t if two Lisp objects have similar structure and contents.
+  (equal "foo" "foo")
+    ⇒ t
+
+
+(cl-equalp x y)
+  Return t if two Lisp objects have similar structures and contents.
+  (cl-equalp "Foo" "foo")
+    ⇒ t
+
+
+(stringp object)
+  Return t if OBJECT is a string.
+  (stringp "a")
+    ⇒ t
+  (stringp 'a)
+    ⇒ nil
+  (stringp ?a)
+    ⇒ nil
+
+
+(string-or-null-p object)
+  Return t if OBJECT is a string or nil.
+  (string-or-null-p "a")
+    ⇒ t
+  (string-or-null-p nil)
+    ⇒ t
+
+
+(char-or-string-p object)
+  Return t if OBJECT is a character or a string.
+  (char-or-string-p ?a)
+    ⇒ t
+  (char-or-string-p "a")
+    ⇒ t
+
+
+(string-empty-p string)
+  Check whether STRING is empty.
+  (string-empty-p "")
+    ⇒ t
+
+
+(string-blank-p string)
+  Check whether STRING is either empty or only whitespace.
+  (string-blank-p " \n")
+    ⇒ 0
+
+
+(string-lessp string1 string2)
+  Return non-nil if STRING1 is less than STRING2 in lexicographic order.
+  (string-lessp "abc" "def")
+    ⇒ t
+  (string-lessp "pic4.png" "pic32.png")
+    ⇒ nil
+  (string-lessp "1.1" "1.2")
+    ⇒ t
+
+
+(string-greaterp string1 string2)
+  Return non-nil if STRING1 is greater than STRING2 in lexicographic order.
+  (string-greaterp "foo" "bar")
+    ⇒ t
+
+
+(string-version-lessp string1 string2)
+  Return non-nil if S1 is less than S2, as version strings.
+  (string-version-lessp "pic4.png" "pic32.png")
+    ⇒ t
+  (string-version-lessp "1.9.3" "1.10.2")
+    ⇒ t
+
+
+(string-collate-lessp s1 s2 &optional locale ignore-case)
+  Return t if first arg string is less than second in collation order.
+  (string-collate-lessp "abc" "abd")
+    ⇒ t
+
+
+(string-prefix-p prefix string &optional ignore-case)
+  Return non-nil if STRING begins with PREFIX.
+  (string-prefix-p "foo" "foobar")
+    ⇒ t
+
+
+(string-suffix-p suffix string &optional ignore-case)
+  Return non-nil if STRING ends with SUFFIX.
+  (string-suffix-p "bar" "foobar")
+    ⇒ t
+
+Case Manipulation
+
+(upcase obj)
+  Convert argument to upper case and return that.
+  (upcase "foo")
+    ⇒ "FOO"
+
+
+(downcase obj)
+  Convert argument to lower case and return that.
+  (downcase "FOObar")
+    ⇒ "foobar"
+
+
+(capitalize obj)
+  Convert argument to capitalized form and return that.
+  (capitalize "foo bar zot")
+    ⇒ "Foo Bar Zot"
+
+
+(upcase-initials obj)
+  Convert the initial of each word in the argument to upper case.
+  (upcase-initials "The CAT in the hAt")
+    ⇒ "The CAT In The HAt"
+
+Converting Strings
+
+(string-to-number string &optional base)
+  Parse STRING as a decimal number and return the number.
+  (string-to-number "42")
+    ⇒ 42
+  (string-to-number "deadbeef" 16)
+    ⇒ 3735928559
+  (string-to-number "2.5e+03")
+    ⇒ 2500.0
+
+
+(number-to-string number)
+  Return the decimal representation of NUMBER as a string.
+  (number-to-string 42)
+    ⇒ "42"
+
+
+(char-uppercase-p char)
+  Return non-nil if CHAR is an upper-case character.
+  (char-uppercase-p ?A)
+    ⇒ t
+  (char-uppercase-p ?a)
+    ⇒ nil
+
+Data About Strings
+
+(length sequence)
+  Return the length of vector, list or string SEQUENCE.
+  (length "foo")
+    ⇒ 3
+  (length "avocado: 🥑")
+    ⇒ 10
+
+
+(string-width string &optional from to)
+  Return width of STRING in columns when displayed in the current buffer.
+  (string-width "foo")
+    ⇒ 3
+  (string-width "avocado: 🥑")
+    ⇒ 11
+
+
+(string-pixel-width string &optional buffer)
+  Return the width of STRING in pixels.
+  (string-pixel-width "foo")
+    ⇒ 21
+  (string-pixel-width "avocado: 🥑")
+    ⇒ 79
+
+
+(string-search needle haystack &optional start-pos)
+  Search for the string NEEDLE in the string HAYSTACK.
+  (string-search "bar" "foobarzot")
+    ⇒ 3
+
+
+(assoc-string key list &optional case-fold)
+  Like ‘assoc’ but specifically for strings (and symbols).
+  (assoc-string "foo" '(("a" 1) (foo 2)))
+    ⇒ (foo 2)
+
+
+(seq-position sequence elt &optional testfn)
+  Return the (zero-based) index of the first element in SEQUENCE "equal" to ELT.
+  (seq-position "foobarzot" ?z)
+    ⇒ 6
 #+end_example
 
 ** describe-package
