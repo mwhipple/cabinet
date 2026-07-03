@@ -98,9 +98,7 @@ A built in jq formatter also seems appealing but not available as an extension p
 Define some content to inject prior to the body.
 
 ** :results
-
 *** what is captured
-
 **** value
 
 The default, with some DWIM formatting.

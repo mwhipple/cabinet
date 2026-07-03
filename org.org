@@ -454,6 +454,23 @@ Let's just set this to [[id:141D8A2B-2353-4636-9E02-3C9899EB1174][org-directory]
 
 #+RESULTS:
 
+*** org-agenda-open-link
+#+begin_src emacs-lisp
+  (describe-function #'org-agenda-open-link)
+#+end_src
+
+#+RESULTS:
+: org-agenda-open-link is an interactive byte-code-function in
+: ‘org-agenda.el’.
+: 
+: (org-agenda-open-link &optional ARG)
+: 
+: Open the link(s) in the current entry, if any.
+: This looks for a link in the displayed line in the agenda.
+: It also looks at the text of the entry itself.
+: 
+
+**** Debugging Window Selection
 *** org-agenda-span
 
 #+begin_src emacs-lisp
