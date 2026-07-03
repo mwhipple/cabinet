@@ -1,0 +1,31 @@
+:PROPERTIES:
+:ID:       25057DA1-FADB-44EA-8A54-045FEAEC2A9C
+:END:
+#+title: language-culture
+
+Potentially one of the biggest factors that should guide selection of
+something like a programming language is the culture that surrounds
+it.
+
+For me this perpsective crystallized many years ago while spending a
+fair amount of time with perl. While I appreciate much of perl's
+culture including its TIMTOWTDI mentality (and I consider the book
+"Perl Best Practices" a good read for developer regardless of
+language), I also witnessed many threads on a beginner mailing list
+devolving from answering the original question to trying to
+exhaustively provide often esoteric answers. This felt like a quick
+way to overwhelm the beginners for whom the list ostensibly existed,
+and at the time there also seemed to be a desire for perl to have more
+of a golden path (like "Enlightened Perl") that could allow it to
+retain its position in the face of then upstarts like Python and
+Ruby, but all of that seemed hamstrung by what often turned into
+obfuscated perl leaking into introductory resources.
+
+There seem to be a fairly wide range of qualities that impact cultures
+which in turn impact the ecosystem and other resources available for a
+language. Given that functionality can be coded in most languages, the
+culture surrounding those languages therefore becomes one of the key
+drivers for how the language tends to be applied to realize those
+needs. While I'm open to to a range of different cultures, I do tend
+to be turned off by any that seem self-indulgent (all languages should
+be a means to an end rather than serving an inherent purpose).
