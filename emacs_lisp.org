@@ -1035,6 +1035,27 @@ Get the path environment variable as a list of parsed options.
 #+RESULTS:
 | foo | /usr/bin | /bin | /usr/sbin | /sbin | /opt/homebrew/bin/ |
 
+*** set
+
+Set the path from a provided list.
+
+#+begin_src emacs-lisp
+  (defun mw/path/set (paths)
+    (setenv "PATH" (string-join paths ":")))
+#+end_src
+
+#+RESULTS:
+: mw/path/set
+
+**** Sandbox
+
+#+begin_src emacs-lisp
+  (mw/path/set (cons "foo" (mw/path/get)))
+#+end_src
+
+#+RESULTS:
+: foo:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin/
+
 * Filesystem
 
 ** default-directory ([[id:5BA060A7-6674-4523-BC6F-6D34C230B12B][is-a-cwd]])
