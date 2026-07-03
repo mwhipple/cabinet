@@ -1,0 +1,18 @@
+:PROPERTIES:
+:ID:       A14DACC4-73D4-4A2D-9FA1-64302876D845
+:END:
+#+title: code-comments
+* is-a-comment
+:PROPERTIES:
+:ID:       BE451020-0698-4866-9E61-CA682E619A85
+:END:
+* Single Line
+** is-a-single-line-comment
+:PROPERTIES:
+:ID:       5C4EB373-6300-460B-A882-A8A2D72259CD
+:END:
+* Block
+** is-a-block-comment
+:PROPERTIES:
+:ID:       A0D7C6C3-F0E8-4362-AA6F-54BF6FF5A422
+:END:
