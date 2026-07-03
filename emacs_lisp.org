@@ -1193,6 +1193,26 @@ while messing around.
 
 #+RESULTS:
 
+*** cons
+
+#+begin_src emacs-lisp
+  (defun mw/path/cons (path)
+    (mw/path/set (cons path (mw/path/get))))
+#+end_src
+
+#+RESULTS:
+: mw/path/cons
+
+**** Sandbox
+
+#+begin_src emacs-lisp
+  (mw/path/append "foo")
+#+end_src
+
+#+RESULTS:
+: /Users/mwhipple/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin/:foo
+
+*** append
 
 * Filesystem
 
