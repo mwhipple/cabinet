@@ -2,6 +2,9 @@
 :ID:       72258C97-F88E-4498-825D-A7447EC008AA
 :END:
 #+title: java
+
+The Java Programming Language
+
 * Configuring for Babel
 
 #+begin_src emacs-lisp
@@ -17,3 +20,47 @@
 
 #+RESULTS:
 : foo
+
+* My Take
+
+** [[id:25057DA1-FADB-44EA-8A54-045FEAEC2A9C][language-culture]]
+
+*** Spring Boot
+
+Java seems to have a fair amount of competing subcultures. The one I'm
+most often (but not exclusively) exposed to, however, is that which is
+dominated by the use of frameworks such as Spring Boot. Spring Boot is
+fairly bloated, and much of the use seems to rely on a fair amount of
+normalized ignorance...where the developers fiddle with things until
+they work.
+
+My take on that specific subculture and Spring Boot in general is that
+it seems largely unnecessary. Much of the model seems to inherit
+practices that where popular prior to Java 8, at a time when fairly
+complicated tools made heavy use of annotations along with AOP and
+reflection to compensate for what felt like deficiencies in the
+language while we were waiting to see whether Java was going to yield
+to some newer language "Beyond Java". A time when I earnestly adopted
+Spring (pre-boot) and played around with pre-cursors like Spring
+Roo...and at one point I remember producing some code for JPA entity
+graphs which fell squarely into the camp of >10x lines of annotations
+for every line of code.
+
+The Java language itself has evolved and the standard library it
+provides has expanded to the point where it can be applied to more
+problems directly, and other components and custom logic can be
+readily integrated where needed using core facilities. That there's
+a lingering attachment to offloading work to more magical tools.
+
+Spring Boot in particular seems to particularly pull people in that
+direction. Having spent far more time with pre-Boot Spring and
+streamlining it's use it feels like there's no concrete benefit in
+what the Spring Boot magic brings over some minimal wiring code, but
+a notable loss in terms of understandability (a feeling that has been
+reinforced when needing to manually wire compontents into a Spring
+Boot app which affirmed that there's negligble difference in lines of
+code when configuration is involved). This seems to be driven by the
+notion of trying to not [[id:D3B65FED-887A-47FB-82F0-55CD3DC41AC7][say-something]], and also by offering an overly
+generalized solution that is setup so that it can change in readily
+change in ways that you'd never actually want your system to change.
+
