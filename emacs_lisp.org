@@ -557,9 +557,7 @@ See also the function ‘signal’ for more info.
 * [[id:58037216-DD41-4C5F-AE7C-7A621EF9D319][lists]]
 
 #+begin_src emacs-lisp
-  (save-excursion
-    (shortdoc 'list)
-    (buffer-substring-no-properties (point-min) (point-max)))
+  (mw/shortdoc 'list)
 #+end_src
 
 #+RESULTS:
@@ -1136,6 +1134,56 @@ Misc
   Let-bind dotted symbols to their cdrs in ALIST and execute BODY.
   (let ((colors '((rose . red) (lily . white)))) (let-alist colors (if (eq .rose 'red) .lily)))
     ⇒ white
+#+end_example
+
+** alist-get
+
+#+begin_src emacs-lisp
+  (describe-function #'alist-get)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+alist-get is a byte-code-function in ‘subr.el’.
+
+(alist-get KEY ALIST &optional DEFAULT REMOVE TESTFN)
+
+Find the first element of ALIST whose ‘car’ equals KEY and return its ‘cdr’.
+If KEY is not found in ALIST, return DEFAULT.
+Equality with KEY is tested by TESTFN, defaulting to ‘eq’.
+
+You can use ‘alist-get’ in "place expressions"; i.e., as a
+generalized variable.  Doing this will modify an existing
+association (more precisely, the first one if multiple exist), or
+add a new element to the beginning of ALIST, destructively
+modifying the list stored in ALIST.
+
+Example:
+
+   (setq foo '((a . 0)))
+   (setf (alist-get 'a foo) 1
+         (alist-get 'b foo) 2)
+
+   foo => ((b . 2) (a . 1))
+
+
+When using it to set a value, optional argument REMOVE non-nil
+means to remove KEY from ALIST if the new value is ‘eql’ to
+DEFAULT (more precisely the first found association will be
+deleted from the alist).
+
+Example:
+
+  (setq foo '((a . 1) (b . 2)))
+  (setf (alist-get 'b foo nil 'remove) nil)
+
+  foo => ((a . 1))
+
+  ‘alist-get’ is also a generalized variable.
+  Other relevant functions are documented in the list and alist
+  groups.
+  Probably introduced at or before Emacs version 25.1.
+
 #+end_example
 
 ** assoc
