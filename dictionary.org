@@ -1,0 +1,17 @@
+:PROPERTIES:
+:ID:       083CCE11-4732-459E-81FE-3738C8920016
+:END:
+#+title: dictionary
+
+A dictionary represents a structure where values are associated with
+keys. This includes what may also be called associative arrays, maps,
+or (the most implementation biased) hashes.
+
+These have the property that the values associated with the keys can
+be retrieved and optionally set, and such operations are likely to be
+optimized (an order of growth along the lines of of constant or
+logarithmic should be available where appropriate).
+* is-a-dictionary
+:PROPERTIES:
+:ID:       AA953990-88CD-40CD-9C47-88D9DE698E13
+:END:
