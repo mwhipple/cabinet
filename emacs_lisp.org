@@ -1056,6 +1056,28 @@ Set the path from a provided list.
 #+RESULTS:
 : foo:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin/
 
+*** delete
+
+This is unlikely to be typically used but can at least help clean up
+while messing around.
+
+#+begin_src emacs-lisp
+  (defun mw/path/delete (path)
+    (mw/path/set (delete path (mw/path/get))))
+#+end_src
+
+#+RESULTS:
+: mw/path/delete
+
+**** Sandbox
+
+#+begin_src emacs-lisp
+  (mw/path/rm "foo")
+#+end_src
+
+#+RESULTS:
+: /usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin/
+
 * Filesystem
 
 ** default-directory ([[id:5BA060A7-6674-4523-BC6F-6D34C230B12B][is-a-cwd]])
