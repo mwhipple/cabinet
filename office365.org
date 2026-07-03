@@ -12,6 +12,9 @@ While I've warmed up to Microsoft over the years I still remain pretty
 unlikely to adopt Office 365 of my own free will...but them's the
 breaks. I've setup a personal free account to work with this notebook.
 
+There are some canned o365 tools for langchain - it is likely worth
+trying to pull those in.
+
 * Library Selection
 
 ** O365 (Nope)
@@ -1258,6 +1261,29 @@ FILE
 #+end_example
 
 **** users
+
+***** package
+
+#+begin_src python :results output
+  from msgraph.generated import users
+  help(users)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Help on package msgraph.generated.users in msgraph.generated:
+
+NAME
+    msgraph.generated.users
+
+PACKAGE CONTENTS
+    users_request_builder
+
+FILE
+    (built-in)
+#+end_example
+
+***** users_request_builder
 
 #+begin_src python :results output
   from msgraph.generated.users import users_request_builder
