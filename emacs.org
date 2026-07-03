@@ -1396,6 +1396,19 @@ Interactively, URL defaults to the string looking like a url around point.
 
 #+end_example
 
+** mw/xw/new-search
+
+Open a new xwidget window searching for the provided term
+using [[id:2140D11D-1066-4B77-9062-0B8A1C5A287D][url-encode-url]].
+
+#+begin_src emacs-lisp
+  (defun mw/xw/new-search (q)
+    (xwidget-webkit-browse-url (url-encode-url (format "https://www.duckduckgo.com?q=%s" q))))
+#+end_src
+
+#+RESULTS:
+: mw/xw/new-search
+
 * Sharing macOS Environment Variables with Emacs
 :PROPERTIES:
 :ID:       4F46C5C5-5999-4BCD-8432-2AE564B64843
