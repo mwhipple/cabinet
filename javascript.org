@@ -1,0 +1,136 @@
+:PROPERTIES:
+:ID:       BAEC8A6E-A434-4D3B-B05A-5C691A3C10E4
+:END:
+#+title: javascript
+
+JavaScript is one of the most popular programming languages.
+
+* My Take
+
+** [[id:25057DA1-FADB-44EA-8A54-045FEAEC2A9C][language-culture]]
+
+I've tended to have some serious reservations about the JS
+community and ecosystem, which were particularly reinforced after a
+stint at an all JS shop.
+
+JS anecdotally seems to breed fanaticism, where even though it
+certainly seems like the developers of systems like NodeJS appreciate
+it as a specific tool to be complemented by others, many adopters
+instead fall into treating JS as a golden hammer.
+
+*** Bloat
+
+The JS community seems to suffer from rapidly expanding bloat. The
+rate of tooling churn was somewhat of a joke ~10 years ago, and while
+(from a somewhat outsider perspective) that seems to have slowed down
+that seems somewhat incidental rather than a cultural change. There
+still seems to be a tendency to chase new tools and download the
+Internet even when that may not be necessary.
+
+JS and the environments it runs it feels like the quintessential
+example of some kind of Jeven's Paradox for software where even though
+all of the pieces involved seem to get more powerful, they all
+continue to grow larger rather than leveraging that power to
+streamline.
+
+While the language itself seems particularly ripe for providing lean
+functionality, its use seems to gravitate towards sprawl.
+
+*** Accepted Ignorance
+
+JavaScript seems like a language where lack of understanding how
+things work is particularly normalized. The language itself certainly
+has its fair share of quirks, and environments like NodeJS may also
+bring enough specialized considerations to raise the overhead a fair
+amount; but both on both forums and personal experience I've come
+across what seems to be a higher than typical exchanges which
+translated to programming by coincidence and developers that are
+unable to explain code that they've written (and organizations that
+seem to rely on one or two gurus that are expected to be able to
+furnish that knowledge).
+
+Many of those that have drank too much of the JS Kool-aid also seem to
+promote ideas around some aspects of JS being /better/ or somehow
+avoiding problems (for example that it is asynchronous or
+single-threaded). While much of this stems from very real potential
+benefits, there is a tendency to embrace those promises independently
+of context and understanding (and therefore facing the consequences
+when the lack of magic is discovered).
+
+This unforuntately does not seem unique to JavaScript, but the
+frequency and level in JavaScript seems higher than elsewhere,
+particularly as the language and ecosystem (like TypeScript) have
+rolled out additional sugar. Among other concerns this has translated
+to major obstacles in operating such systems (both in terms of systems
+not performing as expected, and in building out observability).
+
+** The Language
+
+I'm fairly fond of the JavaScript language itself. It has potentially
+gotten a bit too big over the years, particularly as many of the
+extensions are somewhat superficial and therefore seem likely to be
+misleading.
+
+I gravitate towards the original SICP-inspired model (I probably
+remain likely to drift towards parasitic inheritance over classical)
+and apply JS as a language that can be particularly adept at slicing
+up data (and leverage any of the new features that aid in that
+goal). This overall can leave it with a great mix of simplicity and
+power.
+
+** Runtime Model
+
+Most of the JavaScript runtimes make use of event loops and therefore
+a model that amounts to cooperative multitasking. In my opinion, this
+somewhat shifts JavaScript from being a general purpose language to
+one that is specialized for that space (where it inadvertently lead to
+forfeiting or recreating decades of work related to preemptive
+scheduling). While this can offer a very transparent and lightweight
+solution, it also requires complementary expertise and attention.
+
+** Engines
+
+A major blocker for me with more whole-hearted adoption of JavaScript
+(outside of professional use) has been the heft and limited selection
+of mature engines. It seemed like SpiderMonkey and V8 where
+the only up-to-date games in town. Both of those seem fairly
+large...but the language itself seems like it should not require that
+level of girth (assuming that things like optimization are not tangled
+up with the base engine).
+
+More recently I've discovered https://github.com/bellard/quickjs which
+is a game changer in this regard (and ~mquickjs~ which is even leaner).
+
+** TypeScript and Structural Typing
+
+I like TypeScript...my one /major/ complaint with it is that it is
+large - and that mass is on top of other large masses in the form of
+engines and runtimes. Professionally I'm likely to pull in TypeScript
+for any sizeable JS project, personally I'm probably more likely to
+look for a smaller alternative that only makes use of comments.
+
+One major element of TypeScript that I'd look to apply across any
+JavaScript project is the orientation around structural typing. As
+touched on before, JavaScript as a whole is particularly appealing as
+a language that can expressively define data transformations, and the
+introduction of some type of nominal meta-layer on top of that model
+feels like noise that is best left out. This is particularly
+reinforced when thinking about how that data may be sent across the
+wire, where JavaScript is obviously attuned to the marriage of logic
+and data represented as JSON...but things get a lot messier if there's
+significant information which is not encoded within that data. This
+has translated to very real hassles in practice as I've worked with
+code bases that rely on instance of checks but don't properly expose
+the relevant constructors/types in their APIs nor enforce a good
+boundary between internal and public behaviors (so polymorphism would
+sometimes rely on access to types that weren't exposed). This has led
+to confusing results where objects that are returned are not
+self-describing and may be smuggling methods or expect logic which is
+not otherwise available and therefore the data that is returned is not
+actually freed from presumed contexts; standard usage is less
+intuitive and extension is particularly thorny. These issues could
+certainly be addressed through improving the API surface...but a
+particularly safe and simple way to unlock the underlying value is to
+just move towards structural typing and data that is self-contained.
+In the project where I was most impacted by this, I just created a
+translation layer to provide that cleaner break.
