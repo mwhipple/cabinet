@@ -1,0 +1,73 @@
+:PROPERTIES:
+:ID:       5C3C29D0-540F-4F03-88CF-DE7E2C1CC028
+:END:
+#+title: hugging-face
+* Command Line
+** Installation
+
+#+begin_src shell :session hf :async yes :results output
+  curl -LsSf https://hf.co/cli/install.sh | bash
+#+end_src
+
+#+RESULTS:
+#+begin_example
+curl -LsSf https://hf.co/cli/install.sh | bash
+[INFO] Installing Hugging Face CLI...
+[INFO] OS: macos
+[INFO] Force reinstall: false
+[INFO] Install dir: /Users/mwhipple/.hf-cli
+[INFO] Bin dir: /Users/mwhipple/.local/bin
+[INFO] Skip PATH update: false
+[WARNING] python3 detected (Python 3.9.6) but Python 3.10+ is required.
+[INFO] Using Python: Python 3.14.6
+[INFO] Creating directories...
+[INFO] Creating virtual environment...
+[INFO] Virtual environment already exists; reusing (pass --force to recreate)
+[INFO] Installing/upgrading Hugging Face CLI (latest)...
+[INFO] Installation output suppressed; set HF_CLI_VERBOSE_PIP=1 for full logs
+[INFO] Linking hf CLI into /Users/mwhipple/.local/bin...
+[INFO] hf available at /Users/mwhipple/.local/bin/hf (symlink to venv)
+[INFO] Run without touching PATH: env PATH="/Users/mwhipple/.local/bin:$PATH" hf --help
+[INFO] /Users/mwhipple/.local/bin is not in your PATH
+[INFO] Verifying installation...
+[SUCCESS] Hugging Face CLI installed successfully!
+[INFO] CLI location: /Users/mwhipple/.local/bin/hf
+[INFO] Installation directory: /Users/mwhipple/.hf-cli
+[INFO] Current version: ✓ hf version
+  version: 1.21.0
+[INFO] 
+[INFO] To uninstall the Hugging Face CLI, run:
+[INFO]   rm -rf /Users/mwhipple/.hf-cli
+[INFO]   rm -f /Users/mwhipple/.local/bin/hf
+[INFO] 
+[INFO]   Remove any PATH edits you made manually.
+[SUCCESS] hf CLI ready!
+[INFO] Binary: /Users/mwhipple/.local/bin/hf
+[INFO] Virtualenv: /Users/mwhipple/.hf-cli
+[INFO] Try it now: env PATH="/Users/mwhipple/.local/bin:$PATH" hf --help
+[INFO] Examples:
+[INFO]   hf auth login
+[INFO]   hf download deepseek-ai/DeepSeek-R1
+[INFO]   hf jobs run python:3.12 python -c 'print("Hello from HF CLI!")'
+[INFO]
+[?2004hecho 'ob_comint_async_shell_end_7ab3044d-bd8c-4ad9-a25c-a8f6696d06bb'[?2004l
+#+end_example
+** Verification
+
+#+begin_src emacs-lisp
+  (let ((path "/Users/mwhipple/.local/bin"))
+    (unless (mw/path/member path)
+      (mw/path/cons path)))
+#+end_src
+
+#+RESULTS:
+: /Users/mwhipple/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin/
+
+#+begin_src bash :results output
+  hf --version
+#+end_src
+
+#+RESULTS:
+: 1.21.0
+
+* Help
