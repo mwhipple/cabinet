@@ -1,0 +1,49 @@
+:PROPERTIES:
+:ID:       D3B65FED-887A-47FB-82F0-55CD3DC41AC7
+:END:
+#+title: say-something
+
+Say something is a concept I'll use for when Don't Repeat Yourself
+(DRY) goes overboard. While there's clearly some value in keeping
+things DRY...it's probably most important to keep a clear perpsective
+of what those actual values are.
+
+This is very much aligned with a principle in requirements engineering
+for "say it once and say it well" - where any repetition is more
+likely to introduce drift which in the context of requirements can
+lead to ambiguities and conflicts, and in the case of software itself
+can lead to maintenance challenges when something like an update
+applied to one instance is not manifested in the others.
+
+In both cases the concepts should therefore have a single
+/definition/. This in *no way* implies that that definition should not
+be referenced whereever appropriate - the value of that is likely to
+be evident in the requirements case (being able to understand how
+things relate to each other)...and the same applies to software.
+
+In software, however, DRY often gets extended to the point where logic
+is written so that what is defined is applied in a way that makes it
+implicit...rather than referencing the definition it is assumed:
+"don't repeat yourself" becomes "don't even say anything". This can
+lead to code which is coupled to its execution environment and
+therefore lacks a bit of functional hygiene which /seems/ like
+something that wouldn't be advocated for once identified. Most
+obviously this leads to the behavior of the system not being readily
+discoverable from the corresponding code: where such understanding
+relies on knowledge of something elsewhere and that knowledge may be
+presumed rather than captured.
+
+This may often be defended in terms of the prospective noise of those
+repeated references. The footprint of such references should be
+minimal however (a line or two) and may often amount to an equivalent
+impact as code introduced to try to avoid them. If the lines are more
+than a line or two...then it may also be a sign of a larger problem
+either in terms of the API (your functionality should be able to be
+readily applied, if not that seems like a usability issue) or
+complexity (if the component under test or any other part of the
+system requires a lot of things to be set up to demonstrate behavior
+then that suggests too many dependencies and/or poorly defined
+interfaces).
+
+Not repeating yourself helps avoid drift, but actually saying
+something makes sure your system remains understandable and usable.
