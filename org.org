@@ -5,7 +5,6 @@
 #+title: org
 
 * Basics
-
 ** org-directory
 :PROPERTIES:
 :ID:       141D8A2B-2353-4636-9E02-3C9899EB1174
@@ -56,6 +55,49 @@ following situations:
 #+end_src
 
 #+RESULTS:
+
+*** org-link-frame-setup
+
+#+begin_src emacs-lisp
+  (describe-variable 'org-link-frame-setup)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+org-link-frame-setup is a variable defined in ‘ol.el’.
+
+Its value is
+((vm . vm-visit-folder-other-frame)
+ (vm-imap . vm-visit-imap-folder-other-frame)
+ (gnus . org-gnus-no-new-news) (file . find-file-other-window)
+ (wl . wl-other-frame))
+
+Setup the frame configuration for following links.
+When following a link with Emacs, it may often be useful to display
+this link in another window or frame.  This variable can be used to
+set this up for the different types of links.
+For VM, use any of
+    ‘vm-visit-folder’
+    ‘vm-visit-folder-other-window’
+    ‘vm-visit-folder-other-frame’
+For Gnus, use any of
+    ‘gnus’
+    ‘gnus-other-frame’
+    ‘org-gnus-no-new-news’
+For FILE, use any of
+    ‘find-file’
+    ‘find-file-other-window’
+    ‘find-file-other-frame’
+For Wanderlust use any of
+    ‘wl’
+    ‘wl-other-frame’
+For the calendar, use the variable ‘calendar-setup’.
+For BBDB, it is currently only possible to display the matches in
+another window.
+
+  You can customize this variable.
+
+#+end_example
 
 * Weaving
 
