@@ -323,6 +323,156 @@ The return value of the ‘setq’ form is the value of the last VAL.
 
 #+end_example
 
+* comparison
+
+** Summary
+
+#+begin_src emacs-lisp
+  (mw/shortdoc 'comparison)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+General-purpose
+
+(eq obj1 obj2)
+  Return t if the two args are the same Lisp object.
+  (eq 'a 'a)
+    ⇒ t
+  (eq ?A ?A)
+    ⇒ t
+  (let ((x (list 'a "b" '(c) 4 5.0))) (eq x x))
+    ⇒ t
+
+
+(eql obj1 obj2)
+  Return t if the two args are ‘eq’ or are indistinguishable numbers.
+  (eql 2 2)
+    ⇒ t
+  (eql 2.0 2.0)
+    ⇒ t
+  (eql 2.0 2)
+    ⇒ nil
+
+
+(equal o1 o2)
+  Return t if two Lisp objects have similar structure and contents.
+  (equal "abc" "abc")
+    ⇒ t
+  (equal 2.0 2.0)
+    ⇒ t
+  (equal 2.0 2)
+    ⇒ nil
+  (equal '(a "b" (c) 4.0) '(a "b" (c) 4.0))
+    ⇒ t
+
+
+(cl-equalp x y)
+  Return t if two Lisp objects have similar structures and contents.
+  (cl-equalp 2 2.0)
+    ⇒ t
+  (cl-equalp "ABC" "abc")
+    ⇒ t
+
+Numeric
+
+(= number &rest numbers)
+  Return t if args, all numbers or markers, are equal.
+  (= 2 2)
+    ⇒ t
+  (= 2.0 2.0)
+    ⇒ t
+  (= 2.0 2)
+    ⇒ t
+  (= 4 4 4 4)
+    ⇒ t
+
+
+(/= num1 num2)
+  Return t if first arg is not equal to second arg.  Both must be numbers or markers.
+  (/= 4 4)
+    ⇒ nil
+
+
+(< number &rest numbers)
+  Return t if each arg (a number or marker), is less than the next arg.
+  (< 4 4)
+    ⇒ nil
+  (< 1 2 3)
+    ⇒ t
+
+
+(<= number &rest numbers)
+  Return t if each arg (a number or marker) is less than or equal to the next.
+  (<= 4 4)
+    ⇒ t
+  (<= 1 2 2 3)
+    ⇒ t
+
+
+(> number &rest numbers)
+  Return t if each arg (a number or marker) is greater than the next arg.
+  (> 4 4)
+    ⇒ nil
+  (> 3 2 1)
+    ⇒ t
+
+
+(>= number &rest numbers)
+  Return t if each arg (a number or marker) is greater than or equal to the next.
+  (>= 4 4)
+    ⇒ t
+  (>= 3 2 2 1)
+    ⇒ t
+
+String
+
+(string-equal s1 s2)
+  Return t if two strings have identical contents.
+  (string-equal "abc" "abc")
+    ⇒ t
+  (string-equal "abc" "ABC")
+    ⇒ nil
+
+
+(string-equal-ignore-case string1 string2)
+  Compare STRING1 and STRING2 case-insensitively.
+  (string-equal-ignore-case "abc" "ABC")
+    ⇒ t
+
+
+(string-lessp string1 string2)
+  Return non-nil if STRING1 is less than STRING2 in lexicographic order.
+  (string-lessp "abc" "abd")
+    ⇒ t
+  (string-lessp "abc" "abc")
+    ⇒ nil
+  (string-lessp "pic4.png" "pic32.png")
+    ⇒ nil
+
+
+(string-greaterp string1 string2)
+  Return non-nil if STRING1 is greater than STRING2 in lexicographic order.
+  (string-greaterp "abd" "abc")
+    ⇒ t
+  (string-greaterp "abc" "abc")
+    ⇒ nil
+
+
+(string-version-lessp string1 string2)
+  Return non-nil if S1 is less than S2, as version strings.
+  (string-version-lessp "pic4.png" "pic32.png")
+    ⇒ t
+  (string-version-lessp "1.9.3" "1.10.2")
+    ⇒ t
+
+
+(string-collate-lessp s1 s2 &optional locale ignore-case)
+  Return t if first arg string is less than second in collation order.
+  (string-collate-lessp "abc" "abd")
+    ⇒ t
+#+end_example
+
 * flow control
 
 ** condition-case
