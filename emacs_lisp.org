@@ -176,6 +176,21 @@ it is displayed along with the global value.
 : If FUNCTION is non-nil, place point on the entry for FUNCTION (if any).
 : If SAME-WINDOW, don’t pop to a new window.
 : 
+
+**** mw/shortdoc
+
+#+begin_src emacs-lisp
+  (defun mw/shortdoc (group)
+    "Return shortdoc contents while containing state changes."
+    (save-excursion
+      (with-temp-buffer
+        (shortdoc--insert-group-in-buffer group)
+        (buffer-substring-no-properties (point-min) (point-max)))))
+#+end_src
+
+#+RESULTS:
+: mw/shortdoc
+
 * Debugging
 ** message
 
