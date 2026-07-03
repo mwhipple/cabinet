@@ -1874,30 +1874,31 @@ to be ‘eq’.
 
 #+end_example
 
-** describe-variable
+** string-join
 
 #+begin_src emacs-lisp
-  (describe-function #'describe-variable)
+  (describe-function #'string-join)
 #+end_src
 
 #+RESULTS:
 #+begin_example
-describe-variable is an autoloaded interactive byte-code-function in
-‘help-fns.el’.
+string-join is a byte-code-function in ‘subr-x.el’.
 
-It is bound to C-h v, <f1> v and <help> v.
-It can also be invoked from the menu: Help → Describe → Describe
-Variable...
+(string-join STRINGS &optional SEPARATOR)
 
-(describe-variable VARIABLE &optional BUFFER FRAME)
+Join all STRINGS using SEPARATOR.
+Optional argument SEPARATOR must be a string, a vector, or a list of
+characters; nil stands for the empty string.
 
-Display the full documentation of VARIABLE (a symbol).
-Returns the documentation as a string, also.
-If VARIABLE has a buffer-local value in BUFFER or FRAME
-(default to the current buffer and current frame),
-it is displayed along with the global value.
+  Other relevant functions are documented in the string group.
+  Probably introduced at or before Emacs version 24.4.
+  This function does not change global state, including the match
+    data.
+  This function has a byte-code optimizer
+    ‘byte-compile-inline-expand’.  See the manual for details.
 
-  Probably introduced at or before Emacs version 27.1.
+#+end_example
+* elisp-urls
 
 #+end_example
 
