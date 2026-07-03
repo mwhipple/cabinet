@@ -1,0 +1,13 @@
+:PROPERTIES:
+:ID:       16D051E0-952F-48C0-919C-2AAF3E25ECA4
+:END:
+#+title: jq
+
+* Installation
+
+#+begin_src shell
+  jq --version
+#+end_src
+
+#+RESULTS:
+: jq-1.7.1-apple
