@@ -1462,7 +1462,6 @@ Also make sure to add the right permissions in the right mode.
 
   scopes = ['https://graph.microsoft.com/.default']
   client = GraphServiceClient(credentials=credential, scopes=scopes)
-  print(dir(client))
   async def get_user():
       user = await client.users.by_user_id('4c5587fc-957b-41e8-be8b-f54331deb9b5').get()
 
@@ -1477,11 +1476,12 @@ Also make sure to add the right permissions in the right mode.
       me = await client.me.get()
       if me:
           print(me.display_name)
-  asyncio.run(messages())
+  asyncio.run(get_user())
 #+end_src
 
 #+RESULTS:
-: 46e3a1e3-945a-4ac9-aa9e-3cc7a2eb7678
+: ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__firstlineno__', '__format__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__static_attributes__', '__str__', '__subclasshook__', '__weakref__', 'admin', 'agreement_acceptances', 'agreements', 'app_catalogs', 'application_templates', 'applications', 'applications_with_app_id', 'applications_with_unique_name', 'audit_logs', 'authentication_method_configurations', 'authentication_methods_policy', 'batch', 'certificate_based_auth_configuration', 'chats', 'communications', 'compliance', 'connections', 'contacts', 'contracts', 'data_policy_operations', 'device_app_management', 'device_management', 'devices', 'devices_with_device_id', 'directory', 'directory_objects', 'directory_role_templates', 'directory_roles', 'directory_roles_with_role_template_id', 'domain_dns_records', 'domains', 'drives', 'education', 'employee_experience', 'external', 'filter_operators', 'functions', 'group_lifecycle_policies', 'group_setting_templates', 'group_settings', 'groups', 'groups_with_unique_name', 'identity', 'identity_governance', 'identity_protection', 'identity_providers', 'information_protection', 'invitations', 'me', 'oauth2_permission_grants', 'organization', 'path_parameters', 'permission_grants', 'places', 'planner', 'policies', 'print', 'privacy', 'reports', 'request_adapter', 'role_management', 'schema_extensions', 'scoped_role_memberships', 'search', 'security', 'service_principals', 'service_principals_with_app_id', 'shares', 'sites', 'solutions', 'storage', 'subscribed_skus', 'subscriptions', 'teams', 'teams_templates', 'teamwork', 'tenant_relationships', 'url_template', 'users', 'users_with_user_principal_name']
+: mwhipplebos_hotmail.com#EXT#@mwhippleboshotmail.onmicrosoft.com Matt Whipple 4c5587fc-957b-41e8-be8b-f54331deb9b5
 
 ** List Properties
 

@@ -24,6 +24,24 @@ drive the work of the agents.
 
 * Arguments
 
+** :dir ([[id:5BA060A7-6674-4523-BC6F-6D34C230B12B][is-a-cwd]])
+
+Set the working directory for the command
+
+#+begin_src shell
+  pwd
+#+end_src
+
+#+RESULTS:
+: /Users/mwhipple/memex/cabinet
+
+#+begin_src shell :dir ~
+  pwd
+#+end_src
+
+#+RESULTS:
+: /Users/mwhipple
+
 ** :post
 
 Post Processing
