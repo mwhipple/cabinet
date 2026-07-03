@@ -1843,26 +1843,34 @@ Data About Strings
     ⇒ 6
 #+end_example
 
-** describe-package
+** concat
 
 #+begin_src emacs-lisp
-  (describe-function #'describe-package)
+  (describe-function #'concat)
 #+end_src
 
 #+RESULTS:
 #+begin_example
-describe-package is an autoloaded interactive byte-code-function in
-‘package.el’.
+concat is a primitive-function in ‘src/fns.c’.
 
-It is bound to C-h P, <f1> P and <help> P.
-It can also be invoked from the menu: Help → Describe → Describe
-Package...
+(concat &rest SEQUENCES)
 
-(describe-package PACKAGE)
+Declared type: (function (&rest sequence) string)
 
-Display the full documentation of PACKAGE (a symbol).
+Concatenate all the arguments and make the result a string.
+The result is a string whose elements are the elements of all the arguments.
+Each argument may be a string or a list or vector of characters (integers).
 
-  Probably introduced at or before Emacs version 24.1.
+Values of the ‘composition’ property of the result are not guaranteed
+to be ‘eq’.
+
+  Other relevant functions are documented in the string group.
+  Probably introduced at or before Emacs version 19.20.
+  This function does not change global state, including the match
+    data.
+  This function has a ‘byte-compile’ property ‘byte-compile-concat’
+    and a byte-code optimizer ‘byte-optimize-concat’.  See the manual
+    for details.
 
 #+end_example
 
