@@ -1214,6 +1214,14 @@ while messing around.
 
 *** append
 
+#+begin_src emacs-lisp
+  (defun mw/path/append (path)
+    (mw/path/set (append (mw/path/get) (list path))))
+#+end_src
+
+#+RESULTS:
+: mw/path/append
+
 * Filesystem
 
 ** default-directory ([[id:5BA060A7-6674-4523-BC6F-6D34C230B12B][is-a-cwd]])
@@ -1227,10 +1235,10 @@ while messing around.
 
 #+RESULTS:
 #+begin_example
-default-directory is a variable defined in ‘C source code’.
+default-directory is a variable defined in ‘src/buffer.c’.
 
-Its value is "/Users/mwhipple/memex/notebooks/"
-Local in buffer emacs-lisp.org; global value is nil
+Its value is "/Users/mwhipple/memex/cabinet/"
+Local in buffer emacs_lisp.org; global value is nil
 
 Name of default directory of current buffer.
 It should be an absolute directory name; on GNU and Unix systems,
@@ -1387,6 +1395,8 @@ Support for (derived-mode MODE) specializers.
 Used internally for the (major-mode MODE) context specializers.
 
 Support for dispatch on types defined by ‘oclosure-define’.
+
+Support for dispatch on derived types, i.e. defined with ‘cl-deftype’.
 
 Support for dispatch on types defined by EIEIO’s ‘defclass’.
 
