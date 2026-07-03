@@ -750,6 +750,57 @@ specified by the ACTION argument.
 
 #+end_example
 
+** display-buffer-alist
+
+#+begin_src emacs-lisp
+  (describe-variable 'display-buffer-alist)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+display-buffer-alist is a variable defined in ‘window.el’.
+
+Its value is ((".*" display-buffer-same-window))
+Original value was nil
+
+Alist of user-defined conditional actions for ‘display-buffer’.
+Its value takes effect before processing the ACTION argument of
+‘display-buffer’ and before ‘display-buffer-base-action’ and
+‘display-buffer-fallback-action’, but after
+‘display-buffer-overriding-action’, which see.
+
+If non-nil, this is an alist of elements (CONDITION . ACTION),
+where:
+
+ CONDITION is passed to ‘buffer-match-p’, along with the name of
+  the buffer that is to be displayed and the ACTION argument of
+  ‘display-buffer’, to check if ACTION should be used.
+
+ ACTION is a cons cell (FUNCTIONS . ALIST), where FUNCTIONS is an
+  action function or a list of action functions and ALIST is an
+  action alist.  Each such action function should accept two
+  arguments: a buffer to display and an alist of the same form as
+  ALIST.  See ‘display-buffer’ for details.
+
+‘display-buffer’ scans this alist until the CONDITION is satisfied
+and adds the associated ACTION to the list of actions it will try.
+
+  This variable may be risky if used as a file-local variable.
+  This variable was introduced, or its default value was changed, in
+  version 24.1 of Emacs.
+  You can customize this variable.
+
+#+end_example
+
+*** Prefer Same Window
+
+#+begin_src emacs-lisp
+   (setq display-buffer-alist '((".*" display-buffer-same-window)))
+#+end_src
+
+#+RESULTS:
+| .* | display-buffer-same-window |
+
 ** get-buffer-window
 
 #+begin_src emacs-lisp
