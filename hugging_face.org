@@ -129,6 +129,34 @@ Learn more
   https://huggingface.co/docs/huggingface_hub/en/guides/cli
 #+end_example
 
+* update
+
+#+begin_src shell
+  hf update --help
+#+end_src
+
+#+RESULTS:
+#+begin_example
+hf update --help
+Usage: hf update [OPTIONS]
+
+  Update the `hf` CLI to the latest version.
+
+Options:
+  -h, --help  Show this message and exit.
+
+Formatting options:
+  --format [auto|human|agent|json|quiet]
+                                  Output format. Defaults to 'auto' which picks
+                                  'agent' or 'human' based on the terminal.
+  --json                          JSON output. Equivalent to '--format json'.
+  -q, --quiet                     Quiet output (one ID per line). Equivalent to '--
+                                  format quiet'.
+  --no-truncate                   Do not truncate scalar values in human tables
+                                  (list/dict columns stay shortened).
+<hell_end_5d0aace3-790d-4965-8308-560a51ad17eb'[?2004l
+#+end_example
+
 * auth
 
 #+begin_src shell
@@ -203,6 +231,8 @@ Learn more
 #+end_example
 
 ** list
+
+*** help
 
 #+begin_src shell
   hf models list --help
