@@ -8101,3 +8101,36 @@ remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
 branch.main.remote=origin
 branch.main.merge=refs/heads/main
 #+end_example
+
+* Submodules
+
+** Avoidance Rationale
+
+Submodules have their uses but by default should be avoided.
+
+I think there are some deeper technical reasons for avoiding them,
+but here's some notes from what I can remember from the past and
+recent experiences.
+
+*** Limited Repository Access
+
+Git submodules understandably only work with git repositories. While
+this may not be a practical issue for any specific project it's also
+an unnecessary constraint if a more portable alternative can be as
+readily applied.
+
+There are likely to be somewhat related concerns if things like auth
+needs change across submodules or across environments (such as local
+vs. CI) - while these issues may be able to be worked through using
+submodule configuration, more portable approaches seem preferable.
+
+*** Cycles
+
+The parent project is configured to reference the submodules...and the
+submodules are also configured to reference the parent; therefore
+none of the projects in the set-up are independent git repositories.
+
+This can cause surprises and complicate prospective patterns such as
+chrooting into a submodule directory and expecting to be able to use
+git.
+
