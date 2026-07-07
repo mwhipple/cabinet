@@ -1,0 +1,9 @@
+:PROPERTIES:
+:ID:       B4FEAB90-CD8E-4324-9F5C-BB97F5C1AF79
+:END:
+#+title: numbers
+* Integers
+** is-an-integer
+:PROPERTIES:
+:ID:       10AE2978-0597-4BFA-A265-49173C8C810A
+:END:
