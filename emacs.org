@@ -1635,7 +1635,7 @@ using [[id:2140D11D-1066-4B77-9062-0B8A1C5A287D][url-encode-url]].
 
 #+begin_src emacs-lisp
   (defun mw/xw/new-search (q)
-    (xwidget-webkit-browse-url (url-encode-url (format "https://www.duckduckgo.com?q=%s" q))))
+    (xwidget-webkit-browse-url (url-encode-url (format "https://www.duckduckgo.com?q=%s" q)) t))
 #+end_src
 
 #+RESULTS:

@@ -1,0 +1,15 @@
+:PROPERTIES:
+:ID:       DF2B4777-A59D-4D9E-8EC2-BE4692E9A472
+:END:
+#+title: import
+
+Importing is used to refer to the mechanism through which code that is
+defined elsewhere can be used.
+
+This includes mechanisms that make use of visibility controls such
+that certain constructs must be exported and made available for use,
+and simpler mechanisms where the code is just included.
+* is-an-import
+:PROPERTIES:
+:ID:       0E93C501-C02F-43A4-8AC8-7337DF071706
+:END:
