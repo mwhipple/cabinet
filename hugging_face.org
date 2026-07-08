@@ -355,6 +355,9 @@ Copy-and-paste the text below in your GitHub issue.
 
 #+end_example
 
+** update
+
+*** Help
 
 #+begin_src shell
   hf update --help
