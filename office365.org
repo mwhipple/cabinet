@@ -1,6 +1,6 @@
 :PROPERTIES:
 :ID:       ED17C5B4-4002-4CC0-9FD0-4A72FD845229
-:header-args: :results output :session o365 :async :var venv="/tmp/o365" :python "/tmp/o365/bin/python"
+:header-args: :results output :session o365 :async :var venv="/tmp/o365" :python "/tmp/o365/bin/python" :dir /tmp/o365
 :END:
 #+title: office365
 
@@ -61,7 +61,40 @@ if warranted.
 
 This page does mention mail as another API.
 https://learn.microsoft.com/en-us/entra/identity-platform/scopes-oidc
-** Installation
+
+* Authentication Types
+
+Office365 provides two classes of authentication: application and
+delegated.
+
+Application provides more direct/headless auth: providing simpler API
+key based security which could be used by something like an
+administrative daemon.
+
+Delegated is a more typical OAuth flow which is subject to
+additional authentication steps and ties the authentication more to
+the specific session.
+
+My personal take is that application seems appropriate when dealing
+with trusted systems, and delegated is most appropriate when the
+systems may be untrusted including the actual delegation involved with
+three-legged OAuth.
+
+In practice, however, the directory may be configured such that the
+trust boundary falls less along the lines of systems and more along
+the lines of personnel, and therefore the delegation mechanism becomes
+less about the involvement of a third-party and more a means to
+squeeze any other client through any defined controls. This can enable
+more blanket enforcement of policies such as MFA, which otherwise
+would invite additional trust distinctions. MFA and similar controls
+are arguably guards around the vulnerability associated with
+exchanging credentials and the likelihood of those credentials being
+compromised; therefore they should not be as relevant when credentials
+are less sensitive to compromise (where client certificates are a
+clear example). Working through these types of distinctions and
+gaining the required confidence may not be practicable for directory
+administrators however, which leads to a model where delegation is
+used relatively ubiquitously in place of such trust establishment.
 
 * Installation
 

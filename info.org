@@ -8,4 +8,9 @@ advantages that it tends to be readily available and it generally
 seems to encourage good documentation practices (or any for that
 matter).
 * TODO Increment
-SCHEDULED: <1980-01-01 Tue +1d>
+SCHEDULED: <1980-01-02 Wed +1d>
+:PROPERTIES:
+:LAST_REPEAT: [2026-07-07 Tue 22:23]
+:END:
+- State "DONE"       from "TODO"       [2026-07-07 Tue 22:23]
+** DONE Info

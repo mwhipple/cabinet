@@ -1,0 +1,20 @@
+:PROPERTIES:
+:ID:       7EA4F965-0CDF-4937-8C2F-B152685870F4
+:END:
+#+title: richer-model
+
+One of my general preferences when developing systems is to keep the
+models relatively rich. This does /not/ translate to something like
+die-hard application of object definition, but fairly directly aligns
+with the Rule of Representation - data seems easier to reason about
+that logic, and weakly defined data tends to breed a proliferation of
+logic to deal with it.
+
+This therefore translates to trying to represent things in logic
+rather than data, and where there's repetition introducing some form
+of model.
+
+I don't want to have to remember that something means something...I
+want it to just tell me.
+
+

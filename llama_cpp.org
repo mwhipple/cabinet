@@ -140,8 +140,33 @@ Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
 : built with AppleClang 21.0.0.21000099 for Darwin arm64
 : [?2004hecho 'ob_comint_async_shell_end_74b04f8e-c713-4eb2-977c-eb78d93c628b'[?2004l
 
-* Help
+* Define a [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]] model
 
+The ~hf~ download command can be used to display where a model GGUF
+has ended up.
+
+#+name: model-file
+#+begin_src shell :async no :session none :results output
+  hf download --quiet empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf
+#+end_src
+
+* llama-server
+
+** Help
+
+#+begin_src shell :session llamaserve :async :noweb yes
+  llama-server --model <<model-file()>>
+#+end_src
+
+#+RESULTS:
+: f8bf2816-6513-42aa-af6a-73b5c99a1c5b
+
+#+begin_src shell :session llamaserve :async yes :noweb yes
+#+end_src
+
+* llama-cli
+
+** Help
 o...k
 
 #+begin_src shell

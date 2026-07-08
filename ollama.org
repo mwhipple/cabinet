@@ -111,9 +111,10 @@ Environment Variables:
 
 #+RESULTS:
 : NAME                       ID              SIZE      MODIFIED    
-: nomic-embed-text:latest    0a109f422b47    274 MB    3 weeks ago    
-: qwen3:latest               500a1f067a9f    5.2 GB    3 weeks ago    
-: gpt-oss:latest             17052f91a42e    13 GB     5 weeks ago    
+: gemma:latest               a72c7f4d0a15    5.0 GB    8 days ago     
+: nomic-embed-text:latest    0a109f422b47    274 MB    4 weeks ago    
+: qwen3:latest               500a1f067a9f    5.2 GB    5 weeks ago    
+: gpt-oss:latest             17052f91a42e    13 GB     7 weeks ago    
 
 - [[id:D6EB63CC-2B15-45DC-8C49-33C0DB4DA1C5][gpt-oss]]
 - [[id:265230C1-96C3-4C5B-8CE3-050F471FCFF2][qwen3]]
