@@ -1,0 +1,11 @@
+:PROPERTIES:
+:ID:       78E734C6-40F0-406F-9A70-BE112266375F
+:END:
+#+title: info
+* Description
+info is the standard GNU documentation system, which has the
+advantages that it tends to be readily available and it generally
+seems to encourage good documentation practices (or any for that
+matter).
+* TODO Increment
+SCHEDULED: <1980-01-01 Tue +1d>

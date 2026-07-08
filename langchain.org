@@ -6,13 +6,16 @@
 
 Langchain is a harness for model orchestration.
 My setup typically involves using langchain directly with [[id:002B2928-C32F-49F3-B93F-CBEEE215A7D7][python]]
-and local inference using [[id:D87B9E33-CA56-4301-A59A-6FC951966D08][ollama]].
+and local inference using [[id:D87B9E33-CA56-4301-A59A-6FC951966D08][ollama]]....to be replaced with [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]]
 
 * [[id:A3C4A953-79CA-4160-AB26-A6EDCCD8AC09][Setup the Environment]]
 
+This will start with the union of ollama and llamacpp and should be
+subsequently trimmed.
+
 #+begin_src shell :session venv-setup :results output
   python3.14 -m venv ${venv}
-  ${venv}/bin/python -m pip install langchain-ollama deepagents pydantic
+  ${venv}/bin/python -m pip install langchain-ollama deepagents pydantic langchain-community llama-cpp-python huggingface_hub
 #+end_src
 
 #+RESULTS:
