@@ -337,6 +337,23 @@ Submit bug reports to bug-libcdio@gnu.org
 
 #+end_example
 
+This needs the redirection magic
+
+#+begin_src shell :results output
+  cd-paranoia --verbose --query
+#+end_src
+
+#+RESULTS:
+: ++ WARN: open (/dev/rdisk5): Permission denied
+: ++ WARN: open (/dev/rdisk7): Permission denied
+: ++ WARN: open (/dev/rdisk4): Permission denied
+: ++ WARN: open (/dev/rdisk6): Permission denied
+: ++ WARN: search for kIOCDMediaClass/kIODVDMediaClass/kIOBDMediaClass came up empty
+
+** 405: Option not supported by drive
+
+Seems harmless
+
 * Searching
 
 [[id:0F384B87-44DD-4D61-8590-02F79024BB99][brew-search]]

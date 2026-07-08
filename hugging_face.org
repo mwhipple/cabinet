@@ -280,6 +280,81 @@ Learn more
   https://huggingface.co/docs/huggingface_hub/en/guides/cli
 #+end_example
 
+** env
+
+*** help
+
+#+begin_src shell :session none :async no
+  hf env --help
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Usage: hf env [OPTIONS]
+
+  Print information about the environment.
+
+Options:
+  -h, --help  Show this message and exit.
+
+Formatting options:
+  --format [auto|human|agent|json|quiet]
+                                  Output format. Defaults to 'auto' which
+                                  picks 'agent' or 'human' based on the
+                                  terminal.
+  --json                          JSON output. Equivalent to '--format json'.
+  -q, --quiet                     Quiet output (one ID per line). Equivalent
+                                  to '--format quiet'.
+  --no-truncate                   Do not truncate scalar values in human
+                                  tables (list/dict columns stay shortened).
+#+end_example
+
+*** usage
+
+#+begin_src shell :session none :async no
+  hf env
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+Copy-and-paste the text below in your GitHub issue.
+
+- huggingface_hub version: 1.22.0
+- Platform: macOS-26.3.1-arm64-arm-64bit-Mach-O
+- Python version: 3.14.6
+- Running in iPython ?: No
+- Running in notebook ?: No
+- Running in Google Colab ?: No
+- Running in Google Colab Enterprise ?: No
+- Token path ?: /Users/mwhipple/.cache/huggingface/token
+- Has saved token ?: False
+- Configured git credential helpers: osxkeychain
+- Run by AI agent ?: No
+- Installation method: hf_installer
+- httpx: 0.28.1
+- hf_xet: 1.5.1
+- gradio: N/A
+- tensorboard: N/A
+- ENDPOINT: https://huggingface.co
+- HF_HUB_CACHE: /Users/mwhipple/.cache/huggingface/hub
+- HF_ASSETS_CACHE: /Users/mwhipple/.cache/huggingface/assets
+- HF_TOKEN_PATH: /Users/mwhipple/.cache/huggingface/token
+- HF_STORED_TOKENS_PATH: /Users/mwhipple/.cache/huggingface/stored_tokens
+- HF_HUB_OFFLINE: False
+- HF_HUB_DISABLE_TELEMETRY: False
+- HF_HUB_DISABLE_PROGRESS_BARS: None
+- HF_HUB_DISABLE_SYMLINKS: False
+- HF_HUB_DISABLE_SYMLINKS_WARNING: False
+- HF_HUB_DISABLE_EXPERIMENTAL_WARNING: False
+- HF_HUB_DISABLE_IMPLICIT_TOKEN: False
+- HF_HUB_DISABLE_XET: False
+- HF_HUB_ETAG_TIMEOUT: 10
+- HF_HUB_DOWNLOAD_TIMEOUT: 10
+- HF_XET_HIGH_PERFORMANCE: False
+
+#+end_example
+
 
 #+begin_src shell
   hf update --help
