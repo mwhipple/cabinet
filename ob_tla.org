@@ -11,6 +11,48 @@ to be able to evaluate TLA+ specs within org-babel files.
 I'll be both doing this as I work through and capture info from the
 Practical TLA+ book, and as I build out actual specs.
 
+* Model Configuration Revisited
+
+The TLA+ toolkit and some of the existing tools seem to obscure
+details of the underlying concepts which I'm going to pull apart and
+interpret as it makes sense to me.
+
+Each evaluation consists of a combination of a specification and a
+model configuration, where much of the information seems
+understandably focused on the specification piece (and the
+configuration is largely abstracted by the toolkit). It seems more
+flexible to instead view them as complementary: the specification
+amounts to what becomes a definition for a universe of possibilities,
+and the configuration is an evaluation for a given instantiation
+within that universe.
+
+For me at least the typical model led to an inferred behavior where
+the configuration was used to represent parameters for the spec
+itself, whereas it feels like a simpler and more flexible approach is
+one where a validation is the application of a specific configuration
+to a specification (which seems aligned with the core model once some
+sugar is removed). This leads to a perspective where there may be many
+configurations for a given spec, and that there's a clear delineation
+between aspects of spec preparation (like Pluscal translation) and
+validation...where given the cardinality relationship mentioned above
+validation will be driven by pointing a configuration at a
+specification rather than from the specification itself.
+
+Within the context of this project, I initially approached
+configuration as something that would be generated based off of
+specification parameters, but with the adjusted perspective it seems
+more appropirate to treat configuration files as distinct documents.
+This is particularly appropripate given that such files can contain
+non-trivial expressions.
+
+Configuration files can therefore be defined which will reference
+specification blocks, and evaluation of the configuration files will
+drive validation.
+
+Additional steps like Pluscal translation can be trivially implemented
+on top of that setup by having the translated output be the result of
+the block.
+
 * Current State
 
 The library itself currently supports ~pluscal~ blocks...as that's
