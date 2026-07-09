@@ -354,6 +354,112 @@ This needs the redirection magic
 
 Seems harmless
 
+* picard
+
+Picard seems to be the official musicbrainz offering which supports
+identification through fignerprinting. I've used the GUI before;
+I'm not sure if this will play well with CLI and I'm also not sure at
+this point how much I care, but it will be part of the initial mix.
+
+#+begin_src shell :results output :session brew :async
+  brew reinstall musicbrainz-picard
+#+end_src
+
+#+RESULTS:
+: brew reinstall musicbrainz-picard
+: echo '
+
+** Contents
+#+begin_src bash :results output :session brew :async
+  brew list musicbrainz-picard
+#+end_src
+
+#+RESULTS:
+: brew list musicbrainz-picard
+: ==> App
+: /Applications/MusicBrainz Picard.app (442 files, 100.0MB)
+: <ync_shell_end_a965b101-8047-4f5f-9f7a-5e9e0d1d3643'[?2004l
+
+** list
+
+#+begin_src shell
+  ls "/Applications/MusicBrainz Picard.app/Contents/MacOS"
+#+end_src
+
+#+RESULTS:
+| AppKit                 |
+| base_library.zip       |
+| charset_normalizer     |
+| CoreFoundation         |
+| Foundation             |
+| fpcalc                 |
+| lib-dynload            |
+| libcrypto.3.dylib      |
+| libdiscid.0.dylib      |
+| libssl.3.dylib         |
+| locale                 |
+| Markdown-3.7.dist-info |
+| objc                   |
+| picard                 |
+| picard-run             |
+| PyQt5                  |
+| Python                 |
+| QtCore                 |
+| QtDBus                 |
+| QtGui                  |
+| QtMultimedia           |
+| QtMultimediaWidgets    |
+| QtNetwork              |
+| QtOpenGL               |
+| QtPrintSupport         |
+| QtQml                  |
+| QtQmlModels            |
+| QtQuick                |
+| QtSvg                  |
+| QtWebSockets           |
+| QtWidgets              |
+| yaml                   |
+
+#+begin_src shell :results output :async
+  /Applications/MusicBrainz\ Picard.app/Contents/MacOS/picard-run --help
+#+end_src
+
+#+RESULTS:
+#+begin_example
+usage: picard-run [-h] [-a AUDIT] [-c CONFIG_FILE] [-d]
+                  [-e COMMAND [COMMAND ...]] [-M] [-N] [-P]
+                  [--no-crash-dialog] [-s] [-v] [-V]
+                  [FILE_OR_URL ...]
+
+positional arguments:
+  FILE_OR_URL           the file(s), URL(s) and MBID(s) to load
+
+options:
+  -h, --help            show this help message and exit
+  -a AUDIT, --audit AUDIT
+                        audit events passed as a comma-separated list,
+                        prefixes supported, use all to match any (see https://
+                        docs.python.org/3/library/audit_events.html#audit-
+                        events)
+  -c CONFIG_FILE, --config-file CONFIG_FILE
+                        location of the configuration file
+  -d, --debug           enable debug-level logging
+  -e COMMAND [COMMAND ...], --exec COMMAND [COMMAND ...]
+                        send command (arguments can be entered after space) to
+                        a running instance (use `-e help` for a list of the
+                        available commands)
+  -M, --no-player       disable built-in media player
+  -N, --no-restore      do not restore positions and/or sizes
+  -P, --no-plugins      do not load any plugins
+  --no-crash-dialog     disable the crash dialog
+  -s, --stand-alone-instance
+                        force Picard to create a new, stand-alone instance
+  -v, --version         display version information and exit
+  -V, --long-version    display long version information and exit
+
+If one of the filenames begins with a hyphen, use -- to separate the options from the filenames.
+If a new instance will not be spawned files/directories will be passed to the existing instance
+#+end_example
 * Searching
 
 [[id:0F384B87-44DD-4D61-8590-02F79024BB99][brew-search]]
