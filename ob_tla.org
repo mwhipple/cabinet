@@ -61,7 +61,7 @@ what I'll typically use.
 The blocks should have a ~:file~ argument which is a valid TLA+ name,
 matching the module content.
 
-Fix the verification of this
+** TODO Fix the verification of this
 
 A pluscal block will by default produce the translated output.
 ~:output~ can be provided with the following options:
@@ -225,6 +225,9 @@ This should be replaced if this notebook is used directly.
   (setq org-babel-tla-jar-path (expand-file-name "~/memex/vendor/tlacli/src/tlacli/tla2tools.jar"))
 #+end_src
 
+#+RESULTS:
+: /Users/mwhipple/memex/vendor/tlacli/src/tlacli/tla2tools.jar
+
 ** Let's Get the Basics Working
 
 The path to the config file needs to be provided to avoid issues, so
@@ -239,7 +242,7 @@ appropriate files.
 #+begin_src emacs-lisp
   (defun org-babel-execute:tla (body params)
     (let* ((default-directory (org-babel-temp-directory))
-  	 (spec-file (cdr (assq :file params)))
+  	 (spec-file (cdr (assq :spec-file params)))
   	 (cfg-file (format "%s.cfg" spec-file)))
       (with-temp-file spec-file (insert body))
       (with-temp-file cfg-file (insert ""))
@@ -264,19 +267,19 @@ appropriate files.
 TLC2 Version 2.15 of Day Month 20?? (rev: d5b5a7f)
 Warning: Please run the Java VM which executes TLC with a throughput optimized garbage collector by passing the "-XX:+UseParallelGC" property.
 (Use the -nowarning option to disable this warning.)
-Running breadth-first search Model-Checking with fp 65 and seed 8887393191956676524 with 1 worker on 10 cores with 8192MB heap and 64MB offheap memory [pid: 14303] (Mac OS X 26.3.1 aarch64, Homebrew 21.0.11 x86_64, MSBDiskFPSet, DiskStateQueue).
-Parsing file /private/var/folders/y1/qpq5h9vd44dgw77dx8jb00380000gn/T/babel-YPmWu4/foo.tla
+Running breadth-first search Model-Checking with fp 40 and seed 3460717296354855142 with 1 worker on 10 cores with 8192MB heap and 64MB offheap memory [pid: 77362] (Mac OS X 26.3.1 aarch64, Homebrew 21.0.11 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /private/var/folders/y1/qpq5h9vd44dgw77dx8jb00380000gn/T/babel-W8XVAu/foo.tla
 Semantic processing of module foo
-Starting... (2026-06-23 21:22:18)
+Starting... (2026-07-09 14:38:57)
 Computing initial states...
-Finished computing initial states: 0 distinct states generated at 2026-06-23 21:22:18.
+Finished computing initial states: 0 distinct states generated at 2026-07-09 14:38:57.
 Model checking completed. No error has been found.
   Estimates of the probability that TLC did not check all reachable states
   because two distinct states had the same fingerprint:
   calculated (optimistic):  val = 0.0
 0 states generated, 0 distinct states found, 0 states left on queue.
 The depth of the complete state graph search is 1.
-Finished in 00s at (2026-06-23 21:22:18)
+Finished in 00s at (2026-07-09 14:38:57)
 #+end_example
 
 This works :woohoo:
@@ -297,8 +300,8 @@ the output will be the translated content.
   (defun org-babel-execute:pluscal (body params)
     (let* ((default-directory (org-babel-temp-directory))
     	 (spec-file (or
-  		     (cdr (assq :file params))
-  		     (error ":file parameter must be specified!!"))))
+  		     (cdr (assq :spec-file params))
+  		     (error ":spec-file parameter must be specified!!"))))
       (with-temp-file spec-file (insert body))
       (let ((out (org-babel-eval
     		(format "%s pcal.trans %s"
@@ -319,6 +322,30 @@ the output will be the translated content.
 #+RESULTS:
 : org-babel-execute:pluscal
 
+** tla-config
+
+#+begin_src emacs-lisp
+  (defun org-babel-execute:tla-config (body params)
+    (let* ((default-directory (org-babel-temp-directory))
+  	 (spec-content (or (cdr (assq :spec-content params))
+  			   (error ":spec-content parameeter must be specified!")))
+  	 (spec-file (or (cdr (assq :spec-file params))
+  			(error ":spec-file parameter must be specified!")))
+  	 (cfg-file (format "%s.cfg" spec-file)))
+      (save-excursion
+        (goto-char (org-babel-find-named-block spec-content))
+        (org-babel-execute-src-block))
+      (let ((spec-content (save-excursion
+  			  (goto-char (org-babel-find-named-result spec-content))
+  			  (org-element-property :value (org-element-at-point)))))
+        (with-temp-file spec-file (insert spec-content))
+        (with-temp-file cfg-file (insert body))
+        (tla/tlc spec-file cfg-file))))
+#+end_src
+
+#+RESULTS:
+: org-babel-execute:tla-config
+
 ** tla/tlc
 
 Execution of TLA will be split out so that it can be invoked by either
@@ -335,6 +362,9 @@ pluscal or tla (where the latter just becomes an adapter).
   	     spec-file)
        ""))
 #+end_src
+
+#+RESULTS:
+: tla/tlc
 
 ** Config File Generation
 
@@ -361,3 +391,126 @@ library needs to be configured accordingly.
 
 #+RESULTS:
 : tla/render-config
+
+
+** Sandbox
+:PROPERTIES:
+:header-args: :spec-file "testQ.tla"
+:END:
+
+#+name: testQ
+#+begin_src pluscal
+  ---- MODULE testQ ----
+  EXTENDS Integers
+  (*--algorithm main
+  variables
+    count = 0;
+  begin
+    count := count + 1;
+  end algorithm;*)
+  ======================
+#+end_src
+
+#+RESULTS: testQ
+#+begin_example
+---- MODULE testQ ----
+EXTENDS Integers
+(*--algorithm main
+variables
+  count = 0;
+begin
+  count := count + 1;
+end algorithm;*)
+\* BEGIN TRANSLATION - the hash of the PCal code: PCal-d118536b4db5c4d2cdf19c84bddaaa70
+VARIABLES count, pc
+
+vars == << count, pc >>
+
+Init == (* Global variables *)
+        /\ count = 0
+        /\ pc = "Lbl_1"
+
+Lbl_1 == /\ pc = "Lbl_1"
+         /\ count' = count + 1
+         /\ pc' = "Done"
+
+(* Allow infinite stuttering to prevent deadlock on termination. *)
+Terminating == pc = "Done" /\ UNCHANGED vars
+
+Next == Lbl_1
+           \/ Terminating
+
+Spec == Init /\ [][Next]_vars
+
+Termination == <>(pc = "Done")
+
+\* END TRANSLATION - the hash of the generated TLA code (remove to silence divergence warnings): TLA-782c09dd35c746762c75abce5dfbbb51
+======================
+#+end_example
+
+#+RESULTS:
+#+begin_example
+---- MODULE testQ ----
+EXTENDS Integers
+(*--algorithm main
+variables
+  count = 0;
+begin
+  count := count + 1;
+end algorithm;*)
+\* BEGIN TRANSLATION - the hash of the PCal code: PCal-d118536b4db5c4d2cdf19c84bddaaa70
+VARIABLES count, pc
+
+vars == << count, pc >>
+
+Init == (* Global variables *)
+        /\ count = 0
+        /\ pc = "Lbl_1"
+
+Lbl_1 == /\ pc = "Lbl_1"
+         /\ count' = count + 1
+         /\ pc' = "Done"
+
+(* Allow infinite stuttering to prevent deadlock on termination. *)
+Terminating == pc = "Done" /\ UNCHANGED vars
+
+Next == Lbl_1
+           \/ Terminating
+
+Spec == Init /\ [][Next]_vars
+
+Termination == <>(pc = "Done")
+
+\* END TRANSLATION - the hash of the generated TLA code (remove to silence divergence warnings): TLA-782c09dd35c746762c75abce5dfbbb51
+======================
+#+end_example
+
+#+begin_src tla-config :spec-content testQ
+  SPECIFICATION Spec
+#+end_src
+
+#+RESULTS:
+#+begin_example
+TLC2 Version 2.15 of Day Month 20?? (rev: d5b5a7f)
+Warning: Please run the Java VM which executes TLC with a throughput optimized garbage collector by passing the "-XX:+UseParallelGC" property.
+(Use the -nowarning option to disable this warning.)
+Running breadth-first search Model-Checking with fp 93 and seed 2022547075036879566 with 1 worker on 10 cores with 8192MB heap and 64MB offheap memory [pid: 86572] (Mac OS X 26.3.1 aarch64, Homebrew 21.0.11 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /private/var/folders/y1/qpq5h9vd44dgw77dx8jb00380000gn/T/babel-W8XVAu/testQ.tla
+Labels added.
+Parsing file /private/var/folders/y1/qpq5h9vd44dgw77dx8jb00380000gn/T/Integers.tla
+Parsing file /private/var/folders/y1/qpq5h9vd44dgw77dx8jb00380000gn/T/Naturals.tla
+Semantic processing of module Naturals
+Semantic processing of module Integers
+Semantic processing of module testQ
+Starting... (2026-07-09 16:20:51)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-07-09 16:20:51.
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 1.1E-19
+3 states generated, 2 distinct states found, 0 states left on queue.
+The depth of the complete state graph search is 2.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 1 and the 95th percentile is 1).
+Finished in 00s at (2026-07-09 16:20:51)
+#+end_example
