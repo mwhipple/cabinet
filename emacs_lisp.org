@@ -5,11 +5,7 @@
 
 * Help
 ** Describe Things
-*** describe-function
-
-#+begin_src emacs-lisp
-  (describe-function #'describe-function)
-#+end_src
+#+call: obi/describe-function(function='describe-function)
 
 #+RESULTS:
 #+begin_example

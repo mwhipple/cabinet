@@ -41,75 +41,7 @@ the ‘server-process’ variable.
 
 #+end_example
 
-* Help
-** man
-
-[[id:40282DAC-6B66-47A9-9884-06CCC930D29D][man]] should likely be extracted out of emacs.
-
-That will need some output tweaking to render properly in the notebooks.
-This function provides that cleanup.
-
-#+begin_src emacs-lisp
-  (describe-function #'man)
-#+end_src
-
-#+RESULTS:
-#+begin_example
-man is an autoloaded interactive byte-code-function in ‘man.el’.
-
-(man MAN-ARGS)
-
-Get a Un*x manual page and put it in a buffer.
-This command is the top-level command in the man package.
-It runs a Un*x command to retrieve and clean a manpage in the
-background and places the results in a ‘Man-mode’ browsing
-buffer.  The variable ‘Man-width’ defines the number of columns in
-formatted manual pages.  The buffer is displayed immediately.
-The variable ‘Man-notify-method’ defines how the buffer is displayed.
-If a buffer already exists for this man page, it will be displayed
-without running the man command.
-
-For a manpage from a particular section, use either of the
-following.  "cat(1)" is how cross-references appear and is
-passed to man as "1 cat".
-
-    cat(1)
-    1 cat
-
-To see manpages from all sections related to a subject, use an
-"all pages" option (which might be "-a" if it’s not the
-default), then step through with ‘Man-next-manpage’ (M-n) etc.
-Add to ‘Man-switches’ to make this option permanent.
-
-    -a chmod
-
-An explicit filename can be given too.  Use -l if it might
-otherwise look like a page name.
-
-    /my/file/name.1.gz
-    -l somefile.1
-
-An "apropos" query with -k gives a buffer of matching page
-names or descriptions.  The pattern argument is usually an
-"grep -E" style regexp.
-
-    -k pattern
-
-Note that in some cases you will need to use C-q to quote the
-SPC character in the above examples, because this command attempts
-to auto-complete your input based on the installed manual pages.
-
-If ‘default-directory’ is remote, and ‘Man-support-remote-systems’
-is non-nil, this command formats the man page on the remote system.
-A prefix argument reverses the value of ‘Man-support-remote-systems’
-for the current invocation.
-
-  Probably introduced at or before Emacs version 19.29.
-
-#+end_example
-
 * Environment Info
-
 ** user-emacs-directory
 
 #+begin_src emacs-lisp

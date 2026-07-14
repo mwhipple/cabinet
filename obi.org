@@ -4,7 +4,8 @@
 #+title: obi
 
 * TODO Iterate
-SCHEDULED: <1980-01-01 Tue>
+SCHEDULED: <1980-01-02 Wed +1d>
+** Work through [[id:D5B6CBC5-AB99-4278-A8A3-ACB9124B68F4][obi/describe-function]]
 
 * Background
 
@@ -313,3 +314,24 @@ which should likely be split out a bit more.
 
 Splitting out a closure over params seems potentially helpful...
 May not be any terser in emacs-lisp though.
+
+* Library
+
+** Help
+
+*** obi/describe-function
+:PROPERTIES:
+:ID:       D5B6CBC5-AB99-4278-A8A3-ACB9124B68F4
+:END:
+
+#+name: obi/describe-function
+#+begin_src emacs-lisp :var function=nil
+  (describe-function function)
+#+end_src
+
+**** Queue
+Coerce parameter types
+Avoid additional buffer
+Render with text properties
+
+
