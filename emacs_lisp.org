@@ -5,7 +5,13 @@
 
 * Help
 ** Describe Things
-#+call: obi/describe-function(function='describe-function)
+
+*** describe-function
+:PROPERTIES:
+:ID:       A365ACE6-A6A4-4E8D-97C5-C7D44014A187
+:END:
+
+#+call: obi/describe-function(function="describe-function")
 
 #+RESULTS:
 #+begin_example
@@ -21,8 +27,45 @@ Function....
 Display the full documentation of FUNCTION (a symbol).
 When called from Lisp, FUNCTION may also be a function object.
 
-See the ‘help-enable-symbol-autoload’ variable for special
+See the `help-enable-symbol-autoload' variable for special
 handling of autoloaded functions.
+
+  Probably introduced at or before Emacs version 22.1.
+
+#+end_example
+
+*** describe-key
+
+#+call: obi/describe-function(function="describe-key")
+
+#+RESULTS:
+#+begin_example
+describe-key is an interactive byte-code-function in ‘help.el’.
+
+It is bound to C-h k, <f1> k and <help> k.
+It can also be invoked from the menu: Help → Describe → Describe Key
+or Mouse Operation....
+
+(describe-key KEY-LIST &optional BUFFER)
+
+Display documentation of the function invoked by KEY-LIST.
+KEY-LIST can be any kind of a key sequence; it can include keyboard events,
+mouse events, and/or menu events.  When calling from a program,
+pass KEY-LIST as a list of elements (SEQ . RAW-SEQ) where SEQ is
+a key-sequence and RAW-SEQ is its untranslated form.
+
+While reading KEY-LIST interactively, this command temporarily enables
+menu items or tool-bar buttons that are disabled to allow getting help
+on them.
+
+Interactively, this command can't describe prefix commands, but
+will always wait for the user to type the complete key sequence.
+For instance, entering "C-x" will wait until the command has
+been completed, but `M-: (describe-key (kbd "C-x")) RET' will
+tell you what this prefix command is bound to.
+
+BUFFER is the buffer in which to lookup those keys; it defaults to the
+current buffer.
 
   Probably introduced at or before Emacs version 22.1.
 
@@ -186,6 +229,36 @@ it is displayed along with the global value.
 
 #+RESULTS:
 : mw/shortdoc
+
+* Core Types
+** symbols
+*** intern-soft
+:PROPERTIES:
+:ID:       F60C9D6B-8572-4963-B50C-D612DB8844DE
+:END:
+
+#+call: obi/describe-function(function="intern-soft")
+
+#+RESULTS:
+#+begin_example
+intern-soft is a primitive-function in ‘src/lread.c’.
+
+(intern-soft NAME &optional OBARRAY)
+
+Declared type:
+  (function ((or string symbol) &optional (or obarray vector)) symbol)
+
+Return the canonical symbol named NAME, or nil if none exists.
+NAME may be a string or a symbol.  If it is a symbol, that exact
+symbol is searched for.
+A second optional argument specifies the obarray to use;
+it defaults to the value of `obarray'.
+
+  Other relevant functions are documented in the symbol group.
+  Probably introduced at or before Emacs version 21.1.
+  This function does not change global state, including the match data.
+
+#+end_example
 
 * Debugging
 ** message
