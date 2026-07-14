@@ -406,7 +406,29 @@ the outer-most code block.
 
 * Implementation Information
 
-** Configuration
+** Inspection/Document Model
+
+*** org-babel-find-named-block
+:PROPERTIES:
+:ID:       5E5ACC40-83BE-4934-BA1B-01FECE80BBED
+:END:
+
+Navigate to block with provided name.
+
+#+begin_src emacs-lisp
+  (describe-function #'org-babel-find-named-block)
+#+end_src
+
+#+RESULTS:
+: org-babel-find-named-block is a byte-code-function in ‘ob-core.el’.
+: 
+: (org-babel-find-named-block NAME)
+: 
+: Find a named source-code block.
+: Return the location of the source block identified by source
+: NAME, or nil if no such block exists.  Set match data according
+: to ‘org-babel-named-src-block-regexp’.
+: 
 
 *** org-babel-check-evaluate
 
