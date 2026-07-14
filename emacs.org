@@ -859,6 +859,44 @@ after saving the buffers.
 
 #+end_example
 
+** switch-to-next-buffer
+
+#+call: obi/describe-function(function="switch-to-next-buffer")
+
+#+RESULTS:
+#+begin_example
+switch-to-next-buffer is an interactive byte-code-function in
+‘window.el’.
+
+It is bound to C-x n.
+
+(switch-to-next-buffer &optional WINDOW)
+
+In WINDOW switch to next buffer.
+WINDOW must be a live window and defaults to the selected one.
+Return the buffer switched to, nil if no suitable buffer could be
+found.
+
+The option `switch-to-prev-buffer-skip' can be used to not switch
+to certain buffers, for example, to those already shown in
+another window.  Also, if WINDOW's frame has a `buffer-predicate'
+parameter, that predicate may inhibit switching to certain
+buffers.
+
+This function is called by `next-buffer'.
+
+  Probably introduced at or before Emacs version 24.1.
+
+#+end_example
+
+#+begin_src emacs-lisp
+  (bind-key "C-x n" #'switch-to-next-buffer)
+  (bind-key "C-x p" #'switch-to-prev-buffer)
+#+end_src
+
+#+RESULTS:
+: switch-to-prev-buffer
+
 ** switch-to-prev-buffer-skip
 :PROPERTIES:
 :ID:       B11A5ECF-B961-4722-885E-B9965938E615
