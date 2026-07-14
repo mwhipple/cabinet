@@ -496,7 +496,17 @@ Learn more
 <hell_end_0d8eadfe-5cb0-4129-853c-f7c6ed2849eb'[?2004l
 #+end_example
 
-* models
+*** usage
+
+This seems to be fairly silent, potentially due to the terminal used.
+Supporting richer terminals is likely a job for [[id:0F78767D-42FF-4027-B3A2-26CA1898F788][obi]].
+
+#+begin_src shell :async no :session none :results output
+  hf download --quiet empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf
+#+end_src
+
+#+RESULTS:
+: /Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-Claude-Mythos-5-1M-GGUF/snapshots/a7ab0f6ee807c165e8374e4906773ca39f5fdff3/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf
 
 #+begin_src shell
   hf models --help
