@@ -3,10 +3,130 @@
 :END:
 #+title: obi
 
-obi is what I'm tentatively calling an effort to expand use of [[id:04B03591-50E7-41E2-A2A5-0C2893FAD39C][org-babel]].
-The actual name is just slamming together the ~ob~ used for org-babel
-and Star Wars, but it could also theoretically acquire a backronym
-like Org Babel Improved.
+* TODO Iterate
+SCHEDULED: <1980-01-01 Tue>
+
+* Background
+
+~obi~ is what I'm calling my effort to rethink what a user
+interface/IDE looks like in a world with AI, as contemplated in
+[[id:3FA03B7E-EC84-40E0-AB18-E3AED640DA89][scrapbook-interface]].
+
+It's starting off being implemented within emacs, and the name and
+genesis will start with building on top of [[id:04B03591-50E7-41E2-A2A5-0C2893FAD39C][org-babel]] (which is also
+the source of the name), but after starting down this road two
+goals enjoin me to split out the effort a bit more:
+
+- clearer interfaces could decouple the system from emacs
+- the core interface elements should be flipped around
+
+Emacs, like many other editors, leans into the notion that a given
+view and the editor itself provides specific behavior, but an
+extension to the proposed model is that such behavior should instead
+be pushed into the content. This is likely to drift closer to
+alternative editors like Acme. The underlying motivation here is to
+reduce the surface area of the exposed interface, and to make shift
+towards a model where the content model has primacy rather than
+prospectively being subordinated to the editor model.
+
+** Design Principles
+
+Much standard emacs behavior is very oriented towards contextual
+behaviors and corresponding implicit parameters. Functions operate
+based on editor state, and make frequent use of editor provided
+constructs. As part of flipping the ownership around, much of that
+will be encoded more directly. The content model will be able to provide
+references to itself, but such references should be passed more
+explicitly into the logic.
+
+** Compared to Org-Babel
+
+The general model will begin as /very/ similar to org-babel, and will
+steal much of the underlying logic. Logic can be invoked by having
+functionality embedded within content which can be invoked and the
+results rendered. The expected differences are that that mechanism
+will be more clearly and uniformly defined, and some of the behavioral
+variations will be removed: each such invocation will produce a common
+results object which will have references to all produced outputs and
+which will be populated asynchronously. This interface will then also
+be extended to support virtually all use cases. Behaviors that may
+currently be provided by specialized modes (for example something like
+magit) could then be replaced by a file template.
+
+Another significant change is that this will likely gravitate towards
+defining more of a DAG (directed acyclic graph): so rather than having
+the interaction model primarily defined as executable blocks which
+produce outputs, it will be defined as blocks which can be defined as
+the expressions evaluated from other blocks (thereby providing a
+simpler means for capturing multiple outputs).
+
+** Function Syntax
+
+One of the underlying goals as outlined in [[id:3FA03B7E-EC84-40E0-AB18-E3AED640DA89][scrapbook-interface]] is that
+this should biased towards supporting a range of what amounts to IPC
+rather than trying to control it. As org-babel behaves, the goal
+should be that functions can be defined using whatever syntax and
+tools make sense, and the system provides the wiring to support those
+different types.
+
+** Envelopes
+
+The interface between the notebooks and the invoked commands should
+have a contained definition and therefore requires support for some
+type of consistent envelope, rather than expecting the system to deal with
+variations. This should in particular reflect what amounts to a
+basic protocol level detail rather than having any implication on the
+data itself (continuing from the goals outlined for the Function
+Syntax. This should support what amounts to dispatching but /not/
+limit what is on the other end of that dispatching. For example if a
+function call is expected to produce 3 streams then the envelope
+should allow for discovery of those streams so that logic can be
+applied to them...but the content of those streams would remain
+a specialized detail - this most clearly reflects support for things
+like stdout/stderr, and also the goal of surfacing what is actually
+being done and similar logging concerns.
+
+Initially this will probably simply be represented in lisp sexps using
+alists or plists, but what is provided should be small and simple
+enough that it could be readily replaced with something else like JSON
+or Protobufs.
+
+* Introspection
+
+Much of how this will work will be built on top of the document model,
+where emacs generally and org-mode in particular seems more oriented
+towards providing logic rather than deifning such a model. One of my
+first tasks will therefore be to extract and repackage the underlying
+model.
+
+** Content Selection
+
+In the longer term I'd gravitate towards something like XPath
+selection, but that will be incremental as needed, starting with what
+is there.
+
+*** obi/block-named
+:PROPERTIES:
+:ID:       546AA76D-E686-4D85-BE25-B231678285ED
+:END:
+
+[[id:04B03591-50E7-41E2-A2A5-0C2893FAD39C][org-babel]] seems to gravitate towards using names as the means to
+identify/reference blocks, so that will be what is started with.
+This is provided by [[id:5E5ACC40-83BE-4934-BA1B-01FECE80BBED][org-babel-find-named-block]] which simply needs some
+packaging up to be less mutate-y.
+
+#+begin_src emacs-lisp
+  (defun obi/block-named (name)
+    "Find the block with the provided NAME or null if it cannot be found."
+    (when-let* ((start (org-babel-find-named-block name)))
+      (save-excursion
+        (goto-char start)
+        (org-element-at-point))))
+#+end_src
+
+#+RESULTS:
+: obi/block-named
+
 
 ** Background
 
