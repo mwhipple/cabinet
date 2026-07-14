@@ -325,12 +325,11 @@ May not be any terser in emacs-lisp though.
 :END:
 
 #+name: obi/describe-function
-#+begin_src emacs-lisp :var function=nil
-  (describe-function function)
+#+begin_src emacs-lisp :var function="MISSING"
+  (describe-function (intern-soft function))
 #+end_src
 
 **** Queue
-Coerce parameter types
 Avoid additional buffer
 Render with text properties
 
