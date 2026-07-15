@@ -2450,6 +2450,28 @@ C-h o or M-x cl-describe-type.
 
 #+end_example
 
+* types
+
+** cl-check-type
+
+#+begin_src emacs-lisp
+  (describe-function #'cl-check-type)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+cl-check-type is an autoloaded Lisp macro in ‘cl-macs.el’.
+
+(cl-check-type FORM TYPE &optional STRING)
+
+Verify that FORM is of type TYPE; signal an error if not.
+STRING is an optional description of the desired type.
+
+Hint: To check the type of an object, use ‘cl-type-of’.
+To define new types, see ‘cl-deftype’.
+
+#+end_example
+
 * with-current-buffer
 :PROPERTIES:
 :ID:       9A9596F0-8138-47F1-8002-91B0474FE107
