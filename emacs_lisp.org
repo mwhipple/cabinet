@@ -3,6 +3,29 @@
 :END:
 #+title: emacs-lisp
 
+* Style
+There are some established style guides I should probably adopt (I
+just saw batsov's), but for now I'll just capture some explanations
+here.
+
+** [[id:824EE294-DF57-45EA-861F-CCE772A8B83F][types]]
+
+With emacs-lisp I'll gravitate towards the use of gradual typing where
+appropriate. There seem to be a fair amount of fairly complicated
+compound structures floating around, and I think due to history and
+language design they tend to be modeled in very basic forms which just
+leads to a repeated need to track down what the different things mean.
+
+For the most part I'll likely look at working with the data as it is
+and expand documentation and defined functions, probably leaning
+heavily on [[id:E6A8C472-96C7-4B2C-B127-999D94702E5F][cl-deftype]]. I'll likely also add cl-defstruct compatible
+functions so that that route is more readily available where/when it
+makes sense.
+
+The convention that I'll adopt is to use PascalCase for type names
+which matches a convention I think I picked up somewhere working with
+Racket...but I may have made it up.
+
 * Help
 ** Describe Things
 
@@ -73,16 +96,14 @@ current buffer.
 
 *** describe-mode
 
-#+begin_src emacs-lisp
-  (describe-function #'describe-mode)
-#+end_src
+#+call: obi/describe-function(function="describe-mode")
 
 #+RESULTS:
 #+begin_example
 describe-mode is an autoloaded interactive byte-code-function in
 ‘help-fns.el’.
 
-It is bound to C-h m, <f1> m and <help> m.
+It is bound to h, ?, C-h m, <f1> m and <help> m.
 It can also be invoked from the menu: Help → Describe → Describe
 Buffer Modes.
 
@@ -93,14 +114,14 @@ A brief summary of the minor modes comes first, followed by the
 major mode description.  This is followed by detailed
 descriptions of the minor modes, each on a separate page.
 
-For this to work correctly for a minor mode, the mode’s indicator
-variable (listed in ‘minor-mode-alist’) must also be a function
+For this to work correctly for a minor mode, the mode's indicator
+variable (listed in `minor-mode-alist') must also be a function
 whose documentation describes the minor mode.
 
 If called from Lisp with a non-nil BUFFER argument, display
 documentation for the major and minor modes of that buffer.
 
-When ‘describe-mode-outline’ is non-nil, Outline minor mode
+When `describe-mode-outline' is non-nil, Outline minor mode
 is enabled in the Help buffer.
 
   Probably introduced at or before Emacs version 29.1.
@@ -328,11 +349,10 @@ See also the variable ‘debug-on-quit’ and ‘inhibit-debugger’.
 #+end_example
 
 #+begin_src emacs-lisp
-  (setq debug-on-error t)
+  (setq debug-on-error nil)
 #+end_src
 
 #+RESULTS:
-: t
 
 * stateyness
 ** save-excursion
@@ -2381,6 +2401,55 @@ Define the method which leverages the impl.
 : 
 :   Probably introduced at or before Emacs version 1.6.
 : 
+* structs
+** cl-defstruct
+:PROPERTIES:
+:ID:       BE779DCE-0F34-4DAC-90A9-0D1C16EFBC75
+:END:
+
+#+begin_src emacs-lisp
+  (describe-function #'cl-defstruct)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+cl-defstruct is an autoloaded Lisp macro in ‘cl-macs.el’.
+
+(cl-defstruct NAME &optional DOCSTRING &rest SLOTS)
+
+Define a struct type.
+This macro defines a new data type called NAME that stores data
+in SLOTs.  It defines a ‘make-NAME’ constructor, a ‘copy-NAME’
+copier, a ‘NAME-p’ predicate, and slot accessors named ‘NAME-SLOT’.
+You can use the accessors to set the corresponding slots, via ‘setf’.
+
+NAME is usually a symbol, but may instead take the form (NAME
+OPTIONS...), where each OPTION is either a single keyword
+or (KEYWORD VALUE) where KEYWORD can be one of ‘:conc-name’,
+‘:constructor’, ‘:copier’, ‘:predicate’, ‘:type’, ‘:named’,
+‘:initial-offset’, ‘:print-function’, ‘:noinline’, or ‘:include’.
+See Info node ‘(cl)Structures’ for the description of the
+options.
+
+The first element in SLOTS can be a doc string.
+
+The rest of the elements in SLOTS is a list of SLOT elements,
+each of which should either be a symbol, or take the form (SNAME
+SDEFAULT SOPTIONS...), where SDEFAULT is the default value of
+that slot and SOPTIONS are keyword-value pairs for that slot.
+
+Supported keywords for slots are:
+- ‘:read-only’: If this has a non-nil value, that slot cannot be set via ‘setf’.
+- ‘:documentation’: this is a docstring describing the slot.
+- ‘:type’: the type of the field; currently only used for documentation.
+
+To see the documentation for a defined struct type, use
+C-h o or M-x cl-describe-type.
+
+  Probably introduced at or before Emacs version 26.1.
+
+#+end_example
+
 * with-current-buffer
 :PROPERTIES:
 :ID:       9A9596F0-8138-47F1-8002-91B0474FE107
