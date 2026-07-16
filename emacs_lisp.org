@@ -2472,6 +2472,41 @@ To define new types, see ‘cl-deftype’.
 
 #+end_example
 
+** cl-deftype
+:PROPERTIES:
+:ID:       E6A8C472-96C7-4B2C-B127-999D94702E5F
+:END:
+
+#+begin_src emacs-lisp
+  (describe-function #'cl-deftype)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+cl-deftype is an autoloaded Lisp macro in ‘cl-macs.el’.
+
+(cl-deftype NAME ARGLIST &rest BODY)
+
+Define NAME as a new, so-called derived type.
+The type NAME can then be used in ‘cl-typecase’, ‘cl-check-type’,
+etc., and to some extent, as method specializer.
+
+ARGLIST is a Common Lisp argument list of the sort accepted by
+‘cl-defmacro’.  BODY forms should return a type specifier that is equivalent
+to the type (see the Info node ‘(cl)Type Predicates’).
+
+If there is a ‘declare’ form in BODY, the spec (parents . PARENTS)
+can specify a list of types NAME is a subtype of.
+The list of PARENTS types determines the order of methods invocation,
+and missing PARENTS may cause incorrect ordering of methods, while
+extraneous PARENTS may cause use of extraneous methods.
+
+If PARENTS is non-nil, ARGLIST must be nil.
+
+  Probably introduced at or before Emacs version 31.1.
+
+#+end_example
+
 * with-current-buffer
 :PROPERTIES:
 :ID:       9A9596F0-8138-47F1-8002-91B0474FE107
