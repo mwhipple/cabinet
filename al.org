@@ -4,12 +4,11 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-02 Wed +1d>
+SCHEDULED: <1980-01-03 Thu +1d>
 :PROPERTIES:
-:LAST_REPEAT: [2026-07-17 Fri 12:46]
+:LAST_REPEAT: [2026-07-17 Fri 13:48]
 :END:
 
-- State "DONE"       from "TODO"       [2026-07-17 Fri 12:46]
 Al is the provisional name for my personal agent setup.
 
 "Al" was chosen because:
@@ -83,37 +82,78 @@ Successfully installed MarkupSafe-3.0.3 diskcache-5.6.3 jinja2-3.1.6 llama-cpp-p
 
 ** Beget Al
 
-#+begin_src python :var model_path=model-file()
+Construct and interact with a [[id:D40AB771-6361-484A-8685-D082565D0D1E][llama.Llama]].
+
+There a lot of options for construction documented at [[id:E23922B9-95E0-45AA-A3FB-DB627EA18002][llama.Llama.init]].
+
+Messages will be sent using [[id:C6047B7D-4B82-45B9-886A-FACBF966030B][create_chat_completion]].
+
+The low level interface of create_chat_completion seems worth bundling
+up a bit: most of those parameters are likely to remain fairly fixed
+(or some may be calculated), rather than being warranted on each
+invocation. I'll therefore introduce a Chat class to help with this.
+
+This will be populated as functionality is developed.
+
+Support submitting of [[id:F68AF496-31B7-40E1-A0A2-8E7CD442BC30][ChatCompletionRequestUserMessage]]s and [[id:9E1AE570-F677-4E05-AE14-8C6DF8A2CEF9][ChatCompletionRequestSystemMessage]]s
+
+*** Chat
+
+#+name: chat
+#+begin_src python
+  from llama_cpp import Llama
+  class Chat:
+      def __init__(self, model: Llama):
+          self.model = model
+          self.messages = []
+
+      def append_system_message(self, content: str):
+          self.messages.append({"role": "system", "content": content})
+
+      def append_user_message(self, content: str):
+          self.messages.append({"role": "user", "content": content})
+
+      def submit(self):
+          return self.model.create_chat_completion(
+              messages = self.messages,
+          )
+
+#+end_src
+
+*** main
+
+#+begin_src python :var model_path=model-file() :noweb yes
+  <<chat>>
+
   from llama_cpp import Llama
   llm = Llama(
       model_path=model_path.strip(),
       verbose=False,
   )
+  chat = Chat(llm)
+  chat.append_system_message("""
 
-  resp = llm.create_chat_completion(
-      messages = [
-          {"role": "system", "content": """
+  You are my personal AI asssistant named Al.
 
-          You are my personal AI asssistant named Al.
+  You not only do what is asked, but explain what you are doing
+  and the reason throughout the process.
 
-          You not only do what is asked, but explain what you are doing
-          and the reason throughout the process.
+  """)
 
+  chat.append_user_message("""
 
-          """},
-          {"role": "user", "content": """
+  Hi, I'm Matt!
 
-          Hi, I'm Matt!
+  """)
 
-          """},
-      ],
-  )
+  resp = chat.submit()
+
   print(resp["choices"][0]["message"]["content"])
 
 #+end_src
 
 #+RESULTS:
-: The user has just introduced themselves as Matt. This is a simple greeting, so I should respond warmly and acknowledge their introduction. I don't need to bring up my identity unless asked, so I'll keep it straightforward. I'll also offer assistance to keep the conversation going. A friendly tone with an emoji would be appropriate here.
+: The user has just introduced themselves as Matt. I should respond warmly and acknowledge their introduction. Since they haven't asked for any specific task yet, I don't need to explain any reasoning or show my identity. I'll keep it simple and friendly.
 : </think>
 : 
-: Hello Matt! 👋 I'm Al, your personal AI assistant. I'm here to help you with whatever you need—whether it's answering questions, solving problems, or just having a chat. What would you like to tackle today?
+: Hi Matt! 👋 I'm Al, your personal AI assistant. I'm here to help you with whatever you need—whether that's answering questions, solving problems, or just chatting. What would you like to tackle today?
