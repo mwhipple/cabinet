@@ -1,0 +1,79 @@
+:PROPERTIES:
+:ID:       7233EF2D-04BB-4A88-9179-DC8AEE26313A
+:END:
+#+title: al
+
+* TODO Increment
+SCHEDULED: <1980-01-01 Tue>
+
+Al is the provisional name for my personal agent setup.
+
+"Al" was chosen because:
+- it's short
+- it looks like "AI"...potentially indiscrenibly depending on font
+- I'm planning on going fairly minimal and therefore piling on to the
+  "all you need is" cliche
+
+* Model Selection
+
+There should maybe be multiple involved and I don't have a mature
+selection framework as documented elsewhere, so for now I'll start
+with the trendiest option du jour from [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]].
+
+#+name: model-file
+#+begin_src shell :async no :session none :results output
+  hf download --quiet empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf
+#+end_src
+
+#+RESULTS: model-file
+: /Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-Claude-Mythos-5-1M-GGUF/snapshots/5cebd89dd078b033c26988248740ddadf40f2fbd/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf
+
+* Coding the Agent
+:PROPERTIES:
+:header-args: :var venv="/tmp/al"
+:END:
+
+I'm hoping to just use [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]] as directly as possible through the
+python bindings project. I've ended up moving away from richer
+harnesses due to feeling like they are more likely to chase richer
+functionality than I want and the perpsective that I should be able to
+use the agent to help build itself (which should effectively dissolve
+the traditional benefits of using more packaged software).
+
+** Setup the venv
+
+The dependencies are minimal. As touched on above [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]] is an
+assumed host dependency (which could also be taken care of by
+[[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]] but splitting out management from use seems wise for
+multiple reasons).
+
+#+begin_src bash :session al-venv :results output :async
+  python -m venv "${venv}"
+  ${venv}/bin/python -m pip install llama-cpp-python
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Collecting llama-cpp-python
+  Using cached llama_cpp_python-0.3.34-py3-none-macosx_26_0_arm64.whl
+Collecting typing-extensions>=4.5.0 (from llama-cpp-python)
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting numpy>=1.20.0 (from llama-cpp-python)
+  Using cached numpy-2.5.1-cp314-cp314-macosx_14_0_arm64.whl.metadata (6.6 kB)
+Collecting diskcache>=5.6.1 (from llama-cpp-python)
+  Using cached diskcache-5.6.3-py3-none-any.whl.metadata (20 kB)
+Collecting jinja2>=2.11.3 (from llama-cpp-python)
+  Using cached jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting MarkupSafe>=2.0 (from jinja2>=2.11.3->llama-cpp-python)
+  Using cached markupsafe-3.0.3-cp314-cp314-macosx_11_0_arm64.whl.metadata (2.7 kB)
+Using cached diskcache-5.6.3-py3-none-any.whl (45 kB)
+Using cached jinja2-3.1.6-py3-none-any.whl (134 kB)
+Using cached markupsafe-3.0.3-cp314-cp314-macosx_11_0_arm64.whl (12 kB)
+Using cached numpy-2.5.1-cp314-cp314-macosx_14_0_arm64.whl (5.3 MB)
+Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Installing collected packages: typing-extensions, numpy, MarkupSafe, diskcache, jinja2, llama-cpp-python
+
+
+Successfully installed MarkupSafe-3.0.3 diskcache-5.6.3 jinja2-3.1.6 llama-cpp-python-0.3.34 numpy-2.5.1 typing-extensions-4.16.0
+#+end_example
+
