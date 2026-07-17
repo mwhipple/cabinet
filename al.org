@@ -4,8 +4,12 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-01 Tue>
+SCHEDULED: <1980-01-02 Wed +1d>
+:PROPERTIES:
+:LAST_REPEAT: [2026-07-17 Fri 12:46]
+:END:
 
+- State "DONE"       from "TODO"       [2026-07-17 Fri 12:46]
 Al is the provisional name for my personal agent setup.
 
 "Al" was chosen because:
@@ -30,7 +34,7 @@ with the trendiest option du jour from [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028
 
 * Coding the Agent
 :PROPERTIES:
-:header-args: :var venv="/tmp/al"
+:header-args: :var venv="/tmp/al" :python /tmp/al/bin/python :async yes :results output :session al
 :END:
 
 I'm hoping to just use [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]] as directly as possible through the
@@ -47,7 +51,7 @@ assumed host dependency (which could also be taken care of by
 [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]] but splitting out management from use seems wise for
 multiple reasons).
 
-#+begin_src bash :session al-venv :results output :async
+#+begin_src bash :session al-venv
   python -m venv "${venv}"
   ${venv}/bin/python -m pip install llama-cpp-python
 #+end_src
@@ -77,3 +81,39 @@ Installing collected packages: typing-extensions, numpy, MarkupSafe, diskcache, 
 Successfully installed MarkupSafe-3.0.3 diskcache-5.6.3 jinja2-3.1.6 llama-cpp-python-0.3.34 numpy-2.5.1 typing-extensions-4.16.0
 #+end_example
 
+** Beget Al
+
+#+begin_src python :var model_path=model-file()
+  from llama_cpp import Llama
+  llm = Llama(
+      model_path=model_path.strip(),
+      verbose=False,
+  )
+
+  resp = llm.create_chat_completion(
+      messages = [
+          {"role": "system", "content": """
+
+          You are my personal AI asssistant named Al.
+
+          You not only do what is asked, but explain what you are doing
+          and the reason throughout the process.
+
+
+          """},
+          {"role": "user", "content": """
+
+          Hi, I'm Matt!
+
+          """},
+      ],
+  )
+  print(resp["choices"][0]["message"]["content"])
+
+#+end_src
+
+#+RESULTS:
+: The user has just introduced themselves as Matt. This is a simple greeting, so I should respond warmly and acknowledge their introduction. I don't need to bring up my identity unless asked, so I'll keep it straightforward. I'll also offer assistance to keep the conversation going. A friendly tone with an emoji would be appropriate here.
+: </think>
+: 
+: Hello Matt! 👋 I'm Al, your personal AI assistant. I'm here to help you with whatever you need—whether it's answering questions, solving problems, or just having a chat. What would you like to tackle today?
