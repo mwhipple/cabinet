@@ -4,9 +4,9 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-03 Thu +1d>
+SCHEDULED: <1980-01-04 Fri +1d>
 :PROPERTIES:
-:LAST_REPEAT: [2026-07-17 Fri 13:48]
+:LAST_REPEAT: [2026-07-17 Fri 15:39]
 :END:
 
 Al is the provisional name for my personal agent setup.
@@ -80,6 +80,62 @@ Installing collected packages: typing-extensions, numpy, MarkupSafe, diskcache, 
 Successfully installed MarkupSafe-3.0.3 diskcache-5.6.3 jinja2-3.1.6 llama-cpp-python-0.3.34 numpy-2.5.1 typing-extensions-4.16.0
 #+end_example
 
+
+** Define Some Tools
+
+I'll start with some basics with some manual wiring and then work on
+generalizing some of that. The first goal is just making sure the tool
+can be discovered and provokes a tool_call from the model.
+
+The definition for the tools will be defined alongside the tool (and
+subsequently based on code already floating around) to be pulled in by
+the agent later.
+
+The tools will be defined using type [[id:D875AD7A-32CC-4252-B42E-97B28C3835AA][ChatCompletionTool]]
+
+The actual types here could use some help which is a lingering
+upstream TODO:
+https://github.com/abetlen/llama-cpp-python/blob/629bd1b333f60d24a01886c5f99019f4c7c3ea6c/llama_cpp/llama_types.py#L272
+I'd mostly want to derive this information which should largely absorb
+that concern. The structure below gets the ball rolling and nudges
+this to the point of handling the tool call which will be the next
+step. Next steps are to write what is a standlone tool handler for the
+time being, pipe that back to the agent, and then bundle all of that
+up as a toolbelt.
+
+#+name: fs-tools
+#+begin_src python
+  def read_file(path: str) -> str:
+      "Return the contents of the file at path as a string."
+      try:
+          with open(path, 'r', encoding='utf-8') as f:
+              return f.read()
+      except FileNotFoundError:
+          return f"Error: File not found at {path}"
+      except IOError as e:
+          return f"Error reading file: {e}"
+
+  READ_FILE = {
+      "type": "function",
+      "function": {
+          "name": "read_file",
+          "description": "Return the contents of the file at path as string.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                },
+            },
+            "required": ["path"],
+          },
+      },
+  }
+
+#+end_src
+
+#+RESULTS: fs-tools
+
 ** Beget Al
 
 Construct and interact with a [[id:D40AB771-6361-484A-8685-D082565D0D1E][llama.Llama]].
@@ -102,10 +158,15 @@ Support submitting of [[id:F68AF496-31B7-40E1-A0A2-8E7CD442BC30][ChatCompletionR
 #+name: chat
 #+begin_src python
   from llama_cpp import Llama
+  from llama_cpp.llama_types import (
+      ChatCompletionRequestMessage,
+      ChatCompletionTool,
+  )
   class Chat:
       def __init__(self, model: Llama):
           self.model = model
-          self.messages = []
+          self.messages: list[ChatCompletionRequestMessage] = []
+          self.tools: list[ChatCompletionTool] = []
 
       def append_system_message(self, content: str):
           self.messages.append({"role": "system", "content": content})
@@ -113,24 +174,39 @@ Support submitting of [[id:F68AF496-31B7-40E1-A0A2-8E7CD442BC30][ChatCompletionR
       def append_user_message(self, content: str):
           self.messages.append({"role": "user", "content": content})
 
+      def register_tool(self, tool: ChatCompletionTool):
+          self.tools.append(tool)
+
       def submit(self):
           return self.model.create_chat_completion(
               messages = self.messages,
+              tools = self.tools,
+              tool_choice = "auto",
           )
 
 #+end_src
 
+#+RESULTS: chat
+
 *** main
+
+chat_format feels like it has a broad impact but is missing some local explanation.
+The current model is advertised as using Qwen/ChatML style, but when
+the format is changed the tools aren't detected without further help.
 
 #+begin_src python :var model_path=model-file() :noweb yes
   <<chat>>
+  <<fs-tools>>
 
+  from pprint import pprint
   from llama_cpp import Llama
   llm = Llama(
       model_path=model_path.strip(),
+      chat_format="chatml-function-calling",
       verbose=False,
   )
   chat = Chat(llm)
+  chat.register_tool(READ_FILE)
   chat.append_system_message("""
 
   You are my personal AI asssistant named Al.
@@ -142,18 +218,77 @@ Support submitting of [[id:F68AF496-31B7-40E1-A0A2-8E7CD442BC30][ChatCompletionR
 
   chat.append_user_message("""
 
-  Hi, I'm Matt!
+  Read the contents of this file at "/Users/mwhipple/memex/cabinet/al.org"
 
   """)
 
   resp = chat.submit()
 
-  print(resp["choices"][0]["message"]["content"])
+  pprint(resp)
 
 #+end_src
 
 #+RESULTS:
-: The user has just introduced themselves as Matt. I should respond warmly and acknowledge their introduction. Since they haven't asked for any specific task yet, I don't need to explain any reasoning or show my identity. I'll keep it simple and friendly.
-: </think>
-: 
-: Hi Matt! 👋 I'm Al, your personal AI assistant. I'm here to help you with whatever you need—whether that's answering questions, solving problems, or just chatting. What would you like to tackle today?
+#+begin_example
+{'choices': [{'finish_reason': 'tool_calls',
+              'index': 0,
+              'logprobs': None,
+              'message': {'content': None,
+                          'function_call': {'arguments': '{ "path": '
+                                                         '"/Users/mwhipple/memex/cabinet/al.org" '
+                                                         '}',
+                                            'name': 'read_file:'},
+                          'role': 'assistant',
+                          'tool_calls': [{'function': {'arguments': '{ "path": '
+                                                                    '"/Users/mwhipple/memex/cabinet/al.org" '
+                                                                    '}',
+                                                       'name': 'read_file'},
+                                          'id': 'call__0_read_file_cmpl-0a6820f6-ab68-4089-aeaa-8dc97c7189bb',
+                                          'type': 'function'}]}}],
+ 'created': 1784338283,
+ 'id': 'chatcmpl-e505a76e-c187-43c6-999c-c17df192c4d8',
+ 'model': '/Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-Claude-Mythos-5-1M-GGUF/snapshots/5cebd89dd078b033c26988248740ddadf40f2fbd/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf',
+ 'object': 'chat.completion',
+ 'usage': {'completion_tokens': 18, 'prompt_tokens': 237, 'total_tokens': 255}}
+#+end_example
+
+*** Queue
+
+**** Self-Improvement
+
+The first actual practical goal as alluded to above is allowing the
+agent to improve itself. To do so efficiently it should first be able
+to read and then subsequently write to this file (on the local
+filesystem).
+
+**** Tools
+
+Getting tools working is viewed as one of the highest priority items.
+Tools are the most straightforward way to bridge models with things
+outside fo their sandboxes, and presumably also forms the means for
+many other typically expected agent behaviors (and may be the route I
+pursue even if there are alternatives).
+
+Working outside of a harness seems to make the interactions a bit
+clearer, where the tool calls pass back through as messages to the
+driving code/agent which is responsible for actually making the call
+and returning the response.
+
+I'm therefore expecting to produce a ToolBelt which both advertises
+the tools to the model and can handle the tool call messages. One of
+the big remaining questions is around the chat format and related
+behavior encountered earlier.
+
+**** Tidy Up Response Handling
+The current code is sloppy but effective...without the need for
+tighter integration this is a bit of hygiene but not pragmatically important.
+
+**** Streaming
+
+Streaming is ostensibly preferable to provide more realtime feedback,
+but it introduces additional challenges in terms of needing to
+reassemble some chunks. Basic streaming interaction is straightforward
+and was done previously, but it seems wiser to defer leaning into
+streaming until there is known working code that it can be used for
+(for example getting all of the tool calling machinery working with
+full messages before those messages get chunked up).
