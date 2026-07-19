@@ -4,10 +4,12 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-04 Fri +1d>
+SCHEDULED: <1980-01-05 Sat +1d>
 :PROPERTIES:
-:LAST_REPEAT: [2026-07-17 Fri 15:39]
+:LAST_REPEAT: [2026-07-17 Fri 21:39]
 :END:
+
+* Name
 
 Al is the provisional name for my personal agent setup.
 
@@ -25,11 +27,11 @@ with the trendiest option du jour from [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028
 
 #+name: model-file
 #+begin_src shell :async no :session none :results output
-  hf download --quiet empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf
+  hf download --quiet empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf
 #+end_src
 
 #+RESULTS: model-file
-: /Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-Claude-Mythos-5-1M-GGUF/snapshots/5cebd89dd078b033c26988248740ddadf40f2fbd/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf
+: /Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-Claude-Mythos-5-1M-GGUF/snapshots/5cebd89dd078b033c26988248740ddadf40f2fbd/Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf
 
 * Coding the Agent
 :PROPERTIES:
@@ -81,7 +83,30 @@ Successfully installed MarkupSafe-3.0.3 diskcache-5.6.3 jinja2-3.1.6 llama-cpp-p
 #+end_example
 
 
-** Define Some Tools
+** Tools
+
+*** Protocol
+
+llama.cpp and/or the python bindings seem to provide some pieces to
+help with dealing with tool calls so that the responses can be more
+readily dealt with, but that doesn't seem to work particularly well
+nor does it have a lot of documentation. This support is likely to be
+particularly important when accessing through the server as that would
+enable a cleaner API surface area, but when working with the models
+more directly there seems to be questionable value in trying to push
+that type of logic behind an abstraction rather than dealing with it
+more directly. Overall if it just worked I'd use it but since it
+doesn't I don't see any particular benefit to trying to provide that
+handling in a way that is integrated more deeply rather than just
+having that logic able to be applied; expecting less magic applied
+in-flight and just expecting to apply it after the fact.
+
+The model I'm currently using seems to make use of Qwen style tool
+calls which for whatever reason is XMLish...but not quite XML. This
+generally suggests starting a library of parsers where this would be
+the first instance.
+
+*** Definitions
 
 I'll start with some basics with some manual wiring and then work on
 generalizing some of that. The first goal is just making sure the tool
@@ -131,7 +156,6 @@ up as a toolbelt.
           },
       },
   }
-
 #+end_src
 
 #+RESULTS: fs-tools
