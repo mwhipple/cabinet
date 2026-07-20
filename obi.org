@@ -4,7 +4,7 @@
 #+title: obi
 
 * TODO Iterate
-SCHEDULED: <1980-01-02 Wed +1d>
+SCHEDULED: <1980-01-10 Thu +1d>
 ** Work through [[id:D5B6CBC5-AB99-4278-A8A3-ACB9124B68F4][obi/describe-function]]
 
 * Background
@@ -60,6 +60,18 @@ the interaction model primarily defined as executable blocks which
 produce outputs, it will be defined as blocks which can be defined as
 the expressions evaluated from other blocks (thereby providing a
 simpler means for capturing multiple outputs).
+
+** Compared to Spreadsheets
+
+A belated realization for some of the DAG ideas mentioned above is
+that it also produces a system which is similar to a
+spreadsheet...where those blocks defined as expressions are a
+generalization of spreadsheet cells containing formulas.
+
+Without more substance this comparison doesn't have much practical
+benefit, but the popularity of spreadsheets along with the idea
+that that type of model is still called out as exemplary (such as in
+DDIA) supports that this line of thought may have some merit.
 
 ** Function Syntax
 
@@ -128,15 +140,13 @@ packaging up to be less mutate-y.
 #+RESULTS:
 : obi/block-named
 
+** Initial Work
+
+- [[id:1D039937-F8B4-423A-A732-20E8CDDE4BB7][obi/agenda]]
+
+* Old Info
 
 ** Background
-
-I've recently taken to using org babel very heavily...and that mostly
-comes down to treating those files as a primary interface/shell. This
-therefore seems likely to expand beyond what org-babel may typically
-come with org-babel: while all the building blocks seem to be there,
-there may be some specific extensions and conventions that
-fall out of using it more extensively.
 
 One of the other fairly significant goals is that while I'll be using
 obi with org-babel and emacs for the foreseeable future, I'd also want
@@ -199,6 +209,19 @@ To start we'll assume that this will be checked outside of the function
 
 ** body
 
+** obi/BlockParams
+
+Support working with parameters for a block.  This provides a closure
+over the parameters, returning a function which can be called with a
+parameter name/keword to return the value of that parameter.
+
+#+begin_src emacs-lisp
+  (defun obi/BlockParams (bp)
+    (lambda (sym) (cdr (assq sym bp))))
+#+end_src
+
+#+RESULTS:
+: obi/BlockParams
 ** obi/execute-src-block
 
 This function collects the context which results in an ~info~ object
