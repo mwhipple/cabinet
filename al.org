@@ -4,10 +4,11 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-06 Sun +1d>
+SCHEDULED: <1980-01-07 Mon +1d>
 :PROPERTIES:
-:LAST_REPEAT: [2026-07-19 Sun 11:59]
+:LAST_REPEAT: [2026-07-19 Sun 22:09]
 :END:
+- State "DONE"       from "TODO"       [2026-07-19 Sun 22:09]
 * Name
 
 Al is the provisional name for my personal agent setup.
@@ -159,8 +160,8 @@ This includes positional parameters that have no default.
   import inspect
   def is_required_parameter(param):
       return param.default is inspect.Parameter.empty and (
-	param.kind not in (inspect.Parameter.VAR_POSITIONAL,
-			   inspect.Parameter.VAR_KEYWORD))
+        param.kind not in (inspect.Parameter.VAR_POSITIONAL,
+                           inspect.Parameter.VAR_KEYWORD))
 #+end_src
 
 #+RESULTS:
@@ -172,9 +173,9 @@ Introspect parameter types or throw trying
 #+begin_src python
   def param_type(param):
       if param.annotation == inspect.Parameter.empty:
-	  raise TypeError(
-	      f"Parameter '{param['name']}' lacks a type annotation;"
-	      "add a type hint (e.g., def foo(x: int) -> str).")
+          raise TypeError(
+              f"Parameter '{param['name']}' lacks a type annotation;"
+              "add a type hint (e.g., def foo(x: int) -> str).")
       return str(param.annotation)
 #+end_src
 
@@ -191,6 +192,7 @@ This does /not/ attempt to be comprehensive. As needed this should be
 extended with registries to handle additional types.
 
 #+begin_src python
+  import inspect
   def define_tool(func: callable) -> ToolFunctionDefinition:
       """
       Produce a dictionary suitable for llama-cpp-python tool registration.
@@ -198,27 +200,27 @@ extended with registries to handle additional types.
 
       description = func.__doc__
       if not description:
-	  raise TypeError("Function must have a non-empty docstring.")
+          raise TypeError("Function must have a non-empty docstring.")
 
       sig = inspect.signature(func)
       params = sig.parameters.items()
 
       return {
-	  "type": "function",
-	  "function": {
-	      "name": func.__name__,
-	      "description": description,
-	      "parameters": {
-		  "type": "object",
-		  "properties": {
-		      param_name: {
-			  "type": param_type(param),
-		      }
-		  for param_name, param in params},
-		  "required": [param_name for param_name, param in params if is_required_parameter(param)],
-	      },
-	      "return_type": str(sig.return_annotation),
-	  },
+          "type": "function",
+          "function": {
+              "name": func.__name__,
+              "description": description,
+              "parameters": {
+                  "type": "object",
+                  "properties": {
+                      param_name: {
+                          "type": param_type(param),
+                      }
+                  for param_name, param in params},
+                  "required": [param_name for param_name, param in params if is_required_parameter(param)],
+              },
+              "return_type": str(sig.return_annotation),
+          },
       }
 #+end_src
 
@@ -237,17 +239,67 @@ What better way to test the definition extraction...
 #+begin_example
 func: <built-in function callable>
 {'function': {'description': '\n'
-			     'Produce a dictionary suitable for '
-			     'llama-cpp-python tool registration.\n',
-	      'name': 'define_tool',
-	      'parameters': {'properties': {'func': {'type': '<built-in '
-							     'function '
-							     'callable>'}},
-			     'required': ['func'],
-			     'type': 'object'},
-	      'return_type': "<class '__main__.ToolFunctionDefinition'>"},
+                             'Produce a dictionary suitable for '
+                             'llama-cpp-python tool registration.\n',
+              'name': 'define_tool',
+              'parameters': {'properties': {'func': {'type': '<built-in '
+                                                             'function '
+                                                             'callable>'}},
+                             'required': ['func'],
+                             'type': 'object'},
+              'return_type': "<class '__main__.ToolFunctionDefinition'>"},
  'type': 'function'}
 #+end_example
+
+
+***** apply_tool
+
+Call a function using a ToolCallMessage and return the expected
+request message.
+
+#+begin_src python
+  def apply_tool(func_call, tool: callable, id: str):
+    results = tool(func_call.input)
+    return { "role": "tool",
+             "content": results,
+             "name": func["name"],
+             "tool_call_id": tool_call["id"] }
+#+end_src
+
+#+RESULTS:
+
+***** ToolBelt
+
+The ToolBelt object will handle advertising of available tools and
+their subsequent use.
+
+Application will produce the message to send back to the model.
+
+#+begin_src python
+  class ToolBelt():
+      def __init__(self):
+          self.tools = {}
+
+      def register(self, func: Callable):
+          self.tools[func.__name__] = func
+
+      def definitions(self):
+          return [define_tool(tool) for tool in self.tools.values()]
+
+      def apply(self, tool_call: ToolCall) -> ChatCompletionRequestToolMessage:
+          if tool_call["type"] != "function":
+              raise TypeError("Only functions suppored")
+          func = tool_call["function"]
+          tool_name = func["name"]
+          tool = self.tools.get(tool_name)
+          if tool is None:
+              raise ValueError(f"Tool {tool_name} not found")
+          return apply_tool(tool_call, tool)
+
+  tool_belt = ToolBelt()
+#+end_src
+
+#+RESULTS:
 
 *** Definitions
 
@@ -282,26 +334,8 @@ up as a toolbelt.
           return f"Error: File not found at {path}"
       except IOError as e:
           return f"Error reading file: {e}"
-
-  READ_FILE = {
-      "type": "function",
-      "function": {
-          "name": "read_file",
-          "description": "Return the contents of the file at path as string.",
-          "parameters": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                },
-            },
-            "required": ["path"],
-          },
-      },
-  }
+  tool_belt.register(read_file)
 #+end_src
-
-#+RESULTS: fs-tools
 
 ** Beget Al
 
