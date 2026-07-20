@@ -4,9 +4,9 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-08 Tue +1d>
+SCHEDULED: <1980-01-09 Wed +1d>
 :PROPERTIES:
-:LAST_REPEAT: [2026-07-20 Mon 07:52]
+:LAST_REPEAT: [2026-07-20 Mon 08:45]
 :END:
 * Name
 
@@ -15,8 +15,9 @@ Al is the provisional name for my personal agent setup.
 "Al" was chosen because:
 - it's short
 - it looks like "AI"...potentially indiscrenibly depending on font
-- I'm planning on going fairly minimal and therefore piling on to the
+- I'm planning on going fairly minimal and piling on to the
   "all you need is" cliche
+- it could call you Betty
 
 * Model Selection
 
@@ -81,7 +82,6 @@ Installing collected packages: typing-extensions, numpy, MarkupSafe, diskcache, 
 Successfully installed MarkupSafe-3.0.3 diskcache-5.6.3 jinja2-3.1.6 llama-cpp-python-0.3.34 numpy-2.5.1 typing-extensions-4.16.0
 #+end_example
 
-
 ** Tools
 
 *** Protocol
@@ -100,18 +100,15 @@ handling in a way that is integrated more deeply rather than just
 having that logic able to be applied; expecting less magic applied
 in-flight and just expecting to apply it after the fact.
 
-The model I'm currently using seems to make use of Qwen style tool
-calls which for whatever reason is XMLish...but not quite XML. This
-generally suggests starting a library of parsers where this would be
-the first instance.
+*** ToolBelt
 
-*** Derive Tool Definition
+**** Derive Tool Definition
 
 Extracting information for use by the model should be done by
 reflection. Any ambiguous information should result in an error rather
 than attempting to be clever.
 
-**** Type Definition
+***** Type Definition
 
 The first step will be defining the expected output since that's a gap
 in the upstream type definitions.
@@ -147,9 +144,9 @@ schema definition.
 
 #+RESULTS: tool-definition-type
 
-**** Logic
+***** Logic
 
-***** is_required_parameter
+****** is_required_parameter
 
 Indicate whether a parameter is required.
 
@@ -165,7 +162,7 @@ This includes positional parameters that have no default.
 
 #+RESULTS:
 
-***** param_type
+****** param_type
 
 Introspect parameter types or throw trying
 
@@ -180,7 +177,7 @@ Introspect parameter types or throw trying
 
 #+RESULTS:
 
-***** define_tool
+****** define_tool
 
 This is mostly cleaned up from previously produced AI input...
 mostly to fully conform to the desired format.
@@ -225,7 +222,7 @@ extended with registries to handle additional types.
 
 #+RESULTS:
 
-****** Sandbox
+******* Sandbox
 
 What better way to test the definition extraction...
 
@@ -251,7 +248,7 @@ func: <built-in function callable>
 #+end_example
 
 
-***** apply_tool
+**** apply_tool
 
 Call a function using a ToolCallMessage and return the expected
 request message.
@@ -267,7 +264,7 @@ request message.
 
 #+RESULTS:
 
-***** ToolBelt
+**** Class Definition
 
 The ToolBelt object will handle advertising of available tools and
 their subsequent use.
@@ -299,6 +296,108 @@ Application will produce the message to send back to the model.
 #+end_src
 
 #+RESULTS:
+
+*** Call Parsing and Integration
+
+The ToolBox defined above will be oriented towards standard
+interfaces, but there may be need to be some additional adaptation
+between those standards and what passes to and from the model (and
+maybe elsewhere).
+
+Such adapaters will be defined separately and plugged in where
+appropriate to the message passing and handling machinery...so this
+defines a configuraable integration layer rather than something that
+should be baked into either side.
+
+The general interface for parsing will be one that accepts a message
+and returns (possibly empty) lists of extracted information.
+
+**** Handling Qwen Style Calls
+
+The model I'm currently using seems to make use of Qwen style tool
+calls which for whatever reason is XMLish...but not quite XML.
+
+The matching could likely be trivially generalized to suppor a
+function that takes a tag name and returns the attribute and body...
+but for now this seems legible anough and below the rule of three.
+
+The logic is organized to support [[id:E64A3393-5DD5-4446-8202-BB7588D4EB10][comprehensions]].
+
+***** parameter_from_qwen_match
+
+When passed a regex capture for ~<paramter={}>{}</parameter>~,
+return a tuple of name and parameter value.
+
+The match itself is done by the caller.
+
+#+begin_src python
+  import json
+  def parameter_from_qwen_match(match):
+      name = match.group(1).strip()
+      str_value = match.group(2).strip()
+      try:
+          return (name, json.loads(str_value))
+      except json.JSONDecodeError:
+          return (name, str_value)
+#+end_src
+
+#+RESULTS:
+
+***** call_from_qwen_match
+
+When passed a regex capture for ~<function={}>{}</function>~,
+return a tuple of name and parameter value.
+
+the match itself is done by the caller.
+
+#+begin_src python
+  import re
+  def call_from_qwen_match(match):
+      return {
+          "type": "function",
+          "id": f"call_{uuid.uuid4().hex[:24]}",
+          "function": {
+              "name": match.group(1),
+              "arguments": {k: v for (k, v)
+                            in map(parameter_from_qwen_match,
+                                   re.finditer(r'<parameter=([\w.\-]+)>([\s\S]*?)</parameter>', match.group(2)))},
+          },
+      }
+
+#+end_src
+
+#+RESULTS:
+
+***** parse_qwen_tool_calls
+
+#+begin_src python
+  import json
+  import re
+
+  def parse_qwen_tool_calls(msg):
+    """Parses Qwen style <function> and <parameter> tags from a string."""
+    return [call_from_qwen_match(match) for match in
+            re.finditer(r'<function=([\w.\-]+)>([\s\S]*?)</function>', msg['message'])]
+#+end_src
+
+#+RESULTS:
+
+****** Sandbox
+
+#+begin_src python
+  print(parse_qwen_tool_calls({"message": """
+  <tool_call>
+  <function=read_file>
+  <parameter=path>
+  /Users/mwhipple/memex/cabinet/al.org
+  </parameter>
+  </function>
+  </tool_call>"""}))
+#+end_src
+
+#+RESULTS:
+: /Users/mwhipple/memex/cabinet/al.org
+: [{'type': 'function', 'id': 'call_9da4e2bc8df147ff9f56c373', 'function': {'name': 'read_file', 'arguments': {'path': '/Users/mwhipple/memex/cabinet/al.org'}}}]
 
 *** Definitions
 
@@ -371,6 +470,8 @@ is passed in.
 This could certainly benefit from a bit more encapsulation, but to
 start its unclear where the best seams are that won't just create a
 ball of mud.
+
+Messages will be sent using [[id:C6047B7D-4B82-45B9-886A-FACBF966030B][create_chat_completion]].
 
 #+begin_src python
   from llama_cpp import Llama
