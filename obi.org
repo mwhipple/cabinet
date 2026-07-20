@@ -222,6 +222,41 @@ parameter name/keword to return the value of that parameter.
 
 #+RESULTS:
 : obi/BlockParams
+
+** obi/BlockInfo
+
+Define the type for BlockInfo.
+
+This is the type already used by org-babel, but defined more strongly.
+
+The :language org property is the language for the block which seems
+to be a reasonable part of the org API ostensibly covered elsewhere.
+
+The info structure is then composed of a list of:
+- language
+- body
+- params (merged with levels of defaults)...potentially processed and
+  with file destination resolved
+- switches?
+- name (if present)
+- start as determined by begin or post-affiliated
+- format string for block coderef
+(documented below also but what some of the things mean can be
+expanded above).
+
+#+begin_src emacs-lisp
+  (defun obi/BlockInfo-language  (bi) (nth 0 bi))
+  (defun obi/BlockInfo-body      (bi) (nth 1 bi))
+  (defun obi/BlockInfo-params    (bi) (obi/BlockParams (nth 2 bi)))
+  (defun obi/BlockInfo-switches  (bi) (nth 3 bi))
+  (defun obi/BlockInfo-name      (bi) (nth 4 bi))
+  (defun obi/BlockInfo-start     (bi) (nth 5 bi))
+  (defun obi/BlockInfo-coderef   (bi) (nth 6 bi))
+#+end_src
+
+#+RESULTS:
+: obi/BlockInfo-coderef
+
 ** obi/execute-src-block
 
 This function collects the context which results in an ~info~ object
