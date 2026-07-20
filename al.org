@@ -4,11 +4,10 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-05 Sat +1d>
+SCHEDULED: <1980-01-06 Sun +1d>
 :PROPERTIES:
-:LAST_REPEAT: [2026-07-17 Fri 21:39]
+:LAST_REPEAT: [2026-07-19 Sun 11:59]
 :END:
-
 * Name
 
 Al is the provisional name for my personal agent setup.
@@ -105,6 +104,150 @@ The model I'm currently using seems to make use of Qwen style tool
 calls which for whatever reason is XMLish...but not quite XML. This
 generally suggests starting a library of parsers where this would be
 the first instance.
+
+*** Derive Tool Definition
+
+Extracting information for use by the model should be done by
+reflection. Any ambiguous information should result in an error rather
+than attempting to be clever.
+
+**** Type Definition
+
+The first step will be defining the expected output since that's a gap
+in the upstream type definitions.
+
+Upstream basically stops at parameters so this presses on.
+
+This doesn't seem particularly expressive, but that's probably a
+larger question and probably best served by what amounts to portable
+schema definition.
+
+#+name: tool-definition-type
+#+begin_src python
+  from typing import List, Dict
+  from typing_extensions import TypedDict, NotRequired, Literal
+
+  class ToolDefinition(TypedDict):
+    type: Literal["function"]
+    function: ToolFunctionDefinition
+
+  class ToolFunctionDefinition(TypedDict):
+    name: str
+    description: NotRequired[str]
+    parameters: ToolFunctionDefinitionParameters
+
+  class ToolFunctionDefinitionParameters(TypedDict):
+    type: Literal["object"]
+    properties: Dict[str, ToolFunctionDefinitionParameterDefinition]
+    required: List[str]
+
+  class ToolFunctionDefinitionParameterDefinition(TypedDict):
+    type: str
+#+end_src
+
+#+RESULTS: tool-definition-type
+
+**** Logic
+
+***** is_required_parameter
+
+Indicate whether a parameter is required.
+
+This includes positional parameters that have no default.
+
+#+begin_src python
+  import inspect
+  def is_required_parameter(param):
+      return param.default is inspect.Parameter.empty and (
+	param.kind not in (inspect.Parameter.VAR_POSITIONAL,
+			   inspect.Parameter.VAR_KEYWORD))
+#+end_src
+
+#+RESULTS:
+
+***** param_type
+
+Introspect parameter types or throw trying
+
+#+begin_src python
+  def param_type(param):
+      if param.annotation == inspect.Parameter.empty:
+	  raise TypeError(
+	      f"Parameter '{param['name']}' lacks a type annotation;"
+	      "add a type hint (e.g., def foo(x: int) -> str).")
+      return str(param.annotation)
+#+end_src
+
+#+RESULTS:
+
+***** define_tool
+
+This is mostly cleaned up from previously produced AI input...
+mostly to fully conform to the desired format.
+Reference sources should be provided which is also something that
+should be included in the system prompt.
+
+This does /not/ attempt to be comprehensive. As needed this should be
+extended with registries to handle additional types.
+
+#+begin_src python
+  def define_tool(func: callable) -> ToolFunctionDefinition:
+      """
+      Produce a dictionary suitable for llama-cpp-python tool registration.
+      """
+
+      description = func.__doc__
+      if not description:
+	  raise TypeError("Function must have a non-empty docstring.")
+
+      sig = inspect.signature(func)
+      params = sig.parameters.items()
+
+      return {
+	  "type": "function",
+	  "function": {
+	      "name": func.__name__,
+	      "description": description,
+	      "parameters": {
+		  "type": "object",
+		  "properties": {
+		      param_name: {
+			  "type": param_type(param),
+		      }
+		  for param_name, param in params},
+		  "required": [param_name for param_name, param in params if is_required_parameter(param)],
+	      },
+	      "return_type": str(sig.return_annotation),
+	  },
+      }
+#+end_src
+
+#+RESULTS:
+
+****** Sandbox
+
+What better way to test the definition extraction...
+
+#+begin_src python
+  from pprint import pprint
+  pprint(define_tool(define_tool))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+func: <built-in function callable>
+{'function': {'description': '\n'
+			     'Produce a dictionary suitable for '
+			     'llama-cpp-python tool registration.\n',
+	      'name': 'define_tool',
+	      'parameters': {'properties': {'func': {'type': '<built-in '
+							     'function '
+							     'callable>'}},
+			     'required': ['func'],
+			     'type': 'object'},
+	      'return_type': "<class '__main__.ToolFunctionDefinition'>"},
+ 'type': 'function'}
+#+end_example
 
 *** Definitions
 
