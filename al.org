@@ -4,9 +4,9 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-10 Thu +1d>
+SCHEDULED: <1980-01-11 Fri +1d>
 :PROPERTIES:
-:LAST_REPEAT: [2026-07-20 Mon 10:28]
+:LAST_REPEAT: [2026-07-20 Mon 11:29]
 :END:
 * Name
 
@@ -32,6 +32,15 @@ with the trendiest option du jour from [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028
 
 #+RESULTS: model-file
 : /Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-Claude-Mythos-5-1M-GGUF/snapshots/5cebd89dd078b033c26988248740ddadf40f2fbd/Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf
+
+* Message Types
+
+The language around the different types of messages needs some
+cleaning up, both just for naming and for which are worth paying
+attention to. There is some upstream conventions to start with, but it
+also seems worth trying to refine them a bit since they seem to get
+verbose. "Message" may want to be avoided entirely over time as being
+too general and likely to breed confusion.
 
 * Coding the Agent
 :PROPERTIES:
@@ -82,33 +91,18 @@ Installing collected packages: typing-extensions, numpy, MarkupSafe, diskcache, 
 Successfully installed MarkupSafe-3.0.3 diskcache-5.6.3 jinja2-3.1.6 llama-cpp-python-0.3.34 numpy-2.5.1 typing-extensions-4.16.0
 #+end_example
 
-** Tools
+** ToolBelt
 
-*** Protocol
+Provide some general tool wiring support.
+Declare this early so that it can act as a shared registry of tools.
 
-llama.cpp and/or the python bindings seem to provide some pieces to
-help with dealing with tool calls so that the responses can be more
-readily dealt with, but that doesn't seem to work particularly well
-nor does it have a lot of documentation. This support is likely to be
-particularly important when accessing through the server as that would
-enable a cleaner API surface area, but when working with the models
-more directly there seems to be questionable value in trying to push
-that type of logic behind an abstraction rather than dealing with it
-more directly. Overall if it just worked I'd use it but since it
-doesn't I don't see any particular benefit to trying to provide that
-handling in a way that is integrated more deeply rather than just
-having that logic able to be applied; expecting less magic applied
-in-flight and just expecting to apply it after the fact.
-
-*** ToolBelt
-
-**** Derive Tool Definition
+*** Derive Tool Definition
 
 Extracting information for use by the model should be done by
 reflection. Any ambiguous information should result in an error rather
 than attempting to be clever.
 
-***** Type Definition
+**** Type Definition
 
 The first step will be defining the expected output since that's a gap
 in the upstream type definitions.
@@ -144,9 +138,9 @@ schema definition.
 
 #+RESULTS: tool-definition-type
 
-***** Logic
+**** Logic
 
-****** is_required_parameter
+***** is_required_parameter
 
 Indicate whether a parameter is required.
 
@@ -162,7 +156,7 @@ This includes positional parameters that have no default.
 
 #+RESULTS:
 
-****** param_type
+***** param_type
 
 Introspect parameter types or throw trying
 
@@ -177,7 +171,7 @@ Introspect parameter types or throw trying
 
 #+RESULTS:
 
-****** define_tool
+***** define_tool
 
 This is mostly cleaned up from previously produced AI input...
 mostly to fully conform to the desired format.
@@ -222,7 +216,7 @@ extended with registries to handle additional types.
 
 #+RESULTS:
 
-******* Sandbox
+****** Sandbox
 
 What better way to test the definition extraction...
 
@@ -247,23 +241,23 @@ func: <built-in function callable>
  'type': 'function'}
 #+end_example
 
-**** apply_tool
+*** apply_tool
 
 Call a function using a ToolCallMessage and return the expected
 request message.
 
 #+begin_src python
   def apply_tool(func_call, tool: callable, id: str):
-    results = tool(func_call.input)
+    results = tool(**func_call["arguments"])
     return { "role": "tool",
              "content": results,
-             "name": func["name"],
-             "tool_call_id": tool_call["id"] }
+             "name": func_call["name"],
+             "tool_call_id": id }
 #+end_src
 
 #+RESULTS:
 
-**** Class Definition
+*** Class Definition
 
 The ToolBelt object will handle advertising of available tools and
 their subsequent use.
@@ -289,167 +283,8 @@ Application will produce the message to send back to the model.
           tool = self.tools.get(tool_name)
           if tool is None:
               raise ValueError(f"Tool {tool_name} not found")
-          return apply_tool(tool_call, tool)
+          return apply_tool(func, tool, tool_call["id"])
 
-  tool_belt = ToolBelt()
-#+end_src
-
-#+RESULTS:
-
-*** Call Parsing and Integration
-
-The ToolBox defined above will be oriented towards standard
-interfaces, but there may be need to be some additional adaptation
-between those standards and what passes to and from the model (and
-maybe elsewhere).
-
-Such adapaters will be defined separately and plugged in where
-appropriate to the message passing and handling machinery...so this
-defines a configuraable integration layer rather than something that
-should be baked into either side.
-
-The general interface for parsing will be one that accepts a message
-and returns (possibly empty) lists of extracted information.
-
-**** Handling Qwen Style Calls
-
-The model I'm currently using seems to make use of Qwen style tool
-calls which for whatever reason is XMLish...but not quite XML.
-
-The matching could likely be trivially generalized to suppor a
-function that takes a tag name and returns the attribute and body...
-but for now this seems legible anough and below the rule of three.
-
-The logic is organized to support [[id:E64A3393-5DD5-4446-8202-BB7588D4EB10][comprehensions]].
-
-***** parameter_from_qwen_match
-
-When passed a regex capture for ~<paramter={}>{}</parameter>~,
-return a tuple of name and parameter value.
-
-The match itself is done by the caller.
-
-#+begin_src python
-  import json
-  def parameter_from_qwen_match(match):
-      name = match.group(1).strip()
-      str_value = match.group(2).strip()
-      try:
-          return (name, json.loads(str_value))
-      except json.JSONDecodeError:
-          return (name, str_value)
-#+end_src
-
-#+RESULTS:
-
-***** call_from_qwen_match
-
-When passed a regex capture for ~<function={}>{}</function>~,
-return a tuple of name and parameter value.
-
-the match itself is done by the caller.
-
-#+begin_src python
-  import re
-  def call_from_qwen_match(match):
-      return {
-          "type": "function",
-          "id": f"call_{uuid.uuid4().hex[:24]}",
-          "function": {
-              "name": match.group(1),
-              "arguments": {k: v for (k, v)
-                            in map(parameter_from_qwen_match,
-                                   re.finditer(r'<parameter=([\w.\-]+)>([\s\S]*?)</parameter>', match.group(2)))},
-          },
-      }
-
-#+end_src
-
-#+RESULTS:
-
-***** parse_qwen_tool_calls
-
-#+begin_src python
-  import json
-  import re
-
-  def parse_qwen_tool_calls(msg):
-    """Parses Qwen style <function> and <parameter> tags from a string."""
-    return [call_from_qwen_match(match) for match in
-            re.finditer(r'<function=([\w.\-]+)>([\s\S]*?)</function>', msg['message'])]
-#+end_src
-
-#+RESULTS:
-
-****** Sandbox
-
-#+begin_src python
-  print(parse_qwen_tool_calls({"message": """
-  <tool_call>
-  <function=read_file>
-  <parameter=path>
-  /Users/mwhipple/memex/cabinet/al.org
-  </parameter>
-  </function>
-  </tool_call>"""}))
-#+end_src
-
-#+RESULTS:
-: /Users/mwhipple/memex/cabinet/al.org
-: [{'type': 'function', 'id': 'call_9da4e2bc8df147ff9f56c373', 'function': {'name': 'read_file', 'arguments': {'path': '/Users/mwhipple/memex/cabinet/al.org'}}}]
-
-*** Definitions
-
-I'll start with some basics with some manual wiring and then work on
-generalizing some of that. The first goal is just making sure the tool
-can be discovered and provokes a tool_call from the model.
-
-The definition for the tools will be defined alongside the tool (and
-subsequently based on code already floating around) to be pulled in by
-the agent later.
-
-The tools will be defined using type [[id:D875AD7A-32CC-4252-B42E-97B28C3835AA][ChatCompletionTool]]
-
-The actual types here could use some help which is a lingering
-upstream TODO:
-https://github.com/abetlen/llama-cpp-python/blob/629bd1b333f60d24a01886c5f99019f4c7c3ea6c/llama_cpp/llama_types.py#L272
-I'd mostly want to derive this information which should largely absorb
-that concern. The structure below gets the ball rolling and nudges
-this to the point of handling the tool call which will be the next
-step. Next steps are to write what is a standlone tool handler for the
-time being, pipe that back to the agent, and then bundle all of that
-up as a toolbelt.
-
-#+name: fs-tools
-#+begin_src python
-  def read_file(path: str) -> str:
-      "Return the contents of the file at path as a string."
-      try:
-          with open(path, 'r', encoding='utf-8') as f:
-              return f.read()
-      except FileNotFoundError:
-          return f"Error: File not found at {path}"
-      except IOError as e:
-          return f"Error reading file: {e}"
-  tool_belt.register(read_file)
-#+end_src
-
-** Messages
-
-Similar to Langchain there will be some basic factory functions for
-message creation. Ideally these should be more naturally integrated
-into relevant workflows, which will hopefully be ratcheted down after
-there's a clear picture of how it can make sense.
-
-These are trivial means to produce the expected dicts.
-
-#+begin_src python
-  from llama_cpp.llama_types import ChatCompletionRequestMessage
-
-  def user_message(content: str) -> ChatCompletionRequestMessage:
-      return {"role": "user", "content": content}
-  def system_message(content: str) -> ChatcompletionRequestMessage:
-      return {"role": "system", "content": content}
 #+end_src
 
 #+RESULTS:
@@ -485,16 +320,13 @@ the message and a context dictionary (to be more precisely defined).
   class ChatDriver:
       def __init__(self,
                    model: Llama,
-                   on_message = ForEachMessageHandler()):
+                   on_response = ForEachHandler()):
           self.model = model
           self.messages: list[ChatCompletionRequestMessage] = []
-          self.on_message = on_message
+          self.on_response = on_response
 
       def append(self, msg: ChatCompletionRequestMessage):
           self.messages.append(msg)
-
-      def latest(self):
-          return self.messages[-1]
 
       def submit(self):
           resp = self.model.create_chat_completion(
@@ -504,10 +336,10 @@ the message and a context dictionary (to be more precisely defined).
               temperature=0.6,          # Official developer recommendation
               repeat_penalty=1.05,
           )
-          on_message = self.on_message # assign to avoid being a method call
-          on_message({"driver": self}, resp)
-          choice = resp["choices"][0]
-          self.messages.append(choice['message'])
+          choice = single_choice(resp)
+          on_response = self.on_response # assign to avoid being a method call
+          on_response({"driver": self}, choice)
+          self.append(choice['message'])
 #+end_src
 
 #+RESULTS:
@@ -517,21 +349,262 @@ the message and a context dictionary (to be more precisely defined).
 on_message will make use of the Composite pattern so that details such
 as routing logic can be updated or to enable parameter enrichement.
 
-**** ForEachMessageHandler
+**** ForEachHandler
 
 The initial implementation will represent a list of multiple handlers
 all of which will be called (if any).
 
 #+begin_src python
-  class ForEachMessageHandler:
-    def __init__(self):
-        self.handlers = []
+  class ForEachHandler:
+    def __init__(self, handlers=[]):
+        self.handlers = handlers
     def append_handler(self, handler):
         self.handlers.append(handler)
     def __call__(self, ctx, msg):
         for h in self.handlers:
             h(ctx, msg)
 #+end_src
+
+#+RESULTS:
+
+*** FinishReasonRoutingHandler
+
+Parse out the stop reason and pass through the message for registered
+types.
+
+This isn't useful when the tool calls are smuggled within other
+messages, so this is just left here for potential future use.
+
+#+begin_src python
+  class FinishReasonRoutingHandler:
+      def __init__(self, handlers):
+          self.handler_for_reason = handlers
+
+      def __call__(self, ctx, response):
+          if "finish_reason" not in response:
+              raise TypeError(f"finish_reason not in msg: {response}")
+          finish_reason = response["finish_reason"]
+#+end_src
+
+#+RESULTS:
+
+** Tool Call Parsing and Integration
+
+The ToolBox defined above will be oriented towards standard
+interfaces, but there may be need to be some additional adaptation
+between those standards and what passes to and from the model (and
+maybe elsewhere).
+
+Such adapaters will be defined separately and plugged in where
+appropriate to the message passing and handling machinery...so this
+defines a configuraable integration layer rather than something that
+should be baked into either side.
+
+The general interface for parsing will be one that accepts a message
+and returns (possibly empty) lists of extracted information.
+
+*** Handling Qwen Style Calls
+
+The model I'm currently using seems to make use of Qwen style tool
+calls which for whatever reason is XMLish...but not quite XML.
+
+The matching could likely be trivially generalized to suppor a
+function that takes a tag name and returns the attribute and body...
+but for now this seems legible anough and below the rule of three.
+
+The logic is organized to support [[id:E64A3393-5DD5-4446-8202-BB7588D4EB10][comprehensions]].
+
+**** parameter_from_qwen_match
+
+When passed a regex capture for ~<paramter={}>{}</parameter>~,
+return a tuple of name and parameter value.
+
+The match itself is done by the caller.
+
+#+begin_src python
+  import json
+  def parameter_from_qwen_match(match):
+      name = match.group(1).strip()
+      str_value = match.group(2).strip()
+      try:
+          return (name, json.loads(str_value))
+      except json.JSONDecodeError:
+          return (name, str_value)
+#+end_src
+
+#+RESULTS:
+
+**** call_from_qwen_match
+
+When passed a regex capture for ~<function={}>{}</function>~,
+return a tuple of name and parameter value.
+
+the match itself is done by the caller.
+
+#+begin_src python
+  import re
+  def call_from_qwen_match(match):
+      return {
+          "type": "function",
+          "id": f"call_{uuid.uuid4().hex[:24]}",
+          "function": {
+              "name": match.group(1),
+              "arguments": {k: v for (k, v)
+                            in map(parameter_from_qwen_match,
+                                   re.finditer(r'<parameter=([\w.\-]+)>([\s\S]*?)</parameter>', match.group(2)))},
+          },
+      }
+
+#+end_src
+
+#+RESULTS:
+
+**** parse_qwen_tool_calls
+
+#+begin_src python
+  import json
+  import re
+
+  def parse_qwen_tool_calls(msg):
+    """Parses Qwen style <function> and <parameter> tags from a string."""
+    return [call_from_qwen_match(match) for match in
+            re.finditer(r'<function=([\w.\-]+)>([\s\S]*?)</function>', msg)]
+#+end_src
+
+#+RESULTS:
+
+**** QwenToolCallResponseHandler
+
+Inspect messages for requested tool calls.
+When the messages are embedded there may not be further indications
+(tool calls or stop reasons), so this inspects the content
+
+#+begin_src python
+  class QwenToolCallResponseHandler:
+      def __init__(self, tool_belt):
+          self.tool_belt = tool_belt;
+
+      def __call__(self, ctx, resp):
+          calls = parse_qwen_tool_calls(resp['message']['content'])
+          if not calls: # Don't submit at the end
+              return
+          for call in calls:
+              driver.append(self.tool_belt.apply(call))
+          driver.submit()
+#+end_src
+
+#+RESULTS:
+
+***** Sandbox
+
+#+begin_src python
+  print(parse_qwen_tool_calls("""
+  Some leading content to ignore
+
+  <tool_call>
+  <function=read_file>
+  <parameter=path>
+  /Users/mwhipple/memex/cabinet/al.org
+  </parameter>
+  </function>
+  </tool_call>
+
+  Ignore me too
+  """))
+#+end_src
+
+#+RESULTS:
+: /Users/mwhipple/memex/cabinet/al.org
+: [{'type': 'function', 'id': 'call_4efa1100f13444ea8b764164', 'function': {'name': 'read_file', 'arguments': {'path': '/Users/mwhipple/memex/cabinet/al.org'}}}]
+
+** Tool Definitions
+
+I'll start with some basics with some manual wiring and then work on
+generalizing some of that. The first goal is just making sure the tool
+can be discovered and provokes a tool_call from the model.
+
+The definition for the tools will be defined alongside the tool (and
+subsequently based on code already floating around) to be pulled in by
+the agent later.
+
+The tools will be defined using type [[id:D875AD7A-32CC-4252-B42E-97B28C3835AA][ChatCompletionTool]]
+
+The actual types here could use some help which is a lingering
+upstream TODO:
+https://github.com/abetlen/llama-cpp-python/blob/629bd1b333f60d24a01886c5f99019f4c7c3ea6c/llama_cpp/llama_types.py#L272
+I'd mostly want to derive this information which should largely absorb
+that concern. The structure below gets the ball rolling and nudges
+this to the point of handling the tool call which will be the next
+step. Next steps are to write what is a standlone tool handler for the
+time being, pipe that back to the agent, and then bundle all of that
+up as a toolbelt.
+
+#+name: fs-tools
+#+begin_src python
+  def read_file(path: str) -> str:
+      "Return the contents of the file at path as a string."
+      try:
+          with open(path, 'r', encoding='utf-8') as f:
+              return f.read()
+      except FileNotFoundError:
+          return f"Error: File not found at {path}"
+      except IOError as e:
+          return f"Error reading file: {e}"
+#+end_src
+
+#+RESULTS: fs-tools
+
+** Tools
+
+*** Protocol
+
+llama.cpp and/or the python bindings seem to provide some pieces to
+help with dealing with tool calls so that the responses can be more
+readily dealt with, but that doesn't seem to work particularly well
+nor does it have a lot of documentation. This support is likely to be
+particularly important when accessing through the server as that would
+enable a cleaner API surface area, but when working with the models
+more directly there seems to be questionable value in trying to push
+that type of logic behind an abstraction rather than dealing with it
+more directly. Overall if it just worked I'd use it but since it
+doesn't I don't see any particular benefit to trying to provide that
+handling in a way that is integrated more deeply rather than just
+having that logic able to be applied; expecting less magic applied
+in-flight and just expecting to apply it after the fact.
+
+** Messages
+
+Similar to Langchain there will be some basic factory functions for
+message creation. Ideally these should be more naturally integrated
+into relevant workflows, which will hopefully be ratcheted down after
+there's a clear picture of how it can make sense.
+
+These are trivial means to produce the expected dicts.
+
+#+begin_src python
+  from llama_cpp.llama_types import ChatCompletionRequestMessage
+
+  def user_message(content: str) -> ChatCompletionRequestMessage:
+      return {"role": "user", "content": content}
+  def system_message(content: str) -> ChatcompletionRequestMessage:
+      return {"role": "system", "content": content}
+#+end_src
+
+*** single_choice
+
+Return a presumed single choice from a response or throw trying.
+
+#+begin_src python
+  def single_choice(msg):
+      if "choices" not in msg:
+          raise TypeError(f"choices not in msg: {msg}")
+      choices = msg["choices"]
+      if (len(choices) != 1):
+          raise TypeError(f"Only one choice is expected: {msg}")
+      return choices[0]
+#+end_src
+
+#+RESULTS:
 
 #+RESULTS:
 
@@ -547,62 +620,421 @@ chat_format feels like it has a broad impact but is missing some local explanati
 The current model is advertised as using Qwen/ChatML style, but when
 the format is changed the tools aren't detected without further help.
 
-#+begin_src python :var model_path=model-file() :noweb yes
-  <<chat>>
-  <<fs-tools>>
+Right now this is producing a pretty interesting hallucination.
 
+#+begin_src python :var model_path=model-file() :noweb yes
   from pprint import pprint
   from llama_cpp import Llama
+
+  tool_belt = ToolBelt()
+  tool_belt.register(read_file)
+
   llm = Llama(
       model_path=model_path.strip(),
-      chat_format="chatml-function-calling",
       verbose=False,
+      n_ctx=16_384,
+      n_gpu_layers=-1,
   )
-  chat = Chat(llm)
-  chat.register_tool(READ_FILE)
-  chat.append_system_message("""
+  handler = ForEachHandler(handlers=[
+      lambda ctx, msg: pprint(msg),
+      QwenToolCallResponseHandler(tool_belt),
+  ])
+  driver = ChatDriver(model=llm, on_response=handler)
+  driver.tools = tool_belt.definitions()
+  driver.append(system_message("""
 
   You are my personal AI asssistant named Al.
 
   You not only do what is asked, but explain what you are doing
   and the reason throughout the process.
 
-  """)
+  """))
 
-  chat.append_user_message("""
+  driver.append(user_message("""
 
-  Read the contents of this file at "/Users/mwhipple/memex/cabinet/al.org"
+  The file at "/Users/mwhipple/memex/cabinet/al.org" defines the code for yourself.
+  Review the contents of that file and suggest any improvements.
 
-  """)
+  """))
 
-  resp = chat.submit()
-
-  pprint(resp)
+  driver.submit()
 
 #+end_src
 
 #+RESULTS:
 #+begin_example
-{'choices': [{'finish_reason': 'tool_calls',
-              'index': 0,
-              'logprobs': None,
-              'message': {'content': None,
-                          'function_call': {'arguments': '{ "path": '
-                                                         '"/Users/mwhipple/memex/cabinet/al.org" '
-                                                         '}',
-                                            'name': 'read_file:'},
-                          'role': 'assistant',
-                          'tool_calls': [{'function': {'arguments': '{ "path": '
-                                                                    '"/Users/mwhipple/memex/cabinet/al.org" '
-                                                                    '}',
-                                                       'name': 'read_file'},
-                                          'id': 'call__0_read_file_cmpl-0a6820f6-ab68-4089-aeaa-8dc97c7189bb',
-                                          'type': 'function'}]}}],
- 'created': 1784338283,
- 'id': 'chatcmpl-e505a76e-c187-43c6-999c-c17df192c4d8',
- 'model': '/Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-Claude-Mythos-5-1M-GGUF/snapshots/5cebd89dd078b033c26988248740ddadf40f2fbd/Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf',
- 'object': 'chat.completion',
- 'usage': {'completion_tokens': 18, 'prompt_tokens': 237, 'total_tokens': 255}}
+{'finish_reason': 'stop',
+ 'index': 0,
+ 'logprobs': None,
+ 'message': {'content': 'The user wants me to review the file at '
+                        '"/Users/mwhipple/memex/cabinet/al.org" and suggest '
+                        'improvements. I need to first read the contents of '
+                        'that file to understand what it contains, then '
+                        'analyze it for potential improvements.\n'
+                        '\n'
+                        "I'll start by reading the file using the read_file "
+                        'tool.\n'
+                        '</think>\n'
+                        '\n'
+                        '<tool_call>\n'
+                        '<function=read_file>\n'
+                        '<parameter=path>\n'
+                        '/Users/mwhipple/memex/cabinet/al.org\n'
+                        '</parameter>\n'
+                        '</function>\n'
+                        '</tool_call>',
+             'role': 'assistant'}}
+/Users/mwhipple/memex/cabinet/al.org
+{'finish_reason': 'stop',
+ 'index': 0,
+ 'logprobs': None,
+ 'message': {'content': 'The user wants me to review the contents of '
+                        '"/Users/mwhipple/memex/cabinet/al.org" and suggest '
+                        'any improvements. I just loaded the file (the output '
+                        'is shown in the tool response). Now I need to analyze '
+                        'its structure, identify potential issues, and provide '
+                        'actionable suggestions.\n'
+                        '\n'
+                        'First, I should note that the file is an Org-mode '
+                        'document (indicated by the #+title: al line and other '
+                        'Org formatting elements like * TODO Increment, ** '
+                        'Setup the venv, etc.). The content appears to be a '
+                        'combination of documentation and code snippets for a '
+                        'personal AI agent setup called "Al". It includes '
+                        'sections on model selection, tool definitions, chat '
+                        'drivers, and some Python code embedded in Org '
+                        'blocks.\n'
+                        '\n'
+                        'Key observations:\n'
+                        '- There are several Org-mode headers and properties '
+                        'that define the structure, which is fine.\n'
+                        '- The Python code is wrapped in #+begin_src python '
+                        '... #+end_src blocks, which is a common pattern for '
+                        'Org-mode. This is acceptable.\n'
+                        '- However, there might be some inconsistencies or '
+                        'missing pieces:\n'
+                        '  - The "main" block at the end uses a heredoc-like '
+                        'style with :var model_path=model-file() :noweb yes. '
+                        "This suggests it's using Org's noweb feature to "
+                        'include code from another block. That may be overly '
+                        'complex for a simple script.\n'
+                        '  - Some variable names are not consistently typed '
+                        '(e.g., tool_belt is defined but later used without '
+                        'proper type hints).\n'
+                        '  - The code includes a lot of comments that explain '
+                        'the reasoning, which is good, but there might be '
+                        'opportunities to refactor or simplify.\n'
+                        '  - There is a mention of "chat_format" and '
+                        '"QwenToolCallResponseHandler", indicating that the '
+                        'agent uses a specific chat format. The current '
+                        'implementation may have issues with tool call '
+                        "handling (the user notes that tools aren't being "
+                        'acknowledged by the model). This could be an area for '
+                        'improvement, perhaps by adjusting the chat format or '
+                        'adding more robust error handling.\n'
+                        '  - The file also includes a "TODO Increment" entry '
+                        'with scheduling information, which is typical '
+                        'Org-mode but might be unnecessary if the file is '
+                        'meant to be static documentation.\n'
+                        '  - There are some references to external IDs (like '
+                        '[[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]]) '
+                        'and other Org links, which is fine for documentation '
+                        'but could be cleaned up if they are outdated.\n'
+                        '  - The code includes a "Queue" section with '
+                        '"Self-Improvement" and "Tools", which seems to '
+                        'outline future work. This is good planning, but the '
+                        'actual implementation may need to be more concrete.\n'
+                        '\n'
+                        'Potential improvements:\n'
+                        '1. Add type hints throughout the Python code for '
+                        'better maintainability and IDE support.\n'
+                        '2. Split large blocks of code into separate modules '
+                        'or files for better organization (e.g., separate tool '
+                        'definitions, chat driver logic).\n'
+                        '3. Refactor the "main" block to use a simpler '
+                        'approach, perhaps by exporting the code as a '
+                        'standalone script rather than relying on Org noweb '
+                        'features.\n'
+                        "4. Add error handling for cases where the model's "
+                        "response format doesn't match expectations (e.g., "
+                        'missing finish_reason field).\n'
+                        '5. Consider using a more robust chat format that '
+                        'better supports tool calls, or add fallback logic '
+                        "when tools aren't acknowledged.\n"
+                        '6. Clean up Org-mode properties and TODO items if '
+                        'they are not needed for the final documentation.\n'
+                        '7. Add comments explaining why certain design '
+                        'decisions were made, especially around tool call '
+                        'handling and chat format.\n'
+                        '8. Ensure that the file is formatted consistently '
+                        '(e.g., indentation, spacing) to make it easier to '
+                        'read.\n'
+                        '\n'
+                        'I should present these suggestions in a clear, '
+                        'organized manner, perhaps using bullet points or '
+                        'numbered lists, and explain each improvement with '
+                        "reasoning. I'll also note that some of these "
+                        'improvements might require changes to how the Org '
+                        'file is generated or edited, so I could suggest using '
+                        'a separate script or tool for code generation.\n'
+                        '\n'
+                        'Now, I need to formulate my response: start by '
+                        'acknowledging the request, then summarize the current '
+                        'state of the file (briefly), and then list specific '
+                        'suggestions with explanations. Keep the tone helpful '
+                        "and constructive, as per the user's instruction to "
+                        '"explain what you are doing and the reason throughout '
+                        'the process."\n'
+                        '\n'
+                        "I'll structure the answer like this:\n"
+                        "- Introduction: I've reviewed the file and found "
+                        'several areas for improvement.\n'
+                        '- Section 1: Code organization and modularity '
+                        '(splitting large blocks).\n'
+                        '- Section 2: Type hints and better IDE support.\n'
+                        '- Section 3: Error handling for tool call responses.\n'
+                        '- Section 4: Simplifying the main entry point.\n'
+                        '- Section 5: Cleaning up Org-mode TODO items and '
+                        'properties.\n'
+                        '- Section 6: Adding documentation comments.\n'
+                        '- Section 7: Ensuring consistent formatting.\n'
+                        '- Conclusion: These changes will make the file more '
+                        'maintainable and robust.\n'
+                        '\n'
+                        "I'll write this out in natural language, using "
+                        'appropriate markdown formatting (e.g., bullet points, '
+                        "code blocks) to make it readable. I'll also include a "
+                        'brief note that these suggestions are based on best '
+                        'practices for Org-mode and Python development.\n'
+                        '\n'
+                        'Now, craft the final response.\n'
+                        '</think>\n'
+                        '\n'
+                        '# Review of al.org — Suggestions for Improvement\n'
+                        '\n'
+                        "I've just loaded the file you specified "
+                        '(`/Users/mwhipple/memex/cabinet/al.org`) and examined '
+                        "its structure and contents. It's an Org‑mode document "
+                        'that mixes documentation, Python code blocks, and '
+                        'configuration. Below are specific, actionable '
+                        'suggestions to make it clearer, more maintainable, '
+                        'and safer to use.\n'
+                        '\n'
+                        '---\n'
+                        '\n'
+                        '## 1. Separate Code from Documentation\n'
+                        '\n'
+                        '**Why:** Org files often become hard to edit when '
+                        'code and prose are interleaved. Splitting them makes '
+                        'version control diffs cleaner and reduces the risk of '
+                        'accidental breakage.\n'
+                        '\n'
+                        '**What to do:**\n'
+                        '- Move all Python source into a dedicated directory, '
+                        'e.g. `al.org/code/`.\n'
+                        '- In each Org block that currently contains code '
+                        '(`#+begin_src python ... #+end_src`), replace the '
+                        'inline code with a reference to the external file:\n'
+                        '  ```org\n'
+                        '  #+begin_src file\n'
+                        '    :file "code/tool_definitions.py"\n'
+                        '  #+end_src\n'
+                        '  ```\n'
+                        '- Keep the Org file focused on explaining *what* the '
+                        'agent does, not the implementation details.\n'
+                        '\n'
+                        '**How this helps:** Future edits will only touch '
+                        "documentation or code files independently; you won't "
+                        'need to juggle both in a single large buffer.\n'
+                        '\n'
+                        '---\n'
+                        '\n'
+                        '## 2. Add Type Hints Throughout Python Blocks\n'
+                        '\n'
+                        '**Why:** The current code lacks type annotations for '
+                        'most functions and classes, making static analysis '
+                        'tools (mypy, pyright) ineffective and IDE '
+                        'autocomplete unreliable.\n'
+                        '\n'
+                        '**What to do:**\n'
+                        '- Review each `#+begin_src python ... #+end_src` '
+                        'block.\n'
+                        '- Insert appropriate type hints using the existing '
+                        'imports (`typing`, `typing_extensions`) where '
+                        'possible:\n'
+                        '  ```python\n'
+                        '  def define_tool(func: Callable[[], '
+                        'ToolFunctionDefinition]) -> ToolFunctionDefinition:\n'
+                        '      ...\n'
+                        '  ```\n'
+                        '- For class methods, add return types:\n'
+                        '  ```python\n'
+                        '  def definitions(self) -> '
+                        'list[ToolFunctionDefinition]:\n'
+                        '      ...\n'
+                        '  ```\n'
+                        '\n'
+                        '**How this helps:** The code becomes easier to read, '
+                        'safer to refactor, and integrates better with '
+                        "Python's type system.\n"
+                        '\n'
+                        '---\n'
+                        '\n'
+                        '## 3. Consolidate the `main` Entry Point\n'
+                        '\n'
+                        '**Why:** The `main` block currently uses Org noweb '
+                        '(`:var model_path=model-file() :noweb yes`) which is '
+                        'a bit opaque and hard to debug. It also mixes '
+                        'command‑line flags with Org syntax.\n'
+                        '\n'
+                        '**What to do:**\n'
+                        '- Extract the entire `main` logic into its own Python '
+                        'file, e.g. `al.org/code/main.py`.\n'
+                        '- In the Org file, replace the noweb block with a '
+                        'simple file reference:\n'
+                        '  ```org\n'
+                        '  #+begin_src file\n'
+                        '    :file "code/main.py"\n'
+                        '  #+end_src\n'
+                        '  ```\n'
+                        '- Inside `main.py`, keep the same imports and logic '
+                        'but write it as normal Python code.\n'
+                        '\n'
+                        '**How this helps:** You can run `python -m '
+                        'al.code.main` from any directory, and the Org file '
+                        'becomes just a documentation reference.\n'
+                        '\n'
+                        '---\n'
+                        '\n'
+                        '## 4. Improve Error Handling for Tool Calls\n'
+                        '\n'
+                        '**Why:** The current implementation assumes that tool '
+                        "calls will always be present in the model's response "
+                        "(`parse_qwen_tool_calls`). If the model doesn't emit "
+                        'them (e.g., due to a format mismatch), the code may '
+                        'silently ignore them or raise confusing exceptions.\n'
+                        '\n'
+                        '**What to do:**\n'
+                        '- Wrap `parse_qwen_tool_calls` in a try/except block '
+                        'and log when no calls are found:\n'
+                        '  ```python\n'
+                        '  def parse_qwen_tool_calls(msg):\n'
+                        '      ...\n'
+                        '  ```\n'
+                        '- Add a fallback handler that still appends the '
+                        "model's message even if it contains no tool calls.\n"
+                        '\n'
+                        '**How this helps:** The agent becomes more robust to '
+                        'unexpected model behavior, and you get clearer '
+                        'diagnostics when tools are missing.\n'
+                        '\n'
+                        '---\n'
+                        '\n'
+                        '## 5. Clean Up Org Mode Properties and TODO Items\n'
+                        '\n'
+                        '**Why:** The file contains several `:PROPERTIES:` '
+                        'blocks (e.g., for scheduling) and a TODO entry (`* '
+                        "TODO Increment`) that aren't relevant to the static "
+                        'documentation of the agent.\n'
+                        '\n'
+                        '**What to do:**\n'
+                        '- Remove any scheduling properties, as they are '
+                        'unnecessary here.\n'
+                        '- Convert the TODO item into a plain header or delete '
+                        "it if it's not needed.\n"
+                        '- Review all `[[id:...][link]]` references and ensure '
+                        'they point to valid Org IDs; replace outdated ones '
+                        'with simple text links.\n'
+                        '\n'
+                        '**How this helps:** The file becomes lighter and '
+                        'easier to read without unrelated metadata.\n'
+                        '\n'
+                        '---\n'
+                        '\n'
+                        '## 6. Add a Brief README or Overview at the Top\n'
+                        '\n'
+                        '**Why:** New contributors (or you in the future) '
+                        'might want a quick summary of what the repository '
+                        'does before diving into code.\n'
+                        '\n'
+                        '**What to do:**\n'
+                        '- Insert an Org header after the title:\n'
+                        '  ```org\n'
+                        '  * Overview\n'
+                        '\n'
+                        '  This file documents and drives the personal AI '
+                        'agent "Al". It contains:\n'
+                        '  - Model configuration (see `code/model.py`)\n'
+                        '  - Tool definitions (`code/tools/`)\n'
+                        '  - The main entry point (`code/main.py`)\n'
+                        '  ```\n'
+                        '- Keep it concise; link to external documentation '
+                        'where appropriate.\n'
+                        '\n'
+                        '**How this helps:** Provides context and navigation '
+                        'without cluttering the code sections.\n'
+                        '\n'
+                        '---\n'
+                        '\n'
+                        '## 7. Consider a Build Script for Org → Python '
+                        'Export\n'
+                        '\n'
+                        '**Why:** If you ever want to generate a Python '
+                        'package from the Org file, having a dedicated script '
+                        '(e.g., `make-al.py`) that parses the Org blocks and '
+                        'writes out the corresponding Python files would be '
+                        'useful.\n'
+                        '\n'
+                        '**What to do:**\n'
+                        '- Draft a simple script that reads `al.org`, extracts '
+                        'all `#+begin_src python` blocks, writes them into the '
+                        '`code/` directory, and creates a `pyproject.toml`.\n'
+                        '- Document this in an Org section like `* Build`.\n'
+                        '\n'
+                        '**How this helps:** Automates the transition from '
+                        'documentation to runnable code.\n'
+                        '\n'
+                        '---\n'
+                        '\n'
+                        '## 8. Formatting Consistency\n'
+                        '\n'
+                        '**Why:** Inconsistent indentation and spacing make '
+                        'the file harder to read.\n'
+                        '\n'
+                        '**What to do:**\n'
+                        '- Ensure all Python blocks use 4‑space indentation '
+                        '(standard for Org‑mode).\n'
+                        '- Add a trailing newline after each block.\n'
+                        '- Align header lines (`*`, `#`, etc.) consistently.\n'
+                        '\n'
+                        '**How this helps:** Improves overall readability and '
+                        'reduces diff noise.\n'
+                        '\n'
+                        '---\n'
+                        '\n'
+                        '### Summary of Immediate Next Steps\n'
+                        '\n'
+                        '1. **Create the directory structure** (`code/`, '
+                        "`code/tools/`) if it doesn't exist.\n"
+                        '2. **Move code blocks** into separate files with '
+                        'proper imports.\n'
+                        '3. **Add type hints** to all functions and classes.\n'
+                        '4. **Refactor the `main` block** into its own Python '
+                        'file.\n'
+                        '5. **Improve error handling** for tool calls.\n'
+                        '6. **Clean up Org metadata** (properties, TODOs, '
+                        'links).\n'
+                        '7. **Insert an overview section** at the top of the '
+                        'file.\n'
+                        '8. **(Optional) Draft a build script** for future '
+                        'automation.\n'
+                        '\n'
+                        'These changes will make `al.org` more maintainable, '
+                        'robust, and easier to understand, while preserving '
+                        "its current functionality as the agent's definition "
+                        "file. Let me know if you'd like help implementing any "
+                        'of these steps.',
+             'role': 'assistant'}}
 #+end_example
 
 *** Queue
