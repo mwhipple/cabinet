@@ -4,11 +4,10 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-07 Mon +1d>
+SCHEDULED: <1980-01-08 Tue +1d>
 :PROPERTIES:
-:LAST_REPEAT: [2026-07-19 Sun 22:09]
+:LAST_REPEAT: [2026-07-20 Mon 07:52]
 :END:
-- State "DONE"       from "TODO"       [2026-07-19 Sun 22:09]
 * Name
 
 Al is the provisional name for my personal agent setup.
@@ -337,57 +336,72 @@ up as a toolbelt.
   tool_belt.register(read_file)
 #+end_src
 
-** Beget Al
+** Messages
 
-Construct and interact with a [[id:D40AB771-6361-484A-8685-D082565D0D1E][llama.Llama]].
+Similar to Langchain there will be some basic factory functions for
+message creation. Ideally these should be more naturally integrated
+into relevant workflows, which will hopefully be ratcheted down after
+there's a clear picture of how it can make sense.
 
-There a lot of options for construction documented at [[id:E23922B9-95E0-45AA-A3FB-DB627EA18002][llama.Llama.init]].
+These are trivial means to produce the expected dicts.
 
-Messages will be sent using [[id:C6047B7D-4B82-45B9-886A-FACBF966030B][create_chat_completion]].
+#+begin_src python
+  from llama_cpp.llama_types import ChatCompletionRequestMessage
 
-The low level interface of create_chat_completion seems worth bundling
-up a bit: most of those parameters are likely to remain fairly fixed
-(or some may be calculated), rather than being warranted on each
-invocation. I'll therefore introduce a Chat class to help with this.
+  def user_message(content: str) -> ChatCompletionRequestMessage:
+      return {"role": "user", "content": content}
+  def system_message(content: str) -> ChatcompletionRequestMessage:
+      return {"role": "system", "content": content}
+#+end_src
 
-This will be populated as functionality is developed.
+#+RESULTS:
 
-Support submitting of [[id:F68AF496-31B7-40E1-A0A2-8E7CD442BC30][ChatCompletionRequestUserMessage]]s and [[id:9E1AE570-F677-4E05-AE14-8C6DF8A2CEF9][ChatCompletionRequestSystemMessage]]s
+** ChatDriver
 
-*** Chat
+When dealing with lower level interactions, it feels like one of the
+main pieces is the component that handles sending messages and dealing
+with responses which will be defined here as a ChatDriver.
 
-#+name: chat
+The focus is that messgage coordination, and providing relevant
+extension points to add additional behavior.
+
+The configuration options should be defined as a separate object which
+is passed in.
+
+This could certainly benefit from a bit more encapsulation, but to
+start its unclear where the best seams are that won't just create a
+ball of mud.
+
 #+begin_src python
   from llama_cpp import Llama
   from llama_cpp.llama_types import (
       ChatCompletionRequestMessage,
-      ChatCompletionTool,
   )
-  class Chat:
+
+  class ChatDriver:
       def __init__(self, model: Llama):
           self.model = model
           self.messages: list[ChatCompletionRequestMessage] = []
-          self.tools: list[ChatCompletionTool] = []
 
-      def append_system_message(self, content: str):
-          self.messages.append({"role": "system", "content": content})
+      def append(self, msg: ChatCompletionRequestMessage):
+          self.messages.append(msg)
 
-      def append_user_message(self, content: str):
-          self.messages.append({"role": "user", "content": content})
-
-      def register_tool(self, tool: ChatCompletionTool):
-          self.tools.append(tool)
+      def latest(self):
+          return self.messages[-1]
 
       def submit(self):
-          return self.model.create_chat_completion(
+          resp = self.model.create_chat_completion(
               messages = self.messages,
               tools = self.tools,
               tool_choice = "auto",
+              temperature=0.6,          # Official developer recommendation
+              repeat_penalty=1.05,
           )
-
+          choice = resp["choices"][0]
+          self.messages.append(choice['message'])
 #+end_src
 
-#+RESULTS: chat
+#+RESULTS:
 
 *** main
 
