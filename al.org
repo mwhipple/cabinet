@@ -4,9 +4,9 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-09 Wed +1d>
+SCHEDULED: <1980-01-10 Thu +1d>
 :PROPERTIES:
-:LAST_REPEAT: [2026-07-20 Mon 08:45]
+:LAST_REPEAT: [2026-07-20 Mon 10:28]
 :END:
 * Name
 
@@ -247,7 +247,6 @@ func: <built-in function callable>
  'type': 'function'}
 #+end_example
 
-
 **** apply_tool
 
 Call a function using a ToolCallMessage and return the expected
@@ -473,6 +472,10 @@ ball of mud.
 
 Messages will be sent using [[id:C6047B7D-4B82-45B9-886A-FACBF966030B][create_chat_completion]].
 
+on_message will be called on each message received from the model and
+serves as the means to trigger most of the logic. This will be passed
+the message and a context dictionary (to be more precisely defined).
+
 #+begin_src python
   from llama_cpp import Llama
   from llama_cpp.llama_types import (
@@ -480,9 +483,12 @@ Messages will be sent using [[id:C6047B7D-4B82-45B9-886A-FACBF966030B][create_ch
   )
 
   class ChatDriver:
-      def __init__(self, model: Llama):
+      def __init__(self,
+                   model: Llama,
+                   on_message = ForEachMessageHandler()):
           self.model = model
           self.messages: list[ChatCompletionRequestMessage] = []
+          self.on_message = on_message
 
       def append(self, msg: ChatCompletionRequestMessage):
           self.messages.append(msg)
@@ -498,11 +504,42 @@ Messages will be sent using [[id:C6047B7D-4B82-45B9-886A-FACBF966030B][create_ch
               temperature=0.6,          # Official developer recommendation
               repeat_penalty=1.05,
           )
+          on_message = self.on_message # assign to avoid being a method call
+          on_message({"driver": self}, resp)
           choice = resp["choices"][0]
           self.messages.append(choice['message'])
 #+end_src
 
 #+RESULTS:
+
+*** on_message
+
+on_message will make use of the Composite pattern so that details such
+as routing logic can be updated or to enable parameter enrichement.
+
+**** ForEachMessageHandler
+
+The initial implementation will represent a list of multiple handlers
+all of which will be called (if any).
+
+#+begin_src python
+  class ForEachMessageHandler:
+    def __init__(self):
+        self.handlers = []
+    def append_handler(self, handler):
+        self.handlers.append(handler)
+    def __call__(self, ctx, msg):
+        for h in self.handlers:
+            h(ctx, msg)
+#+end_src
+
+#+RESULTS:
+
+** Beget Al
+
+Construct and interact with a [[id:D40AB771-6361-484A-8685-D082565D0D1E][llama.Llama]].
+
+There a lot of options for construction documented at [[id:E23922B9-95E0-45AA-A3FB-DB627EA18002][llama.Llama.init]].
 
 *** main
 
