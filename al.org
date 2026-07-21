@@ -4,9 +4,9 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-11 Fri +1d>
+SCHEDULED: <1980-01-12 Sat +1d>
 :PROPERTIES:
-:LAST_REPEAT: [2026-07-20 Mon 11:29]
+:LAST_REPEAT: [2026-07-20 Mon 16:53]
 :END:
 * Name
 
@@ -95,6 +95,16 @@ Successfully installed MarkupSafe-3.0.3 diskcache-5.6.3 jinja2-3.1.6 llama-cpp-p
 
 Provide some general tool wiring support.
 Declare this early so that it can act as a shared registry of tools.
+
+Tools are the most straightforward way to bridge models with things
+outside fo their sandboxes, and presumably also forms the means for
+many other typically expected agent behaviors (and may be the route I
+pursue even if there are alternatives).
+
+Working outside of a harness seems to make the interactions a bit
+clearer, where the tool calls pass back through as messages to the
+driving code/agent which is responsible for actually making the call
+and returning the response.
 
 *** Derive Tool Definition
 
@@ -333,7 +343,7 @@ the message and a context dictionary (to be more precisely defined).
               messages = self.messages,
               tools = self.tools,
               tool_choice = "auto",
-              temperature=0.6,          # Official developer recommendation
+              temperature=0.4,
               repeat_penalty=1.05,
           )
           choice = single_choice(resp)
@@ -367,7 +377,7 @@ all of which will be called (if any).
 
 #+RESULTS:
 
-*** FinishReasonRoutingHandler
+**** FinishReasonRoutingHandler
 
 Parse out the stop reason and pass through the message for registered
 types.
@@ -402,6 +412,23 @@ should be baked into either side.
 
 The general interface for parsing will be one that accepts a message
 and returns (possibly empty) lists of extracted information.
+
+*** Protocol
+
+llama.cpp and/or the python bindings seem to provide some pieces to
+help with dealing with tool calls so that the responses can be more
+readily dealt with, but that doesn't seem to work particularly well
+nor does it have a lot of documentation. This support is likely to be
+particularly important when accessing through the server as that would
+enable a cleaner API surface area, but when working with the models
+more directly there seems to be questionable value in trying to push
+that type of logic behind an abstraction rather than dealing with it
+more directly. Overall if it just worked I'd use it but since it
+doesn't I don't see any particular benefit to trying to provide that
+handling in a way that is integrated more deeply rather than just
+having that logic able to be applied; expecting less magic applied
+in-flight and just expecting to apply it after the fact.
+
 
 *** Handling Qwen Style Calls
 
@@ -519,33 +546,133 @@ When the messages are embedded there may not be further indications
 
 ** Tool Definitions
 
-I'll start with some basics with some manual wiring and then work on
-generalizing some of that. The first goal is just making sure the tool
-can be discovered and provokes a tool_call from the model.
+*** AL-TODO CLI
 
-The definition for the tools will be defined alongside the tool (and
-subsequently based on code already floating around) to be pulled in by
-the agent later.
+What seems to be one of the most useful tools to provide out of the
+gate is a standard POSIX-y shell environment. This would allow the
+agent to perform a variety of work without further logic. A naive
+approach would also pose signficiant security concerns given that it
+would allow wide access to the underlying system. Existing mecahnisms
+should be used to provide a more controlled sandbox, where one of the
+most supported such mechanisms is the use of containers. This tool
+should therefore be designed such that the tool is defined to define a
+containerized environment, and those calls requested by the agent will
+be run within that environment.
 
-The tools will be defined using type [[id:D875AD7A-32CC-4252-B42E-97B28C3835AA][ChatCompletionTool]]
+The containerization should be prefer using portable approaches rather
+than making use of anything that introduces unnecessary abstractions
+or constraints. For example: generating a system call that would
+compose a docker CLI compatible command would be appropriate (with
+appropriate guards against any kind of injection attacks). Any
+configuraitons should be modeled as reasonably self-documenting
+objects - while the actual implementation used may be portable and
+low-level, the provided interface should provide expressive logical
+constructs rather than leaking out implementation details.
 
-The actual types here could use some help which is a lingering
-upstream TODO:
-https://github.com/abetlen/llama-cpp-python/blob/629bd1b333f60d24a01886c5f99019f4c7c3ea6c/llama_cpp/llama_types.py#L272
-I'd mostly want to derive this information which should largely absorb
-that concern. The structure below gets the ball rolling and nudges
-this to the point of handling the tool call which will be the next
-step. Next steps are to write what is a standlone tool handler for the
-time being, pipe that back to the agent, and then bundle all of that
-up as a toolbelt.
+The work described in this section should be performed without needing
+further context. The requested tool should be produced using standard
+python code where the resulting model is that instantiation configures
+the containerized environment and the instance exposes a method which
+can be used to invoke commands within that environment. For example:
+
+#+begin_example
+my_sandbox = ShellSandbox(
+  image=alpine:latest,
+  mounts=[BindMount(host_dir...)])
+(stdout, stderr) = my_sandbox.shell_command('ls -l')
+#+end_example
+
+The options available for the sandbox creation should be based on
+standard concepts. The starting set should include those that allow
+for interacting with local files while providing maximum protection
+that anything other than such file protections would be prevented.
+
+The actual command construction piece should be broken out into
+expressive methods and more direct composition - which should also be
+pulled up into general guidance
+
+Longer form options should also be preferred throughout.
+
+#+begin_src python
+  import subprocess
+  from dataclasses import dataclass
+  from typing import Optional, List
+
+  @dataclass
+  class BindMount:
+    host_path: str
+    container_path: str
+    read_only: bool = False
+
+  class ShellSandbox:
+    def __init__(self,
+                 image: str,
+                 mounts: List[BindMount] = [],
+                 lxc_cmd = "docker"):
+        self.image = image
+        self.mounts = mounts
+        self.container_name = f"shell_sandbox_{id(self)}"
+        self.lxc_cmd = lxc_cmd
+
+    def shell_command(self, command: str) -> tuple[str, str]:
+      """
+      Execute the provided shell command.
+
+      The utilities available will vary based on the image used.
+      Users should therefore check availability prior to invoking.
+      """
+      cmd = [
+        self.lxc_cmd,
+        "run",
+        "--rm",
+        "-v",
+        f"{self.container_name}:/rootfs",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "-t",
+      ]
+
+      # Add mounts
+      for mount in self.mounts:
+        read_only_str = "ro" if mount.read_only else "rw"
+        cmd.extend(["-v", f"{mount.host_path}:{mount.container_path}:{read_only_str}"])
+
+      # Add image
+      cmd.append(self.image)
+
+      # Execute command
+      print(cmd)
+      result = subprocess.run(cmd + ["sh", "-c", command], capture_output=True, text=True)
+      return result.stdout.strip(), result.stderr.strip()
+#+end_src
+
+#+RESULTS:
+
+**** Sandbox
+
+#+begin_src python
+  import os
+  sb = ShellSandbox(image="alpine:latest", mounts=[BindMount(host_path=os.getcwd(),container_path="/host")])
+  print(sb.shell_command("ls -l /host"))
+#+end_src
+
+*** read_file
+
+Support reading of a specific file.
+This may be too limited to warrant typical inclusion and may be simple
+enough that it's not even worth keeping around, but this will probably
+just get moved somewhere else.
 
 #+name: fs-tools
 #+begin_src python
-  def read_file(path: str) -> str:
-      "Return the contents of the file at path as a string."
+  def read_file(path: str, chunk_size: int = -1) -> str:
+      """
+      Return the contents of the file at path as a string.
+      """
       try:
           with open(path, 'r', encoding='utf-8') as f:
-              return f.read()
+              return f.read(chunk_size)
       except FileNotFoundError:
           return f"Error: File not found at {path}"
       except IOError as e:
@@ -553,24 +680,6 @@ up as a toolbelt.
 #+end_src
 
 #+RESULTS: fs-tools
-
-** Tools
-
-*** Protocol
-
-llama.cpp and/or the python bindings seem to provide some pieces to
-help with dealing with tool calls so that the responses can be more
-readily dealt with, but that doesn't seem to work particularly well
-nor does it have a lot of documentation. This support is likely to be
-particularly important when accessing through the server as that would
-enable a cleaner API surface area, but when working with the models
-more directly there seems to be questionable value in trying to push
-that type of logic behind an abstraction rather than dealing with it
-more directly. Overall if it just worked I'd use it but since it
-doesn't I don't see any particular benefit to trying to provide that
-handling in a way that is integrated more deeply rather than just
-having that logic able to be applied; expecting less magic applied
-in-flight and just expecting to apply it after the fact.
 
 ** Messages
 
@@ -606,8 +715,6 @@ Return a presumed single choice from a response or throw trying.
 
 #+RESULTS:
 
-#+RESULTS:
-
 ** Beget Al
 
 Construct and interact with a [[id:D40AB771-6361-484A-8685-D082565D0D1E][llama.Llama]].
@@ -622,7 +729,7 @@ the format is changed the tools aren't detected without further help.
 
 Right now this is producing a pretty interesting hallucination.
 
-#+begin_src python :var model_path=model-file() :noweb yes
+#+begin_src python :var model_path=model-file()
   from pprint import pprint
   from llama_cpp import Llama
 
@@ -632,7 +739,7 @@ Right now this is producing a pretty interesting hallucination.
   llm = Llama(
       model_path=model_path.strip(),
       verbose=False,
-      n_ctx=16_384,
+      n_ctx=50_000,
       n_gpu_layers=-1,
   )
   handler = ForEachHandler(handlers=[
@@ -648,12 +755,41 @@ Right now this is producing a pretty interesting hallucination.
   You not only do what is asked, but explain what you are doing
   and the reason throughout the process.
 
+  You should operate in a presumes headless/YOLO mode. Attempt to
+  perform all identified work as completely as possible, do not wait for
+  feedback/confirmation.  No final message should indicate planned
+  work...any such message should be followed by actually doing that
+  work.
+
+  This project makes heavy use of literate programming. It should be expected
+  that code and documentation are colocated and it should adhere to literate
+  programming best practices. Ultimately this should move towards a model where
+  the text may be used to verify or generate the code using agents.
+
+  You currently only have access to the read_file tool, don't attempt to use others.
+
+  Within the files headlines are any lines that start with one or more `*`
+  characters - headlines containing AL-TODO contain text describing work that
+  you should take on. This includes the content of that section (which would be all
+  text up to the next headline including a number of `*`s <= the starting headline.
+
+  Those sections may contain work such from previous sessions. In such cases
+  produce extensions or refinements of the work to attempt to more closely conform to
+  what is described in the text and any other guidance that you have been provided.
+
+  Only perform work which is indicated by those sections with headlines containing AL-TODO.
+
+  If further work seems valuable or could assist with the work that has been requested,
+  then create new AL-TODO content indicating what work would be done. Such sections
+  should therefore act as the plan for all work that is performed.
+
   """))
 
   driver.append(user_message("""
 
   The file at "/Users/mwhipple/memex/cabinet/al.org" defines the code for yourself.
-  Review the contents of that file and suggest any improvements.
+
+  Identify the AL-TODO headlines and their contents within that file, and perform the described work.
 
   """))
 
@@ -666,14 +802,12 @@ Right now this is producing a pretty interesting hallucination.
 {'finish_reason': 'stop',
  'index': 0,
  'logprobs': None,
- 'message': {'content': 'The user wants me to review the file at '
-                        '"/Users/mwhipple/memex/cabinet/al.org" and suggest '
-                        'improvements. I need to first read the contents of '
-                        'that file to understand what it contains, then '
-                        'analyze it for potential improvements.\n'
-                        '\n'
-                        "I'll start by reading the file using the read_file "
-                        'tool.\n'
+ 'message': {'content': 'Alright, the user wants me to identify AL-TODO '
+                        'headlines and their contents within the file at '
+                        '"/Users/mwhipple/memex/cabinet/al.org" and perform '
+                        'the described work. I need to read that file first to '
+                        "see what's inside. Let me call read_file with the "
+                        'given path.\n'
                         '</think>\n'
                         '\n'
                         '<tool_call>\n'
@@ -688,354 +822,185 @@ Right now this is producing a pretty interesting hallucination.
 {'finish_reason': 'stop',
  'index': 0,
  'logprobs': None,
- 'message': {'content': 'The user wants me to review the contents of '
-                        '"/Users/mwhipple/memex/cabinet/al.org" and suggest '
-                        'any improvements. I just loaded the file (the output '
-                        'is shown in the tool response). Now I need to analyze '
-                        'its structure, identify potential issues, and provide '
-                        'actionable suggestions.\n'
+ 'message': {'content': "I've just read the file and identified several "
+                        'AL-TODO sections with their headlines and contents. '
+                        'The user asked me to "Identify the AL-TODO headlines '
+                        'and their contents within that file, and perform the '
+                        'described work." So I need to do two things: 1) '
+                        'Report what I found (the list of AL-TODO items), and '
+                        '2) actually execute the work described in those '
+                        'sections.\n'
                         '\n'
-                        'First, I should note that the file is an Org-mode '
-                        'document (indicated by the #+title: al line and other '
-                        'Org formatting elements like * TODO Increment, ** '
-                        'Setup the venv, etc.). The content appears to be a '
-                        'combination of documentation and code snippets for a '
-                        'personal AI agent setup called "Al". It includes '
-                        'sections on model selection, tool definitions, chat '
-                        'drivers, and some Python code embedded in Org '
-                        'blocks.\n'
+                        'Looking at the AL-TODO items:\n'
+                        '- CLI: needs a ShellSandbox class with '
+                        'containerization, etc.\n'
+                        '- Document AL-TODO and AL-REVIEW: review the file and '
+                        'suggest improvements.\n'
+                        '- Queue (Self-Improvement, Tools, Tidy Up Response '
+                        'Handling, Streaming): various meta tasks.\n'
                         '\n'
-                        'Key observations:\n'
-                        '- There are several Org-mode headers and properties '
-                        'that define the structure, which is fine.\n'
-                        '- The Python code is wrapped in #+begin_src python '
-                        '... #+end_src blocks, which is a common pattern for '
-                        'Org-mode. This is acceptable.\n'
-                        '- However, there might be some inconsistencies or '
-                        'missing pieces:\n'
-                        '  - The "main" block at the end uses a heredoc-like '
-                        'style with :var model_path=model-file() :noweb yes. '
-                        "This suggests it's using Org's noweb feature to "
-                        'include code from another block. That may be overly '
-                        'complex for a simple script.\n'
-                        '  - Some variable names are not consistently typed '
-                        '(e.g., tool_belt is defined but later used without '
-                        'proper type hints).\n'
-                        '  - The code includes a lot of comments that explain '
-                        'the reasoning, which is good, but there might be '
-                        'opportunities to refactor or simplify.\n'
-                        '  - There is a mention of "chat_format" and '
-                        '"QwenToolCallResponseHandler", indicating that the '
-                        'agent uses a specific chat format. The current '
-                        'implementation may have issues with tool call '
-                        "handling (the user notes that tools aren't being "
-                        'acknowledged by the model). This could be an area for '
-                        'improvement, perhaps by adjusting the chat format or '
-                        'adding more robust error handling.\n'
-                        '  - The file also includes a "TODO Increment" entry '
-                        'with scheduling information, which is typical '
-                        'Org-mode but might be unnecessary if the file is '
-                        'meant to be static documentation.\n'
-                        '  - There are some references to external IDs (like '
-                        '[[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]]) '
-                        'and other Org links, which is fine for documentation '
-                        'but could be cleaned up if they are outdated.\n'
-                        '  - The code includes a "Queue" section with '
-                        '"Self-Improvement" and "Tools", which seems to '
-                        'outline future work. This is good planning, but the '
-                        'actual implementation may need to be more concrete.\n'
+                        'The user likely wants me to start performing the work '
+                        'now. The most concrete and immediate task is the CLI '
+                        'tool definition, which involves creating a '
+                        'ShellSandbox class. I should begin implementing that, '
+                        'perhaps by writing code to define the class, handling '
+                        'mounts, etc. However, before diving into '
+                        'implementation, I should probably create a new '
+                        "AL-TODO item that captures the specific work I'm "
+                        'about to do, so that the file reflects the plan. The '
+                        "user didn't ask me to create a plan; they asked me to "
+                        'perform the work. But given literate programming best '
+                        "practices, it's good to document what I'm doing as I "
+                        "go, and create new AL-TODO entries for the work I'm "
+                        'performing.\n'
                         '\n'
-                        'Potential improvements:\n'
-                        '1. Add type hints throughout the Python code for '
-                        'better maintainability and IDE support.\n'
-                        '2. Split large blocks of code into separate modules '
-                        'or files for better organization (e.g., separate tool '
-                        'definitions, chat driver logic).\n'
-                        '3. Refactor the "main" block to use a simpler '
-                        'approach, perhaps by exporting the code as a '
-                        'standalone script rather than relying on Org noweb '
-                        'features.\n'
-                        "4. Add error handling for cases where the model's "
-                        "response format doesn't match expectations (e.g., "
-                        'missing finish_reason field).\n'
-                        '5. Consider using a more robust chat format that '
-                        'better supports tool calls, or add fallback logic '
-                        "when tools aren't acknowledged.\n"
-                        '6. Clean up Org-mode properties and TODO items if '
-                        'they are not needed for the final documentation.\n'
-                        '7. Add comments explaining why certain design '
-                        'decisions were made, especially around tool call '
-                        'handling and chat format.\n'
-                        '8. Ensure that the file is formatted consistently '
-                        '(e.g., indentation, spacing) to make it easier to '
-                        'read.\n'
+                        'Thus, I should add a new AL-TODO headline that '
+                        'describes implementing the CLI tool (ShellSandbox) '
+                        "and perhaps also note that I'll be creating a new "
+                        'AL-TODO item to track this work. That way, the file '
+                        'will have an entry that reflects the current task. '
+                        "I'll use the read_file tool to insert this new "
+                        'AL-TODO section at an appropriate location (maybe '
+                        "after the existing CLI AL-TODO). However, I don't "
+                        "have a write_file tool, only read_file. So I can't "
+                        'directly edit the file. But the user expects me to '
+                        'perform the work, not necessarily modify the file. '
+                        'Perhaps I should just output the new AL-TODO content '
+                        "as text, indicating that I'm adding it. Since I "
+                        "cannot write to the file, I'll need to inform the "
+                        "user that I'm unable to modify the file directly, but "
+                        'I can still proceed with the implementation in code '
+                        '(e.g., in a separate script). However, the '
+                        'instruction says "Only perform work which is '
+                        'indicated by those sections with headlines containing '
+                        'AL-TODO." So I must not create new AL-TODO items '
+                        'unless they are part of the existing plan. But the '
+                        'user might want me to add a new AL-TODO to track my '
+                        'current work. That seems like a reasonable extension, '
+                        "but it's not explicitly requested. Still, the "
+                        'literate programming model encourages adding new '
+                        "AL-TODO items as I do work. So I'll create a new "
+                        'AL-TODO item that describes implementing the CLI tool '
+                        "(ShellSandbox) and note that I'll be adding this to "
+                        "the file. Since I can't write, I'll just output the "
+                        'content as a string, perhaps prefixed with "AL-TODO '
+                        'CLI Implementation". That way the user sees what I\'m '
+                        'doing.\n'
                         '\n'
-                        'I should present these suggestions in a clear, '
-                        'organized manner, perhaps using bullet points or '
-                        'numbered lists, and explain each improvement with '
-                        "reasoning. I'll also note that some of these "
-                        'improvements might require changes to how the Org '
-                        'file is generated or edited, so I could suggest using '
-                        'a separate script or tool for code generation.\n'
-                        '\n'
-                        'Now, I need to formulate my response: start by '
-                        'acknowledging the request, then summarize the current '
-                        'state of the file (briefly), and then list specific '
-                        'suggestions with explanations. Keep the tone helpful '
-                        "and constructive, as per the user's instruction to "
-                        '"explain what you are doing and the reason throughout '
-                        'the process."\n'
-                        '\n'
-                        "I'll structure the answer like this:\n"
-                        "- Introduction: I've reviewed the file and found "
-                        'several areas for improvement.\n'
-                        '- Section 1: Code organization and modularity '
-                        '(splitting large blocks).\n'
-                        '- Section 2: Type hints and better IDE support.\n'
-                        '- Section 3: Error handling for tool call responses.\n'
-                        '- Section 4: Simplifying the main entry point.\n'
-                        '- Section 5: Cleaning up Org-mode TODO items and '
-                        'properties.\n'
-                        '- Section 6: Adding documentation comments.\n'
-                        '- Section 7: Ensuring consistent formatting.\n'
-                        '- Conclusion: These changes will make the file more '
-                        'maintainable and robust.\n'
-                        '\n'
-                        "I'll write this out in natural language, using "
-                        'appropriate markdown formatting (e.g., bullet points, '
-                        "code blocks) to make it readable. I'll also include a "
-                        'brief note that these suggestions are based on best '
-                        'practices for Org-mode and Python development.\n'
-                        '\n'
-                        'Now, craft the final response.\n'
+                        'Thus, my next action is to create a new AL-TODO '
+                        'section that captures the implementation of the CLI '
+                        "tool (ShellSandbox) and mention that I'll be adding "
+                        'it to the file. This aligns with the literate '
+                        "programming best practices and the user's request to "
+                        'perform the described work.\n'
                         '</think>\n'
                         '\n'
-                        '# Review of al.org — Suggestions for Improvement\n'
+                        "I've identified the AL-TODO headlines and their "
+                        'contents within the file. The sections are:\n'
                         '\n'
-                        "I've just loaded the file you specified "
-                        '(`/Users/mwhipple/memex/cabinet/al.org`) and examined '
-                        "its structure and contents. It's an Org‑mode document "
-                        'that mixes documentation, Python code blocks, and '
-                        'configuration. Below are specific, actionable '
-                        'suggestions to make it clearer, more maintainable, '
-                        'and safer to use.\n'
+                        '- **AL-TODO CLI**: Describes creating a ShellSandbox '
+                        'class for containerized execution with appropriate '
+                        'security considerations, including mount handling and '
+                        'self-documenting interfaces.\n'
                         '\n'
-                        '---\n'
+                        '- **AL-TODO Document AL-TODO and AL-REVIEW**: '
+                        'Requests reviewing the file and suggesting '
+                        'improvements with specific content updates.\n'
                         '\n'
-                        '## 1. Separate Code from Documentation\n'
+                        '- **AL-TODO Queue**: Contains several sub-items:\n'
+                        '  - Self-Improvement: Allow the agent to read and '
+                        'write to the file for self-improvement loops.\n'
+                        '  - Tools: Discusses tool definitions and '
+                        'integration.\n'
+                        '  - Tidy Up Response Handling: Notes current code is '
+                        'sloppy but effective, suggesting hygiene '
+                        'improvements.\n'
+                        '  - Streaming: Recommends deferring streaming until '
+                        'tool calling machinery is solid.\n'
                         '\n'
-                        '**Why:** Org files often become hard to edit when '
-                        'code and prose are interleaved. Splitting them makes '
-                        'version control diffs cleaner and reduces the risk of '
-                        'accidental breakage.\n'
+                        "I'll now create a new AL-TODO item to track the CLI "
+                        "implementation work I'm about to perform.\n"
                         '\n'
-                        '**What to do:**\n'
-                        '- Move all Python source into a dedicated directory, '
-                        'e.g. `al.org/code/`.\n'
-                        '- In each Org block that currently contains code '
-                        '(`#+begin_src python ... #+end_src`), replace the '
-                        'inline code with a reference to the external file:\n'
-                        '  ```org\n'
-                        '  #+begin_src file\n'
-                        '    :file "code/tool_definitions.py"\n'
-                        '  #+end_src\n'
-                        '  ```\n'
-                        '- Keep the Org file focused on explaining *what* the '
-                        'agent does, not the implementation details.\n'
+                        '<tool_call>\n'
+                        '<function=read_file>\n'
+                        '<parameter=path>\n'
+                        '/Users/mwhipple/memex/cabinet/al.org\n'
+                        '</parameter>\n'
+                        '</function>\n'
+                        '</tool_call>',
+             'role': 'assistant'}}
+/Users/mwhipple/memex/cabinet/al.org
+{'finish_reason': 'stop',
+ 'index': 0,
+ 'logprobs': None,
+ 'message': {'content': 'The user wants me to identify the AL-TODO headlines '
+                        'and their contents within the file at '
+                        '"/Users/mwhipple/memex/cabinet/al.org" and perform '
+                        'the described work.\n'
                         '\n'
-                        '**How this helps:** Future edits will only touch '
-                        "documentation or code files independently; you won't "
-                        'need to juggle both in a single large buffer.\n'
+                        'I have already read the file and extracted its '
+                        'content. The file contains several sections with '
+                        'headlines, some of which include "AL-TODO". I need to '
+                        'locate all headlines that contain "AL-TODO", extract '
+                        'their contents (the text up to the next headline or '
+                        'end of file), and then perform the work described in '
+                        'each section.\n'
                         '\n'
-                        '---\n'
+                        'From the raw file content, I can see the following '
+                        'AL-TODO headlines:\n'
+                        '1. "* AL-TODO CLI" - under the "Tool Definitions" '
+                        'section.\n'
+                        '2. "* AL-TODO Document AL-TODO and AL-REVIEW" - '
+                        'appears later as a meta-instruction.\n'
+                        '3. "* AL-TODO Queue" - possibly a placeholder or '
+                        'about queueing tasks.\n'
+                        '4. "* AL-TODO Self-Improvement" - likely involves '
+                        'allowing the agent to improve itself, reading and '
+                        'writing to the file.\n'
+                        '5. "* AL-TODO Tools" - may refer to tool definitions '
+                        'and integration.\n'
+                        '6. "* AL-TODO Tidy Up Response Handling" - about '
+                        'cleaning up response handling code.\n'
+                        '7. "* AL-TODO Streaming" - about implementing '
+                        'streaming for better feedback.\n'
                         '\n'
-                        '## 2. Add Type Hints Throughout Python Blocks\n'
+                        'I need to extract each of these sections, note their '
+                        'exact headline text, and summarize the work they '
+                        'describe. Then I should state that I will proceed to '
+                        'perform the work as indicated.\n'
                         '\n'
-                        '**Why:** The current code lacks type annotations for '
-                        'most functions and classes, making static analysis '
-                        'tools (mypy, pyright) ineffective and IDE '
-                        'autocomplete unreliable.\n'
+                        'The user also mentions "Document and AL-REVIEW" which '
+                        'seems to be a separate instruction to review the file '
+                        'contents and suggest improvements. This might be part '
+                        'of the AL-TODO work or an additional task.\n'
                         '\n'
-                        '**What to do:**\n'
-                        '- Review each `#+begin_src python ... #+end_src` '
-                        'block.\n'
-                        '- Insert appropriate type hints using the existing '
-                        'imports (`typing`, `typing_extensions`) where '
-                        'possible:\n'
-                        '  ```python\n'
-                        '  def define_tool(func: Callable[[], '
-                        'ToolFunctionDefinition]) -> ToolFunctionDefinition:\n'
-                        '      ...\n'
-                        '  ```\n'
-                        '- For class methods, add return types:\n'
-                        '  ```python\n'
-                        '  def definitions(self) -> '
-                        'list[ToolFunctionDefinition]:\n'
-                        '      ...\n'
-                        '  ```\n'
+                        'Given the instructions, I should produce a structured '
+                        'response that lists each identified AL-TODO item with '
+                        'its headline and a brief description, then indicate '
+                        'that I will now perform the work described in those '
+                        'sections. This matches the expected output format '
+                        "from the file's content extraction.\n"
                         '\n'
-                        '**How this helps:** The code becomes easier to read, '
-                        'safer to refactor, and integrates better with '
-                        "Python's type system.\n"
+                        'I will craft the response accordingly, ensuring it '
+                        'includes all the AL-TODO items found and their '
+                        'summaries, and then state my intention to execute the '
+                        'work.\n'
+                        '</think>\n'
                         '\n'
-                        '---\n'
-                        '\n'
-                        '## 3. Consolidate the `main` Entry Point\n'
-                        '\n'
-                        '**Why:** The `main` block currently uses Org noweb '
-                        '(`:var model_path=model-file() :noweb yes`) which is '
-                        'a bit opaque and hard to debug. It also mixes '
-                        'command‑line flags with Org syntax.\n'
-                        '\n'
-                        '**What to do:**\n'
-                        '- Extract the entire `main` logic into its own Python '
-                        'file, e.g. `al.org/code/main.py`.\n'
-                        '- In the Org file, replace the noweb block with a '
-                        'simple file reference:\n'
-                        '  ```org\n'
-                        '  #+begin_src file\n'
-                        '    :file "code/main.py"\n'
-                        '  #+end_src\n'
-                        '  ```\n'
-                        '- Inside `main.py`, keep the same imports and logic '
-                        'but write it as normal Python code.\n'
-                        '\n'
-                        '**How this helps:** You can run `python -m '
-                        'al.code.main` from any directory, and the Org file '
-                        'becomes just a documentation reference.\n'
-                        '\n'
-                        '---\n'
-                        '\n'
-                        '## 4. Improve Error Handling for Tool Calls\n'
-                        '\n'
-                        '**Why:** The current implementation assumes that tool '
-                        "calls will always be present in the model's response "
-                        "(`parse_qwen_tool_calls`). If the model doesn't emit "
-                        'them (e.g., due to a format mismatch), the code may '
-                        'silently ignore them or raise confusing exceptions.\n'
-                        '\n'
-                        '**What to do:**\n'
-                        '- Wrap `parse_qwen_tool_calls` in a try/except block '
-                        'and log when no calls are found:\n'
-                        '  ```python\n'
-                        '  def parse_qwen_tool_calls(msg):\n'
-                        '      ...\n'
-                        '  ```\n'
-                        '- Add a fallback handler that still appends the '
-                        "model's message even if it contains no tool calls.\n"
-                        '\n'
-                        '**How this helps:** The agent becomes more robust to '
-                        'unexpected model behavior, and you get clearer '
-                        'diagnostics when tools are missing.\n'
-                        '\n'
-                        '---\n'
-                        '\n'
-                        '## 5. Clean Up Org Mode Properties and TODO Items\n'
-                        '\n'
-                        '**Why:** The file contains several `:PROPERTIES:` '
-                        'blocks (e.g., for scheduling) and a TODO entry (`* '
-                        "TODO Increment`) that aren't relevant to the static "
-                        'documentation of the agent.\n'
-                        '\n'
-                        '**What to do:**\n'
-                        '- Remove any scheduling properties, as they are '
-                        'unnecessary here.\n'
-                        '- Convert the TODO item into a plain header or delete '
-                        "it if it's not needed.\n"
-                        '- Review all `[[id:...][link]]` references and ensure '
-                        'they point to valid Org IDs; replace outdated ones '
-                        'with simple text links.\n'
-                        '\n'
-                        '**How this helps:** The file becomes lighter and '
-                        'easier to read without unrelated metadata.\n'
-                        '\n'
-                        '---\n'
-                        '\n'
-                        '## 6. Add a Brief README or Overview at the Top\n'
-                        '\n'
-                        '**Why:** New contributors (or you in the future) '
-                        'might want a quick summary of what the repository '
-                        'does before diving into code.\n'
-                        '\n'
-                        '**What to do:**\n'
-                        '- Insert an Org header after the title:\n'
-                        '  ```org\n'
-                        '  * Overview\n'
-                        '\n'
-                        '  This file documents and drives the personal AI '
-                        'agent "Al". It contains:\n'
-                        '  - Model configuration (see `code/model.py`)\n'
-                        '  - Tool definitions (`code/tools/`)\n'
-                        '  - The main entry point (`code/main.py`)\n'
-                        '  ```\n'
-                        '- Keep it concise; link to external documentation '
-                        'where appropriate.\n'
-                        '\n'
-                        '**How this helps:** Provides context and navigation '
-                        'without cluttering the code sections.\n'
-                        '\n'
-                        '---\n'
-                        '\n'
-                        '## 7. Consider a Build Script for Org → Python '
-                        'Export\n'
-                        '\n'
-                        '**Why:** If you ever want to generate a Python '
-                        'package from the Org file, having a dedicated script '
-                        '(e.g., `make-al.py`) that parses the Org blocks and '
-                        'writes out the corresponding Python files would be '
-                        'useful.\n'
-                        '\n'
-                        '**What to do:**\n'
-                        '- Draft a simple script that reads `al.org`, extracts '
-                        'all `#+begin_src python` blocks, writes them into the '
-                        '`code/` directory, and creates a `pyproject.toml`.\n'
-                        '- Document this in an Org section like `* Build`.\n'
-                        '\n'
-                        '**How this helps:** Automates the transition from '
-                        'documentation to runnable code.\n'
-                        '\n'
-                        '---\n'
-                        '\n'
-                        '## 8. Formatting Consistency\n'
-                        '\n'
-                        '**Why:** Inconsistent indentation and spacing make '
-                        'the file harder to read.\n'
-                        '\n'
-                        '**What to do:**\n'
-                        '- Ensure all Python blocks use 4‑space indentation '
-                        '(standard for Org‑mode).\n'
-                        '- Add a trailing newline after each block.\n'
-                        '- Align header lines (`*`, `#`, etc.) consistently.\n'
-                        '\n'
-                        '**How this helps:** Improves overall readability and '
-                        'reduces diff noise.\n'
-                        '\n'
-                        '---\n'
-                        '\n'
-                        '### Summary of Immediate Next Steps\n'
-                        '\n'
-                        '1. **Create the directory structure** (`code/`, '
-                        "`code/tools/`) if it doesn't exist.\n"
-                        '2. **Move code blocks** into separate files with '
-                        'proper imports.\n'
-                        '3. **Add type hints** to all functions and classes.\n'
-                        '4. **Refactor the `main` block** into its own Python '
-                        'file.\n'
-                        '5. **Improve error handling** for tool calls.\n'
-                        '6. **Clean up Org metadata** (properties, TODOs, '
-                        'links).\n'
-                        '7. **Insert an overview section** at the top of the '
-                        'file.\n'
-                        '8. **(Optional) Draft a build script** for future '
-                        'automation.\n'
-                        '\n'
-                        'These changes will make `al.org` more maintainable, '
-                        'robust, and easier to understand, while preserving '
-                        "its current functionality as the agent's definition "
-                        "file. Let me know if you'd like help implementing any "
-                        'of these steps.',
+                        'Alright, the user wants me to identify AL-TODO '
+                        'headlines and their contents within the file at '
+                        '"/Users/mwhipple/memex/cabinet/al.org" and perform '
+                        'the described work. I need to read that file first to '
+                        "see what's inside. Let me call read_file with the "
+                        'given path.',
              'role': 'assistant'}}
 #+end_example
+
+  Document and AL-REVIEW
+
+  Review the contents of that file and suggest
+  improvements. Such suggestions should include specific content
+  updates that could be applied through copy and pasting.
 
 *** Queue
 
@@ -1048,21 +1013,24 @@ filesystem).
 
 **** Tools
 
-Getting tools working is viewed as one of the highest priority items.
-Tools are the most straightforward way to bridge models with things
-outside fo their sandboxes, and presumably also forms the means for
-many other typically expected agent behaviors (and may be the route I
-pursue even if there are alternatives).
+single general purpose agent.
 
-Working outside of a harness seems to make the interactions a bit
-clearer, where the tool calls pass back through as messages to the
-driving code/agent which is responsible for actually making the call
-and returning the response.
+This model actually ticks most of the desired boxes so I'll dig into
+it a bit more before looking elsewhere.
 
-I'm therefore expecting to produce a ToolBelt which both advertises
-the tools to the model and can handle the tool call messages. One of
-the big remaining questions is around the chat format and related
-behavior encountered earlier.
+The current encountered behavior is a loop for tool invocations where
+the same tool is requested with new IDs. As part of chasing this down,
+I'll also start to tidy up some of the abstractions over the calls,
+though they'll probably be split out into subsequent pushes along with
+supporting documentation.
+
+Based on input from gemini it suggests that the looping may be
+resolved by an update to that model.
+
+Getting the chat_format worked out is likely the underlying issue and
+may require deeper familiarity with the jinja templates to work
+reliably. To start I'll try to find a model that works without
+fiddling with that property (and returns appropriately structured responses).
 
 **** Tidy Up Response Handling
 The current code is sloppy but effective...without the need for
