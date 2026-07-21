@@ -4,7 +4,10 @@
 #+title: obi
 
 * TODO Iterate
-SCHEDULED: <1980-01-11 Fri +1d>
+SCHEDULED: <1980-01-12 Sat +1d>
+:PROPERTIES:
+:LAST_REPEAT: [2026-07-20 Mon 17:32]
+:END:
 ** Work through [[id:D5B6CBC5-AB99-4278-A8A3-ACB9124B68F4][obi/describe-function]]
 
 * Background
@@ -256,6 +259,25 @@ expanded above).
 
 #+RESULTS:
 : obi/BlockInfo-coderef
+
+** obi/evaluate-block-info
+
+~info~ is the object that holds all of the important info (and could be
+extended as needed), so let's use that to drive the actual execution.
+
+#+begin_src emacs-lisp
+  (defun obi/evaluate-block-info (block-info)
+    (let* ((body (org-babel--expand-body block-info))
+           (lang (obi/BlockInfo-language block-info))
+           (params (obi/BlockInfo-params block-info))
+           (cmd (intern (concat "obi/evaluate:" lang))))
+      (unless (fboundp cmd)
+        (error "No obi/evaluate function for %s!" lang))
+      (funcall cmd body params)))
+#+end_src
+
+#+RESULTS:
+: obi/evaluate-block-info
 
 ** obi/execute-src-block
 
