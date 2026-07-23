@@ -4,9 +4,9 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-12 Sat +1d>
+SCHEDULED: <1980-01-13 Sun +1d>
 :PROPERTIES:
-:LAST_REPEAT: [2026-07-20 Mon 16:53]
+:LAST_REPEAT: [2026-07-21 Tue 13:40]
 :END:
 * Name
 
@@ -14,10 +14,52 @@ Al is the provisional name for my personal agent setup.
 
 "Al" was chosen because:
 - it's short
-- it looks like "AI"...potentially indiscrenibly depending on font
+- it looks like "AI"...potentially indiscernibly depending on font
 - I'm planning on going fairly minimal and piling on to the
   "all you need is" cliche
 - it could call you Betty
+It is not a reference to:
+- Quantum Leap...I was a fan growing up but if I were to go that route
+  the more appropriate option would be Ziggy
+- Season 3 of The Comeback - which I coincidentally watched very
+  shortly after picking the name.
+
+* Glossary
+
+I'm going to adopt some terminology with corresponding designations
+and definitions. The upstream library uses fairly verbose qualified
+concepts and based on what I've read (and years of experience) there's
+plenty of conflicting interpretations...and there's certainly plenty
+of flux. So I'm going to work out some local definitions.
+
+** Missive
+
+Content that is exchanged between parties...in this context typically
+to/from a model. This would include prompts along with their
+responses, and anything else that is more explicitly sent. The core
+behavior of an LLM would be completion/auto-regression based on such
+missives (making use of whatever else may be provided. "Message" is
+avoided as being far too general.
+
+** Response
+
+A complete missive received from submitting missives to a model. This
+will include a response missive along with any other enclosing metadata.
+
+** Tool
+
+A tool is functionality that is provided externally to a model, which
+it can make use of through senging a ToolCallRequest.
+
+** TollCallRequest
+
+A message (may be within a missive) from a model requesting that a
+tool be invoked.
+
+** AL-TODO Update the content to align with the Glossary terms.
+
+Any content related to interacting with the model should make use of
+the corresponding terms where appropriate.
 
 * Model Selection
 
@@ -25,22 +67,17 @@ There should maybe be multiple involved and I don't have a mature
 selection framework as documented elsewhere, so for now I'll start
 with the trendiest option du jour from [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]].
 
+This specific model is /not/ the trendiest, but is a newer version of
+one of the trendiest which ostensibly has some guards against some
+looping (that I think I've experienced).
+
 #+name: model-file
 #+begin_src shell :async no :session none :results output
-  hf download --quiet empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf
+  hf download --quiet empero-ai/Qwythos-9B-v2-GGUF Qwythos-9B-v2-MTP-Q4_K_M.gguf
 #+end_src
 
 #+RESULTS: model-file
-: /Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-Claude-Mythos-5-1M-GGUF/snapshots/5cebd89dd078b033c26988248740ddadf40f2fbd/Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf
-
-* Message Types
-
-The language around the different types of messages needs some
-cleaning up, both just for naming and for which are worth paying
-attention to. There is some upstream conventions to start with, but it
-also seems worth trying to refine them a bit since they seem to get
-verbose. "Message" may want to be avoided entirely over time as being
-too general and likely to breed confusion.
+: /Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-v2-GGUF/snapshots/97c11b03687f194b300efbdb4760d9bc4021b759/Qwythos-9B-v2-MTP-Q4_K_M.gguf
 
 * Coding the Agent
 :PROPERTIES:
@@ -254,7 +291,7 @@ func: <built-in function callable>
 *** apply_tool
 
 Call a function using a ToolCallMessage and return the expected
-request message.
+missive.
 
 #+begin_src python
   def apply_tool(func_call, tool: callable, id: str):
@@ -272,7 +309,7 @@ request message.
 The ToolBelt object will handle advertising of available tools and
 their subsequent use.
 
-Application will produce the message to send back to the model.
+Application will produce a missive to send back to the model.
 
 #+begin_src python
   class ToolBelt():
@@ -347,9 +384,9 @@ the message and a context dictionary (to be more precisely defined).
               repeat_penalty=1.05,
           )
           choice = single_choice(resp)
+          self.append(choice['message'])
           on_response = self.on_response # assign to avoid being a method call
           on_response({"driver": self}, choice)
-          self.append(choice['message'])
 #+end_src
 
 #+RESULTS:
@@ -368,11 +405,27 @@ all of which will be called (if any).
   class ForEachHandler:
     def __init__(self, handlers=[]):
         self.handlers = handlers
-    def append_handler(self, handler):
-        self.handlers.append(handler)
     def __call__(self, ctx, msg):
         for h in self.handlers:
             h(ctx, msg)
+#+end_src
+
+#+RESULTS:
+
+**** FirstActiveHandler
+
+Provide a chain of responibility style handler which will look for the
+first handler is activated.
+
+#+begin_src python
+  class FirstActiveHandler:
+      def __init__(self, handlers=[]):
+          self.handlers = handlers
+      def __call__(self, ctx, msg):
+          for h in self.handlers:
+              if h(ctx, msg):
+                  return True
+          return False
 #+end_src
 
 #+RESULTS:
@@ -394,6 +447,23 @@ messages, so this is just left here for potential future use.
           if "finish_reason" not in response:
               raise TypeError(f"finish_reason not in msg: {response}")
           finish_reason = response["finish_reason"]
+#+end_src
+
+#+RESULTS:
+
+**** yolo_response_handler
+
+#+begin_src python
+  def yolo_response_handler(ctx, response):
+      if "Over and out" in response['message']['content']:
+          return False
+      driver = ctx['driver']
+      driver.append(user_message("""
+      Continue on identified work. If there is no further work then
+      respond with "Over and out" on a line by itself..
+      """))
+      driver.submit()
+      return True
 #+end_src
 
 #+RESULTS:
@@ -513,11 +583,14 @@ When the messages are embedded there may not be further indications
 
       def __call__(self, ctx, resp):
           calls = parse_qwen_tool_calls(resp['message']['content'])
+          driver = ctx['driver']
           if not calls: # Don't submit at the end
-              return
+              return False
           for call in calls:
-              driver.append(self.tool_belt.apply(call))
+              output = self.tool_belt.apply(call)
+              driver.append(output)
           driver.submit()
+          return True
 #+end_src
 
 #+RESULTS:
@@ -604,6 +677,11 @@ Longer form options should also be preferred throughout.
     container_path: str
     read_only: bool = False
 
+    def to_volume_string(self) -> str:
+      """Render this mount as a Docker volume flag."""
+      mode = "ro" if self.read_only else "rw"
+      return f"--volume={self.host_path}:{self.container_path}:{mode}"
+
   class ShellSandbox:
     def __init__(self,
                  image: str,
@@ -620,34 +698,42 @@ Longer form options should also be preferred throughout.
 
       The utilities available will vary based on the image used.
       Users should therefore check availability prior to invoking.
+
+      This will return the output from stdout and stderr as a single string
+      with XML elements for each stream.
       """
       cmd = [
         self.lxc_cmd,
         "run",
         "--rm",
-        "-v",
-        f"{self.container_name}:/rootfs",
-        "--read-only",
-        "--cap-drop=ALL",
+        "--cap-drop=all",
         "--security-opt=no-new-privileges",
-        "-t",
+        "--tty",
       ]
 
       # Add mounts
       for mount in self.mounts:
-        read_only_str = "ro" if mount.read_only else "rw"
-        cmd.extend(["-v", f"{mount.host_path}:{mount.container_path}:{read_only_str}"])
+        cmd.append(mount.to_volume_string())
 
       # Add image
       cmd.append(self.image)
 
       # Execute command
-      print(cmd)
       result = subprocess.run(cmd + ["sh", "-c", command], capture_output=True, text=True)
-      return result.stdout.strip(), result.stderr.strip()
+      return f"<output><stdout>{result.stdout.strip()}</stdout><stderr>{result.stderr.strip()}</stderr></output>"
 #+end_src
-
 #+RESULTS:
+
+**** AL-DONE Longer form options should also be preferred throughout.
+The code for ShellSandbox generates a Docker CLI compatible command
+that makes use of short options - long options should be preferred
+wherever supported for legibility.
+
+**** AL-DONE BindMounts should self render
+The rendering code for bindmount options is currently done within the
+shell_command body - that should instead be moved to the methods on
+the BindMount class.
+
 
 **** Sandbox
 
@@ -729,12 +815,36 @@ the format is changed the tools aren't detected without further help.
 
 Right now this is producing a pretty interesting hallucination.
 
+#+name: this-file
+#+begin_src emacs-lisp :session none :results value
+  buffer-file-name
+#+end_src
+
+#+RESULTS: this-file
+: /Users/mwhipple/memex/cabinet/al.org
+
+#+begin_src emacs-lisp :session none :noweb yes
+  (defun al/go ()
+    (interactive)
+    (save-excursion
+      (find-file "<<this-file()>>")
+      (goto-char (org-babel-find-named-block "al"))
+      (org-babel-execute-src-block)))
+#+end_src
+
+#+RESULTS:
+
+#+name: al
 #+begin_src python :var model_path=model-file()
   from pprint import pprint
   from llama_cpp import Llama
 
   tool_belt = ToolBelt()
-  tool_belt.register(read_file)
+  import os
+  mount_here = BindMount(host_path=os.getcwd(),container_path="/host")
+  sb = ShellSandbox(image="wwarner/emacs-native:latest",
+                    mounts=[mount_here])
+  tool_belt.register(sb.shell_command)
 
   llm = Llama(
       model_path=model_path.strip(),
@@ -744,7 +854,10 @@ Right now this is producing a pretty interesting hallucination.
   )
   handler = ForEachHandler(handlers=[
       lambda ctx, msg: pprint(msg),
-      QwenToolCallResponseHandler(tool_belt),
+      FirstActiveHandler(handlers=[
+          QwenToolCallResponseHandler(tool_belt),
+          yolo_response_handler,
+      ]),
   ])
   driver = ChatDriver(model=llm, on_response=handler)
   driver.tools = tool_belt.definitions()
@@ -755,41 +868,67 @@ Right now this is producing a pretty interesting hallucination.
   You not only do what is asked, but explain what you are doing
   and the reason throughout the process.
 
-  You should operate in a presumes headless/YOLO mode. Attempt to
-  perform all identified work as completely as possible, do not wait for
-  feedback/confirmation.  No final message should indicate planned
-  work...any such message should be followed by actually doing that
-  work.
+  /host/AGENTS.md can be used for your memory. As information and techniques to
+  work more effectively and efficiently are discovered, record that information in
+  that file in a form that you can read in the future, and read this file
+  before starting work.
 
-  This project makes heavy use of literate programming. It should be expected
-  that code and documentation are colocated and it should adhere to literate
-  programming best practices. Ultimately this should move towards a model where
-  the text may be used to verify or generate the code using agents.
+  You can also create and own a /host/al/ directory which you can use to store
+  additional information and tools.
+  For the utilities that you create for yourself, you should *only* make use of
+  what you have available and should not presume access to anything that may be documented.
+  If a particular additional tool would offer significant benefits (such as
+  being able to entirely obviate custom logic or reduce such logic in half) then that information
+  should be recorded through adding a new AL-REVIEW heading to this file.
 
-  You currently only have access to the read_file tool, don't attempt to use others.
+  MAKE SURE to store information in the above locations to reduce churn.
 
-  Within the files headlines are any lines that start with one or more `*`
-  characters - headlines containing AL-TODO contain text describing work that
-  you should take on. This includes the content of that section (which would be all
-  text up to the next headline including a number of `*`s <= the starting headline.
+  Whenever it takes you more than two attempts to work out how to do something, capture that
+  in a combination of AGENTS.md and the /host/al directory. If the need is a
+  one-off with a simple invocation, that invocation information can simply be documented,
+  in all other cases introduce a script to make the purpose self-documenting and reusable.
 
-  Those sections may contain work such from previous sessions. In such cases
-  produce extensions or refinements of the work to attempt to more closely conform to
-  what is described in the text and any other guidance that you have been provided.
+  Always expect that the files with which you're working may change from
+  underneath you.  Wherever possible try to make use of addressing
+  approaches such as content that should remain more stable rather than
+  something like line numbers that could be impacted by unrelated
+  changes.
 
-  Only perform work which is indicated by those sections with headlines containing AL-TODO.
+  All work should strive to be containable within ~10K tokens. Anything
+  that seems likely to exceed or get close to that threshold should be
+  broken up and captured in more granular follow ups.
 
-  If further work seems valuable or could assist with the work that has been requested,
-  then create new AL-TODO content indicating what work would be done. Such sections
-  should therefore act as the plan for all work that is performed.
+  When you have finished all requested work, emit a final "Over and out" message.
 
   """))
 
   driver.append(user_message("""
 
-  The file at "/Users/mwhipple/memex/cabinet/al.org" defines the code for yourself.
+  All work is tracked in org-mode files, where headings tagged with AL-TODO
+  describes work that you shall perform, and headings marked with AL-REVIEW
+  indicate work that has been done or other content which is awaiting feedback.
 
-  Identify the AL-TODO headlines and their contents within that file, and perform the described work.
+  Some AL-TODO items may request that you do certain things for yourself. These
+  should still be handled like any other work. Such requests are to make subsequent
+  more expressive, more efficient, and potentially allow for more sharing of
+  knowledge and tools. When work is indicated as being for you that should inform
+  _how_ things are done (e.g., working within your environment) but not _what_ is done.
+
+  Locate any such headings in org mode files anywhere under /host and
+  perform the tasks based on the content of those headings. Headings may
+  include or refer to partially completed work - in any case where the
+  AL-TODO tag exists, work to create or improve a solution based on the
+  content. If further information is _necessary_ (particularly with work
+  refinement) then update the content to include those questions.  When
+  done dealing with any such heading change the AL-TODO to AL-REVIEW.
+  Update the content as appropriate to indicate that work has been done (rather than
+  being planned).
+
+  Do not do anything which is not requested by an AL-TODO heading.
+  If further work seems valuable or could assist with the work that has
+  been requested, then create new AL-REVIEW headings outlining that work.
+  Such AL-REVIEW headings should similarly be used for capturing a plan where
+  appropriate or breaking up any larger chunk of work to reduce the context size.
 
   """))
 
@@ -797,212 +936,11 @@ Right now this is producing a pretty interesting hallucination.
 
 #+end_src
 
+#+RESULTS: al
+: 32ef711d-8891-4da6-aa40-a97fe96a7942
+
 #+RESULTS:
-#+begin_example
-{'finish_reason': 'stop',
- 'index': 0,
- 'logprobs': None,
- 'message': {'content': 'Alright, the user wants me to identify AL-TODO '
-                        'headlines and their contents within the file at '
-                        '"/Users/mwhipple/memex/cabinet/al.org" and perform '
-                        'the described work. I need to read that file first to '
-                        "see what's inside. Let me call read_file with the "
-                        'given path.\n'
-                        '</think>\n'
-                        '\n'
-                        '<tool_call>\n'
-                        '<function=read_file>\n'
-                        '<parameter=path>\n'
-                        '/Users/mwhipple/memex/cabinet/al.org\n'
-                        '</parameter>\n'
-                        '</function>\n'
-                        '</tool_call>',
-             'role': 'assistant'}}
-/Users/mwhipple/memex/cabinet/al.org
-{'finish_reason': 'stop',
- 'index': 0,
- 'logprobs': None,
- 'message': {'content': "I've just read the file and identified several "
-                        'AL-TODO sections with their headlines and contents. '
-                        'The user asked me to "Identify the AL-TODO headlines '
-                        'and their contents within that file, and perform the '
-                        'described work." So I need to do two things: 1) '
-                        'Report what I found (the list of AL-TODO items), and '
-                        '2) actually execute the work described in those '
-                        'sections.\n'
-                        '\n'
-                        'Looking at the AL-TODO items:\n'
-                        '- CLI: needs a ShellSandbox class with '
-                        'containerization, etc.\n'
-                        '- Document AL-TODO and AL-REVIEW: review the file and '
-                        'suggest improvements.\n'
-                        '- Queue (Self-Improvement, Tools, Tidy Up Response '
-                        'Handling, Streaming): various meta tasks.\n'
-                        '\n'
-                        'The user likely wants me to start performing the work '
-                        'now. The most concrete and immediate task is the CLI '
-                        'tool definition, which involves creating a '
-                        'ShellSandbox class. I should begin implementing that, '
-                        'perhaps by writing code to define the class, handling '
-                        'mounts, etc. However, before diving into '
-                        'implementation, I should probably create a new '
-                        "AL-TODO item that captures the specific work I'm "
-                        'about to do, so that the file reflects the plan. The '
-                        "user didn't ask me to create a plan; they asked me to "
-                        'perform the work. But given literate programming best '
-                        "practices, it's good to document what I'm doing as I "
-                        "go, and create new AL-TODO entries for the work I'm "
-                        'performing.\n'
-                        '\n'
-                        'Thus, I should add a new AL-TODO headline that '
-                        'describes implementing the CLI tool (ShellSandbox) '
-                        "and perhaps also note that I'll be creating a new "
-                        'AL-TODO item to track this work. That way, the file '
-                        'will have an entry that reflects the current task. '
-                        "I'll use the read_file tool to insert this new "
-                        'AL-TODO section at an appropriate location (maybe '
-                        "after the existing CLI AL-TODO). However, I don't "
-                        "have a write_file tool, only read_file. So I can't "
-                        'directly edit the file. But the user expects me to '
-                        'perform the work, not necessarily modify the file. '
-                        'Perhaps I should just output the new AL-TODO content '
-                        "as text, indicating that I'm adding it. Since I "
-                        "cannot write to the file, I'll need to inform the "
-                        "user that I'm unable to modify the file directly, but "
-                        'I can still proceed with the implementation in code '
-                        '(e.g., in a separate script). However, the '
-                        'instruction says "Only perform work which is '
-                        'indicated by those sections with headlines containing '
-                        'AL-TODO." So I must not create new AL-TODO items '
-                        'unless they are part of the existing plan. But the '
-                        'user might want me to add a new AL-TODO to track my '
-                        'current work. That seems like a reasonable extension, '
-                        "but it's not explicitly requested. Still, the "
-                        'literate programming model encourages adding new '
-                        "AL-TODO items as I do work. So I'll create a new "
-                        'AL-TODO item that describes implementing the CLI tool '
-                        "(ShellSandbox) and note that I'll be adding this to "
-                        "the file. Since I can't write, I'll just output the "
-                        'content as a string, perhaps prefixed with "AL-TODO '
-                        'CLI Implementation". That way the user sees what I\'m '
-                        'doing.\n'
-                        '\n'
-                        'Thus, my next action is to create a new AL-TODO '
-                        'section that captures the implementation of the CLI '
-                        "tool (ShellSandbox) and mention that I'll be adding "
-                        'it to the file. This aligns with the literate '
-                        "programming best practices and the user's request to "
-                        'perform the described work.\n'
-                        '</think>\n'
-                        '\n'
-                        "I've identified the AL-TODO headlines and their "
-                        'contents within the file. The sections are:\n'
-                        '\n'
-                        '- **AL-TODO CLI**: Describes creating a ShellSandbox '
-                        'class for containerized execution with appropriate '
-                        'security considerations, including mount handling and '
-                        'self-documenting interfaces.\n'
-                        '\n'
-                        '- **AL-TODO Document AL-TODO and AL-REVIEW**: '
-                        'Requests reviewing the file and suggesting '
-                        'improvements with specific content updates.\n'
-                        '\n'
-                        '- **AL-TODO Queue**: Contains several sub-items:\n'
-                        '  - Self-Improvement: Allow the agent to read and '
-                        'write to the file for self-improvement loops.\n'
-                        '  - Tools: Discusses tool definitions and '
-                        'integration.\n'
-                        '  - Tidy Up Response Handling: Notes current code is '
-                        'sloppy but effective, suggesting hygiene '
-                        'improvements.\n'
-                        '  - Streaming: Recommends deferring streaming until '
-                        'tool calling machinery is solid.\n'
-                        '\n'
-                        "I'll now create a new AL-TODO item to track the CLI "
-                        "implementation work I'm about to perform.\n"
-                        '\n'
-                        '<tool_call>\n'
-                        '<function=read_file>\n'
-                        '<parameter=path>\n'
-                        '/Users/mwhipple/memex/cabinet/al.org\n'
-                        '</parameter>\n'
-                        '</function>\n'
-                        '</tool_call>',
-             'role': 'assistant'}}
-/Users/mwhipple/memex/cabinet/al.org
-{'finish_reason': 'stop',
- 'index': 0,
- 'logprobs': None,
- 'message': {'content': 'The user wants me to identify the AL-TODO headlines '
-                        'and their contents within the file at '
-                        '"/Users/mwhipple/memex/cabinet/al.org" and perform '
-                        'the described work.\n'
-                        '\n'
-                        'I have already read the file and extracted its '
-                        'content. The file contains several sections with '
-                        'headlines, some of which include "AL-TODO". I need to '
-                        'locate all headlines that contain "AL-TODO", extract '
-                        'their contents (the text up to the next headline or '
-                        'end of file), and then perform the work described in '
-                        'each section.\n'
-                        '\n'
-                        'From the raw file content, I can see the following '
-                        'AL-TODO headlines:\n'
-                        '1. "* AL-TODO CLI" - under the "Tool Definitions" '
-                        'section.\n'
-                        '2. "* AL-TODO Document AL-TODO and AL-REVIEW" - '
-                        'appears later as a meta-instruction.\n'
-                        '3. "* AL-TODO Queue" - possibly a placeholder or '
-                        'about queueing tasks.\n'
-                        '4. "* AL-TODO Self-Improvement" - likely involves '
-                        'allowing the agent to improve itself, reading and '
-                        'writing to the file.\n'
-                        '5. "* AL-TODO Tools" - may refer to tool definitions '
-                        'and integration.\n'
-                        '6. "* AL-TODO Tidy Up Response Handling" - about '
-                        'cleaning up response handling code.\n'
-                        '7. "* AL-TODO Streaming" - about implementing '
-                        'streaming for better feedback.\n'
-                        '\n'
-                        'I need to extract each of these sections, note their '
-                        'exact headline text, and summarize the work they '
-                        'describe. Then I should state that I will proceed to '
-                        'perform the work as indicated.\n'
-                        '\n'
-                        'The user also mentions "Document and AL-REVIEW" which '
-                        'seems to be a separate instruction to review the file '
-                        'contents and suggest improvements. This might be part '
-                        'of the AL-TODO work or an additional task.\n'
-                        '\n'
-                        'Given the instructions, I should produce a structured '
-                        'response that lists each identified AL-TODO item with '
-                        'its headline and a brief description, then indicate '
-                        'that I will now perform the work described in those '
-                        'sections. This matches the expected output format '
-                        "from the file's content extraction.\n"
-                        '\n'
-                        'I will craft the response accordingly, ensuring it '
-                        'includes all the AL-TODO items found and their '
-                        'summaries, and then state my intention to execute the '
-                        'work.\n'
-                        '</think>\n'
-                        '\n'
-                        'Alright, the user wants me to identify AL-TODO '
-                        'headlines and their contents within the file at '
-                        '"/Users/mwhipple/memex/cabinet/al.org" and perform '
-                        'the described work. I need to read that file first to '
-                        "see what's inside. Let me call read_file with the "
-                        'given path.',
-             'role': 'assistant'}}
-#+end_example
-
-  Document and AL-REVIEW
-
-  Review the contents of that file and suggest
-  improvements. Such suggestions should include specific content
-  updates that could be applied through copy and pasting.
-
-*** Queue
+: c3aca37a-5b1b-46a0-8f3c-349f9593a726
 
 **** Self-Improvement
 
@@ -1045,3 +983,48 @@ and was done previously, but it seems wiser to defer leaning into
 streaming until there is known working code that it can be used for
 (for example getting all of the tool calling machinery working with
 full messages before those messages get chunked up).
+
+*** todo-Keywords
+
+#+begin_src emacs-lisp
+  (describe-variable 'org-todo-keywords)
+  (setq org-todo-keywords '((sequence "TODO" "DONE") (sequence "AL-TODO" "AL-REVIEW" "AL-DONE")))
+#+end_src
+
+* Workflow
+
+My current thinking around how to actually interact with Al is
+implicit above: introduce a new sequence of org todo keywords that Al
+will use to pickup work and indicate where my input is necessary. This
+can then be driven by a consistent command prompt - and theoreitcally
+even something like a watchman hook but that seems unnecesary. Both
+sides will then just need to account for concurrent editing (likely by
+automatically saving all the time in emacs and having Al adapt if the
+content changes.
+
+** AL-REVIEW Heading Collection
+
+Collection of information from the headings would be done efficiently
+and most efficiently by having that done using emacs. Build out your
+own utility to provide such retrieval.
+
+The initial version of this should focus on extracting such headings
+with enough information that further context could be retrieved as needed.
+
+** AL-REVIEW Attach IDs to todo elements.
+
+Produce initial workflow management utilities for yourself.
+All todo items which are worked on (AL-TODO or otherwise) should
+include an ID as generated by org. Produce such IDs as necessary.
+These ids should be introspectable using the standard org API (org-element).
+
+** AL-REVIEW Produce element collecting utility
+
+For your use through shell_command, introduce a utility that will
+retrieve all outstanding AL-TODO elements. It seems like it would make
+sense to build this using emacs batch mode so that it can leverage
+existing org mode functionality.
+
+
+(defun al-todo-attach-ids ()
+  "Collect all headings tagged with AL-TODO in the current buffer."

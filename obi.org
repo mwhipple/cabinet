@@ -4,10 +4,11 @@
 #+title: obi
 
 * TODO Iterate
-SCHEDULED: <1980-01-12 Sat +1d>
+SCHEDULED: <1980-01-13 Sun +1d>
 :PROPERTIES:
-:LAST_REPEAT: [2026-07-20 Mon 17:32]
+:LAST_REPEAT: [2026-07-21 Tue 17:40]
 :END:
+- State "DONE"       from "TODO"       [2026-07-21 Tue 17:40]
 ** Work through [[id:D5B6CBC5-AB99-4278-A8A3-ACB9124B68F4][obi/describe-function]]
 
 * Background
@@ -212,6 +213,20 @@ To start we'll assume that this will be checked outside of the function
 
 ** body
 
+** obi/evaluate
+
+This is working towards the newer model...rather than having a source
+block that is executed the approach will be to have a target that can
+be an expression that is evaluated (so the focus shifts from the
+source to the destination).
+
+This should largely be able to initially draw on [[id:0C992EE2-DDF8-4475-B157-C017AEF4F6A1][babel-call]].
+
+Start this off as a more focused version of what has been cribbed from
+org-babel.
+    
+#+end_src
+
 ** obi/BlockParams
 
 Support working with parameters for a block.  This provides a closure
@@ -260,6 +275,8 @@ expanded above).
 #+RESULTS:
 : obi/BlockInfo-coderef
 
+** TODO Try out with elisp
+
 ** obi/evaluate-block-info
 
 ~info~ is the object that holds all of the important info (and could be
@@ -279,6 +296,17 @@ extended as needed), so let's use that to drive the actual execution.
 #+RESULTS:
 : obi/evaluate-block-info
 
+#+begin_src emacs-lisp
+  (defun obi/execute-this-block ()
+    (interactive)
+    (let* ((element (org-element-context))
+  	 (info (org-babel-get-src-block-info nil element)))
+      (obi/evaluate-block info)))
+#+end_src
+
+#+RESULTS:
+: obi/execute-this-block
+
 ** obi/execute-src-block
 
 This function collects the context which results in an ~info~ object
@@ -290,6 +318,8 @@ flows then that should be trigged by the callback.
 
 Unfortunately [[id:D9D6DA14-C18F-43AD-A16B-7C9E1E6E9782][org-babel-insert-result]] is also pretty sprawling and
 should be broken up.
+
+[[id:07E2C869-F716-4F4B-9FFA-1EF81ABF7CF8][org-babel-get-src-block-info]]
 
 #+begin_src emacs-lisp
   (defun obi/execute-src-block (&optional arg info params executor-type)
@@ -330,34 +360,6 @@ should be broken up.
 
 #+RESULTS:
 : obi/execute-src-block
-
-** obi/exec-result-for-info
-
-~info~ is the object that holds all of the important info (and could be
-extended as needed), so let's use that to drive the actual execution.
-
-#+begin_src emacs-lisp
-  (defun obi/exec-result-for-info (info)
-    (let* ((body (org-babel--expand-body info))
-    	 (lang (nth 0 info))
-    	 (params (nth 2 info))
-    	 (cmd (intern (concat "org-babel-execute:" lang)))
-    	 (result-params (cdr (assq :result-params params)))
-  	 (maybe-wrapped
-  	  (lambda (r)
-  	    (let ((wants-value? (eq (cdr (assq :result-type params)) 'value))
-  		  (wants-collection? (or (member "vector" result-params) (member "table" result-params))))
-  	      (if (and wants-value? wants-collection? (not (listp r)))
-  		  (list (list r))
-  		r)))))
-      (unless (fboundp cmd)
-        (error "No org-babel-execute function for %s!" lang))
-      (let ((exec-result (funcall maybe-wrapped (save-excursion (funcall cmd body params)))))
-        exec-result)))
-#+end_src
-
-#+RESULTS:
-: obi/exec-result-for-info
 
 ** Test Element
 
@@ -404,13 +406,63 @@ May not be any terser in emacs-lisp though.
 :ID:       D5B6CBC5-AB99-4278-A8A3-ACB9124B68F4
 :END:
 
-#+name: obi/describe-function
-#+begin_src emacs-lisp :var function="MISSING"
-  (describe-function (intern-soft function))
+Port [[id:A365ACE6-A6A4-4E8D-97C5-C7D44014A187][describe-function]] for obi conformance.
+The upstream function seems to be relatively closed off so this will
+mostly port it.
+
+This is throwing an error which is hard to unpack due to compilation,
+so starting with a copied implementation...
+
+It seems most likely that most of the functions are expecting to be
+able to work with a help buffer which is throwing when run outside of
+such a buffer.
+
+That seems to do the trick. /Ideally/ this would be added to the
+relevant signatures, but pragmatically as long as the buffer reference
+is contained it can be made conformant.
+
+Use [[id:F60C9D6B-8572-4963-B50C-D612DB8844DE][intern-soft]] to support strings rather than leaving symbols or
+function references to leak out.
+For debugging at least I'm going to define the function so it can be
+more readily replaced.
+
+There's some xref backend code upstream that may be needed for links.
+Right now the prime factor in whether button information is returned
+seems to be whether the code is invoked directly or through babel.
+
+#+begin_src emacs-lisp
+  (defun obi/describe-function (function)
+    (let ((fn (intern-soft function))
+          (render (lambda (fn) (if (get fn 'reader-construct)
+    				 (princ fn)
+    			       (prin1 fn)))))
+      (save-excursion
+        (with-temp-buffer
+  	(with-help-window (current-buffer)
+            (funcall render fn)
+            (princ " is ")
+            (describe-function-1 fn)
+  	  (with-current-buffer standard-output
+              (buffer-string)))))))
+#+end_src
+
+#+RESULTS:
+: obi/describe-function
+
+#+name: obi/describe-function 
+#+begin_src emacs-lisp var function="MISSING"
+  (obi/describe-function function)
 #+end_src
 
 **** Queue
-Avoid additional buffer
-Render with text properties
+Update model to be oriented towards results...
 
+The end state should be something like being able to attach a property
+to a headline that references a block along with an output from that block.
 
+This will involve doing a deeper dive on the emacs-lisp ob support.
+Can likely get into that through
+
+#+begin_src emacs-lisp
+  (describe-function #'org-babel-execute:emacs-lisp)
+#+end_src
