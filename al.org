@@ -4,8 +4,7 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-15 Tue +1d>
-
+SCHEDULED: <1980-01-16 Wed +1d>
 * Plans
 
 First and foremost I'd want most of this work to be able to be driven
@@ -314,7 +313,8 @@ Application will produce a missive to send back to the model.
           tool_name = func["name"]
           tool = self.tools.get(tool_name)
           if tool is None:
-              raise ValueError(f"Tool {tool_name} not found")
+              return { "role": "user",
+                       "content": f"The tool {tool_name} was requested but is not available." }
           return apply_tool(func, tool, tool_call["id"])
 
 #+end_src

@@ -4,7 +4,7 @@
 #+title: obi
 
 * TODO Iterate
-SCHEDULED: <1980-01-14 Mon +1d>
+SCHEDULED: <1980-01-15 Tue +1d>
 ** Work through [[id:D5B6CBC5-AB99-4278-A8A3-ACB9124B68F4][obi/describe-function]]
 
 * Background
@@ -136,7 +136,7 @@ This accepts parameters from a block, and defaults - where the latter
 can be used to provide per-language defaults.
 
 #+begin_src emacs-lisp :lexical yes
-  (defun obi/BlockParams (bp defaults)
+  (defun obi/blockParams (bp defaults)
     (lambda (sym)
       (let ((pair (or (assq sym bp)
   		    (assq sym defaults))))
@@ -145,12 +145,12 @@ can be used to provide per-language defaults.
 #+end_src
 
 #+RESULTS:
-: obi/BlockParams
+: obi/blockParams
 
 *** Sandbox
 
 #+begin_src emacs-lisp :lexical yes
-  (let ((params (obi/BlockParams '((:foo "bar")) '((:foo "baz")))))
+  (let ((params (obi/blockParams '((:foo "bar")) '((:foo "baz")))))
     (funcall params :foo))
 #+end_src
 
@@ -182,7 +182,7 @@ expanded above).
 #+begin_src emacs-lisp
   (defun obi/BlockInfo-language  (bi) (nth 0 bi))
   (defun obi/BlockInfo-body      (bi) (nth 1 bi))
-  (defun obi/BlockInfo-params    (bi) (obi/BlockParams (nth 2 bi)))
+  (defun obi/BlockInfo-params    (bi) (nth 2 bi))
   (defun obi/BlockInfo-switches  (bi) (nth 3 bi))
   (defun obi/BlockInfo-name      (bi) (nth 4 bi))
   (defun obi/BlockInfo-start     (bi) (nth 5 bi))
@@ -232,6 +232,13 @@ packaging up to be less mutate-y.
 
 - [[id:1D039937-F8B4-423A-A732-20E8CDDE4BB7][obi/agenda]]
 
+
+* Expansion
+
+Expansion feels like a powerful piece that I'd likely want to keep,
+but also a fairly complicated one. I'll therefore start with deferring
+it and then maybe trying to break it up a bit as I pull it in.
+
 * Execution
 
 * TODO obi/execute-src-block
@@ -243,17 +250,36 @@ Splitting up [[id:D7816316-280D-4B7B-9420-3E33264E24D2][org-babel-execute-src-bl
 
 I'll start by just expecting to break up what is there.
 
-** executor-type
+** obi/evaluate-block-info
 
-Return any explicitly provided value, otherwise detect based on the
-next character if it exists.
+~BlockInfo~ is the object that holds all of the important info (and could be
+extended as needed), so let's use that to drive the actual execution.
 
-It seems like this may just be doing too much...maybe I want to split
-out functions?
-Within this function it looks like this is only used to produce a message?
+This will pass in the parameters with the defaults for that language
+mixed in (if any).
 
-Rather than decomposing this function maybe the first pass will be to
-attempt to gut it...
+#+begin_src emacs-lisp
+  (defun obi/evaluate-block-info (block-info)
+    (let* ((body (org-babel--expand-body block-info))
+           (lang (obi/BlockInfo-language block-info))
+           (cmd (intern (concat "obi/evaluate:" lang))))
+      (unless (fboundp cmd)
+        (error "No obi/evaluate function for %s!" lang))
+      (let* ((default-params (intern (concat "obi/default-params:" lang)))
+             (provided (obi/BlockInfo-params block-info))
+  	   (params (obi/blockParams provided default-params)))
+        (funcall cmd body params))))
+#+end_src
+
+#+RESULTS:
+: obi/evaluate-block-info
+
+
+#+end_src emacs-lisp
+#+end_src
+
+#+RESULTS:
+: obi/evaluate-block-info
 
 ** Cut to execute
 

@@ -23,6 +23,11 @@ like common enough practice with supporting benefits to slip in.
     '((:lexical . "yes")))
 #+end_src
 
+But...it turns out that org-babel is already reaching in and cooking
+the parameters in the current logic so this approach will only work
+for parameters not otherwise defined for now. Subsequent work will
+pull likely split that out a bit more.
+
 #+RESULTS:
 : obi/default-params:elisp
 
@@ -33,5 +38,18 @@ like common enough practice with supporting benefits to slip in.
     (funcall params :lexical))
 #+end_src
 
+* evaluate
+
+#+begin_src emacs-lisp
+  (defun obi/evaluate:elisp (body params)
+    (message (funcall params :lexical)))
+#+end_src
+
 #+RESULTS:
-| no |
+: obi/evaluate:elisp
+
+** Sandbox
+
+#+begin_src elisp
+  test
+#+end_src
