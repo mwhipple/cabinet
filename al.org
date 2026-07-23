@@ -4,10 +4,17 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-14 Mon +1d>
-:PROPERTIES:
-:LAST_REPEAT: [2026-07-22 Wed 21:50]
-:END:
+SCHEDULED: <1980-01-15 Tue +1d>
+
+* Plans
+
+First and foremost I'd want most of this work to be able to be driven
+empirically which requires a harness to collect and refine some of the
+underlying processes. I'll likely be pulling in DSPy and explore the
+wider space, hopefully finding solutions that remain relatively
+lightweight rather than anything that pulls in a lot of weight or
+tries to pull me over to a particular platform.
+
 * Name
 
 Al is the provisional name for my personal agent setup.
@@ -41,6 +48,9 @@ behavior of an LLM would be completion/auto-regression based on such
 missives (making use of whatever else may be provided. "Message" is
 avoided as being far too general.
 
+Message will still be in use in the general sense and in forms
+inherited from upstream.
+
 ** Response
 
 A complete missive received from submitting missives to a model. This
@@ -61,7 +71,7 @@ tool be invoked.
 Information about the tool that is declared in a form that can be used
 by a model.
 
-** AL-TODO Update the content to align with the Glossary terms.
+** AL-DONE Update the content to align with the Glossary terms.
 
 Any content related to interacting with the model should make use of
 the corresponding terms where appropriate.
@@ -108,7 +118,7 @@ multiple reasons).
   ${venv}/bin/python -m pip install llama-cpp-python
 #+end_src
 
-** ToolBelt
+** Tool Management
 
 Provide some general tool wiring support.  Declare this early so that
 it can define the interface for tools.
@@ -147,12 +157,12 @@ schema definition.
     description: NotRequired[str]
     parameters: ToolFunctionDeclarationParameters
 
-  class ToolFunctionDeclarationparameters(TypedDict):
+  class ToolFunctionDeclarationParameters(TypedDict):
     type: Literal["object"]
-    properties: Dict[str, ToolFunctionDeclarationParameterDefinition]
+    properties: Dict[str, ToolFunctionDeclarationParameter]
     required: List[str]
 
-  class ToolFunctionDefinitionDeclarationDefinition(TypedDict):
+  class ToolFunctionDeclarationParameter(TypedDict):
     type: str
 #+end_src
 
@@ -279,7 +289,7 @@ Call a function using a ToolCall and return the resulting tool missive.
 
 #+RESULTS:
 
-*** Class Definition
+*** ToolBelt
 
 The ToolBelt object will handle advertising of available tools and
 their subsequent use.
@@ -311,78 +321,54 @@ Application will produce a missive to send back to the model.
 
 #+RESULTS:
 
-** ChatDriver
+** Driving/Orchestrating Interactions
 
 When dealing with lower level interactions, it feels like one of the
-main pieces is the component that handles sending messages and dealing
+main pieces is the component that handles sending missives and dealing
 with responses which will be defined here as a ChatDriver.
 
-The focus is that messgage coordination, and providing relevant
+The focus is that message coordination, and providing relevant
 extension points to add additional behavior.
 
-The configuration options should be defined as a separate object which
-is passed in.
-
-This could certainly benefit from a bit more encapsulation, but to
-start its unclear where the best seams are that won't just create a
-ball of mud.
+This could certainly benefit from a bit more encapsulation around the
+types of interactions and messages, but to start its unclear where the
+best seams are that won't just create a ball of mud.
 
 Messages will be sent using [[id:C6047B7D-4B82-45B9-886A-FACBF966030B][create_chat_completion]].
 
-on_message will be called on each message received from the model and
-serves as the means to trigger most of the logic. This will be passed
-the message and a context dictionary (to be more precisely defined).
+*** MessageHandler
+
+MessageHandler defines handler functions which enable observing and
+reacting to the various events that occur when interacting with models.
+It will be passed a dictionary [[id:3A3B17B9-0761-4DB1-A663-B12BC13155B4][context-argument]] and a generic message,
+and should return a boolean indicating whether it was activated or not.
+
+To start the context will be left as a general dictionary (and the
+types generally be gradually tightened).
+
 
 #+begin_src python
-  from llama_cpp import Llama
-  from llama_cpp.llama_types import (
-      ChatCompletionRequestMessage,
-  )
+  from collections.abc import Callable
 
-  class ChatDriver:
-      def __init__(self,
-                   model: Llama,
-                   on_response = ForEachHandler()):
-          self.model = model
-          self.messages: list[ChatCompletionRequestMessage] = []
-          self.on_response = on_response
-
-      def append(self, msg: ChatCompletionRequestMessage):
-          self.messages.append(msg)
-
-      def submit(self):
-          resp = self.model.create_chat_completion(
-              messages = self.messages,
-              tools = self.tools,
-              tool_choice = "auto",
-              temperature=0.4,
-              repeat_penalty=1.05,
-          )
-          choice = single_choice(resp)
-          self.append(choice['message'])
-          on_response = self.on_response # assign to avoid being a method call
-          on_response({"driver": self}, choice)
+  type MessageHandler[M] = Callable[[dict, M], bool]
 #+end_src
 
-#+RESULTS:
-
-*** on_message
-
-on_message will make use of the Composite pattern so that details such
-as routing logic can be updated or to enable parameter enrichement.
+The references should make use of the Composite pattern which will
+also enable tuning of details such as routing. Some standard
+implementations are provided here.
 
 **** ForEachHandler
 
-The initial implementation will represent a list of multiple handlers
-all of which will be called (if any).
+Represent a list of multiple handlers all of which will be called (if any).
 
 #+begin_src python
   class ForEachHandler:
     def __init__(self, handlers=[]):
-        self.handlers = handlers
-    def __call__(self, ctx, msg):
-        for h in self.handlers:
-            h(ctx, msg)
+      self.handlers = handlers
+    def __call__(self, ctx, msg) -> bool:
+      result = False
+      for h in self.handlers:
+        result = h(ctx, msg) or result
 #+end_src
 
 #+RESULTS:
@@ -405,35 +391,68 @@ first handler is activated.
 
 #+RESULTS:
 
-**** FinishReasonRoutingHandler
+**** ChatDriver
 
-Parse out the stop reason and pass through the message for registered
-types.
-
-This isn't useful when the tool calls are smuggled within other
-messages, so this is just left here for potential future use.
+Track missives and pass them through MessageHandlers.
 
 #+begin_src python
-  class FinishReasonRoutingHandler:
-      def __init__(self, handlers):
-          self.handler_for_reason = handlers
+  from llama_cpp import Llama
+  from llama_cpp.llama_types import (
+      ChatCompletionRequestMessage,
+  )
 
-      def __call__(self, ctx, response):
-          if "finish_reason" not in response:
-              raise TypeError(f"finish_reason not in msg: {response}")
-          finish_reason = response["finish_reason"]
+  class ChatDriver:
+      def __init__(self,
+                   model: Llama,
+                   on_response: MessageHandler = ForEachHandler()):
+          self.model = model
+          self.missives: list[ChatCompletionRequestMessage] = []
+          self.on_response = on_response
+
+      def append(self, msg: ChatCompletionRequestMessage):
+          self.missives.append(msg)
+
+      def submit(self):
+          resp = self.model.create_chat_completion(
+              missives = self.missives,
+              tools = self.tools,
+              tool_choice = "auto",
+              temperature=0.4,
+              repeat_penalty=1.05,
+          )
+          choice = single_choice(resp)
+          self.append(choice['message'])
+          on_response = self.on_response # assign to avoid being a method call
+          on_response({"driver": self}, choice)
 #+end_src
 
 #+RESULTS:
 
+*** on_response
+
+on_response is one of the most crucial MessageHandlers as it will
+process the responses from the model and therefore be the point at
+which logic can be triggered based on those responses.
+
 **** yolo_response_handler
+
+Models will often pause and await feedback or confirmation, but I
+typically want them to just keep going. Such stopping is likely
+valuable when there's a cost per token, but with local inference I'll
+instead by default want to first optimize wall time which the stopping
+conflicts with (with resource consumption optimization being a
+secondary goal).
+
+Trying to get the models to keep working through prompting seems to
+have mixed results and sucks up context, so this offers an alternative
+that seems to work well.
 
 #+begin_src python
   def yolo_response_handler(ctx, response):
-      if "Over and out" in response['message']['content']:
+      if "Over and out" in response['message]['content']:
           return False
       driver = ctx['driver']
-      driver.append(user_message("""
+      driver.append(user_missive("""
       Continue on identified work. If there is no further work then
       respond with "Over and out" on a line by itself..
       """))
@@ -445,17 +464,17 @@ messages, so this is just left here for potential future use.
 
 ** Tool Call Parsing and Integration
 
-The ToolBox defined above will be oriented towards standard
+The ToolBox previously defined above will be oriented towards standard
 interfaces, but there may be need to be some additional adaptation
 between those standards and what passes to and from the model (and
 maybe elsewhere).
 
 Such adapaters will be defined separately and plugged in where
-appropriate to the message passing and handling machinery...so this
+appropriate to the missive passing and handling machinery...so this
 defines a configuraable integration layer rather than something that
 should be baked into either side.
 
-The general interface for parsing will be one that accepts a message
+The general interface for parsing will be one that accepts a missive
 and returns (possibly empty) lists of extracted information.
 
 *** Protocol
@@ -474,19 +493,18 @@ handling in a way that is integrated more deeply rather than just
 having that logic able to be applied; expecting less magic applied
 in-flight and just expecting to apply it after the fact.
 
-
 *** Handling Qwen Style Calls
 
 The model I'm currently using seems to make use of Qwen style tool
 calls which for whatever reason is XMLish...but not quite XML.
 
-The matching could likely be trivially generalized to suppor a
+The matching could likely be trivially generalized to support a
 function that takes a tag name and returns the attribute and body...
 but for now this seems legible anough and below the rule of three.
 
 The logic is organized to support [[id:E64A3393-5DD5-4446-8202-BB7588D4EB10][comprehensions]].
 
-**** parameter_from_qwen_match
+**** tool_call_parameter_from_qwen_match
 
 When passed a regex capture for ~<paramter={}>{}</parameter>~,
 return a tuple of name and parameter value.
@@ -495,7 +513,7 @@ The match itself is done by the caller.
 
 #+begin_src python
   import json
-  def parameter_from_qwen_match(match):
+  def tool_call_parameter_from_qwen_match(match):
       name = match.group(1).strip()
       str_value = match.group(2).strip()
       try:
@@ -506,7 +524,7 @@ The match itself is done by the caller.
 
 #+RESULTS:
 
-**** call_from_qwen_match
+**** tool_call_request_from_qwen_match
 
 When passed a regex capture for ~<function={}>{}</function>~,
 return a tuple of name and parameter value.
@@ -515,14 +533,15 @@ the match itself is done by the caller.
 
 #+begin_src python
   import re
-  def call_from_qwen_match(match):
+  import uuid
+  def tool_call_request_from_qwen_match(match):
       return {
           "type": "function",
           "id": f"call_{uuid.uuid4().hex[:24]}",
           "function": {
               "name": match.group(1),
               "arguments": {k: v for (k, v)
-                            in map(parameter_from_qwen_match,
+                            in map(tool_call_parameter_from_qwen_match,
                                    re.finditer(r'<parameter=([\w.\-]+)>([\s\S]*?)</parameter>', match.group(2)))},
           },
       }
@@ -531,15 +550,15 @@ the match itself is done by the caller.
 
 #+RESULTS:
 
-**** parse_qwen_tool_calls
+**** qwen_tool_call_requests
 
 #+begin_src python
   import json
   import re
 
-  def parse_qwen_tool_calls(msg):
+  def qwen_tool_call_requests(msg):
     """Parses Qwen style <function> and <parameter> tags from a string."""
-    return [call_from_qwen_match(match) for match in
+    return [tool_call_request_from_qwen_match(match) for match in
             re.finditer(r'<function=([\w.\-]+)>([\s\S]*?)</function>', msg)]
 #+end_src
 
@@ -547,8 +566,8 @@ the match itself is done by the caller.
 
 **** QwenToolCallResponseHandler
 
-Inspect messages for requested tool calls.
-When the messages are embedded there may not be further indications
+Inspect missives for requested tool calls.
+When the missives are embedded there may not be further indications
 (tool calls or stop reasons), so this inspects the content
 
 #+begin_src python
@@ -557,7 +576,7 @@ When the messages are embedded there may not be further indications
           self.tool_belt = tool_belt;
 
       def __call__(self, ctx, resp):
-          calls = parse_qwen_tool_calls(resp['message']['content'])
+          calls = qwen_tool_call_requests(resp['message']['content'])
           driver = ctx['driver']
           if not calls: # Don't submit at the end
               return False
@@ -573,7 +592,7 @@ When the messages are embedded there may not be further indications
 ***** Sandbox
 
 #+begin_src python
-  print(parse_qwen_tool_calls("""
+  print(qwen_tool_call_requests("""
   Some leading content to ignore
 
   <tool_call>
@@ -589,12 +608,11 @@ When the messages are embedded there may not be further indications
 #+end_src
 
 #+RESULTS:
-: /Users/mwhipple/memex/cabinet/al.org
-: [{'type': 'function', 'id': 'call_4efa1100f13444ea8b764164', 'function': {'name': 'read_file', 'arguments': {'path': '/Users/mwhipple/memex/cabinet/al.org'}}}]
+: [{'type': 'function', 'id': 'call_3bfe374cf66a409ab42e1b7b', 'function': {'name': 'read_file', 'arguments': {'path': '/Users/mwhipple/memex/cabinet/al.org'}}}]
 
 ** Tool Definitions
 
-*** AL-TODO CLI
+*** CLI
 
 What seems to be one of the most useful tools to provide out of the
 gate is a standard POSIX-y shell environment. This would allow the
@@ -623,92 +641,83 @@ python code where the resulting model is that instantiation configures
 the containerized environment and the instance exposes a method which
 can be used to invoke commands within that environment. For example:
 
-#+begin_example
-my_sandbox = ShellSandbox(
-  image=alpine:latest,
-  mounts=[BindMount(host_dir...)])
-(stdout, stderr) = my_sandbox.shell_command('ls -l')
-#+end_example
-
-The options available for the sandbox creation should be based on
+The options available for the sandbox creation is based on
 standard concepts. The starting set should include those that allow
 for interacting with local files while providing maximum protection
 that anything other than such file protections would be prevented.
 
-The actual command construction piece should be broken out into
-expressive methods and more direct composition - which should also be
-pulled up into general guidance
+**** BindMount
 
-Longer form options should also be preferred throughout.
+Defining mounts is a straightforward way to enable and control access
+to files within the container.
 
 #+begin_src python
-  import subprocess
   from dataclasses import dataclass
-  from typing import Optional, List
 
   @dataclass
   class BindMount:
     host_path: str
     container_path: str
-    read_only: bool = False
+    mode: Literal["rw", "ro"] = "ro"
 
     def to_volume_string(self) -> str:
       """Render this mount as a Docker volume flag."""
-      mode = "ro" if self.read_only else "rw"
-      return f"--volume={self.host_path}:{self.container_path}:{mode}"
+      return f"--volume={self.host_path}:{self.container_path}:{self.mode}"
+#+end_src
 
-  class ShellSandbox:
-    def __init__(self,
-                 image: str,
-                 mounts: List[BindMount] = [],
-                 lxc_cmd = "docker"):
-        self.image = image
-        self.mounts = mounts
-        self.container_name = f"shell_sandbox_{id(self)}"
-        self.lxc_cmd = lxc_cmd
+#+RESULTS:
 
-    def shell_command(self, command: str) -> tuple[str, str]:
-      """
-      Execute the provided shell command.
+**** ShellSandbox
 
-      The utilities available will vary based on the image used.
-      Users should therefore check availability prior to invoking.
+Compose and invoke the command for containerized execution.
+This is currently oriented towards single/stateless evaluation.
+It is certainly plausible for performance or functionality that we'd
+want to repeatedly interact with the same container rather than tear
+it down.
 
-      This will return the output from stdout and stderr as a single string
-      with XML elements for each stream.
-      """
-      cmd = [
-        self.lxc_cmd,
-        "run",
-        "--rm",
-        "--cap-drop=all",
-        "--security-opt=no-new-privileges",
-        "--tty",
-      ]
+#+begin_src python
+          import subprocess
 
-      # Add mounts
-      for mount in self.mounts:
-        cmd.append(mount.to_volume_string())
+          from typing import Optional, List
+          class ShellSandbox:
+            def __init__(self,
+                         image: str,
+                         mounts: List[BindMount] = [],
+                         lxc_cmd = "docker"):
+                self.image = image
+                self.mounts = mounts
+                self.container_name = f"shell_sandbox_{id(self)}"
+                self.lxc_cmd = lxc_cmd
 
-      # Add image
-      cmd.append(self.image)
+            def shell_command(self, command: str) -> tuple[str, str]:
+              """
+              Execute the provided shell command.
 
-      # Execute command
-      result = subprocess.run(cmd + ["sh", "-c", command], capture_output=True, text=True)
-      return f"<output><stdout>{result.stdout.strip()}</stdout><stderr>{result.stderr.strip()}</stderr></output>"
+              The utilities available will vary based on the image used.
+              Users should therefore check availability prior to invoking.
+
+              This will return the output from stdout and stderr as a single string
+              with XML elements for each stream.
+              """
+              cmd = [
+                self.lxc_cmd,
+                "run",
+                "--rm",
+                "--cap-drop=all",
+                "--security-opt=no-new-privileges",
+                "--tty",
+              ] + [
+                  mount.to_volume_string() for mount in self.mounts
+              ] + [ self.image ]
+
+              # Execute command
+              result = subprocess.run(cmd + ["sh", "-c", command], capture_output=True, text=True)
+              return f"<output><stdout>{result.stdout.strip()}</stdout><stderr>{result.stderr.strip()}</stderr></output>"
 #+end_src
 #+RESULTS:
 
 **** AL-DONE Longer form options should also be preferred throughout.
-The code for ShellSandbox generates a Docker CLI compatible command
-that makes use of short options - long options should be preferred
-wherever supported for legibility.
-
 **** AL-DONE BindMounts should self render
-The rendering code for bindmount options is currently done within the
-shell_command body - that should instead be moved to the methods on
-the BindMount class.
-
 
 **** Sandbox
 
@@ -754,11 +763,13 @@ These are trivial means to produce the expected dicts.
 #+begin_src python
   from llama_cpp.llama_types import ChatCompletionRequestMessage
 
-  def user_message(content: str) -> ChatCompletionRequestMessage:
+  def user_missive(content: str) -> ChatCompletionRequestMessage:
       return {"role": "user", "content": content}
-  def system_message(content: str) -> ChatcompletionRequestMessage:
+  def system_missive(content: str) -> ChatcompletionRequestMessage:
       return {"role": "system", "content": content}
 #+end_src
+
+#+RESULTS:
 
 *** single_choice
 
@@ -816,7 +827,7 @@ Right now this is producing a pretty interesting hallucination.
 
   tool_belt = ToolBelt()
   import os
-  mount_here = BindMount(host_path=os.getcwd(),container_path="/host")
+  mount_here = BindMount(host_path=os.getcwd(),container_path="/host",mode="rw")
   sb = ShellSandbox(image="wwarner/emacs-native:latest",
                     mounts=[mount_here])
   tool_belt.register(sb.shell_command)
@@ -828,15 +839,15 @@ Right now this is producing a pretty interesting hallucination.
       n_gpu_layers=-1,
   )
   handler = ForEachHandler(handlers=[
-      lambda ctx, msg: pprint(msg),
+      lambda ctx, msg: pprint(msg, width=240),
       FirstActiveHandler(handlers=[
           QwenToolCallResponseHandler(tool_belt),
           yolo_response_handler,
       ]),
   ])
   driver = ChatDriver(model=llm, on_response=handler)
-  driver.tools = tool_belt.definitions()
-  driver.append(system_message("""
+  driver.tools = tool_belt.declarations()
+  driver.append(system_missive("""
 
   You are my personal AI asssistant named Al.
 
@@ -858,7 +869,7 @@ Right now this is producing a pretty interesting hallucination.
 
   MAKE SURE to store information in the above locations to reduce churn.
 
-  Whenever it takes you more than two attempts to work out how to do something, capture that
+  Whenever it takes you more than one attempt to work out how to do something, capture that
   in a combination of AGENTS.md and the /host/al directory. If the need is a
   one-off with a simple invocation, that invocation information can simply be documented,
   in all other cases introduce a script to make the purpose self-documenting and reusable.
@@ -873,11 +884,11 @@ Right now this is producing a pretty interesting hallucination.
   that seems likely to exceed or get close to that threshold should be
   broken up and captured in more granular follow ups.
 
-  When you have finished all requested work, emit a final "Over and out" message.
+  When you have finished all requested work, emit a missive ending with "Over and out".
 
   """))
 
-  driver.append(user_message("""
+  driver.append(user_missive("""
 
   All work is tracked in org-mode files, where headings tagged with AL-TODO
   describes work that you shall perform, and headings marked with AL-REVIEW

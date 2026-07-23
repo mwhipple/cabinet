@@ -1,0 +1,32 @@
+:PROPERTIES:
+:ID:       49D8CA5D-B0C7-4F3A-B773-37A27C4A30A8
+:END:
+#+title: al-tools
+
+Capture some non-essential tools for [[id:7233EF2D-04BB-4A88-9179-DC8AEE26313A][al]].
+
+These will be organized into different toolkits as they grow.
+
+* read_file
+
+Support reading of a specific file.
+This may be too limited to warrant typical inclusion and may be simple
+enough that it's not even worth keeping around, but this will probably
+just get moved somewhere else.
+
+#+name: fs-tools
+#+begin_src python
+  def read_file(path: str, chunk_size: int = -1) -> str:
+      """
+      Return the contents of the file at path as a string.
+      """
+      try:
+          with open(path, 'r', encoding='utf-8') as f:
+              return f.read(chunk_size)
+      except FileNotFoundError:
+          return f"Error: File not found at {path}"
+      except IOError as e:
+          return f"Error reading file: {e}"
+#+end_src
+
+#+RESULTS: fs-tools
