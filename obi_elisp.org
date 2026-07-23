@@ -1,0 +1,37 @@
+:PROPERTIES:
+:ID:       0F80D831-E650-4893-AD51-7AF93246FB2B
+:END:
+#+title: obi/elisp
+
+Support evalaution of [[id:222093AC-E4FC-4E90-B124-ADFFC31F6314][emacs-lisp]] in [[id:0F78767D-42FF-4027-B3A2-26CA1898F788][obi]].
+
+* Steal from [[file:/Applications/Emacs.app/Contents/Resources/lisp/org/ob-emacs-lisp.el.gz::;;; ob-emacs-lisp.el --- Babel Functions for Emacs-lisp Code -*- lexical-binding: t; -*-]]
+
+* Parameters
+
+To start I don't understand the practical benefit of declaring
+per-language parameters, but I do see the value in providing defaults.
+I'll therefore just have the defaults serve double duty as definition
+to start.
+
+Default to lexical scopting. This /could/ yield surprises given that
+it is implicit and deviates from emacs-lisp defaults...but it seems
+like common enough practice with supporting benefits to slip in.
+
+#+begin_src emacs-lisp
+  (defvar obi/default-params:elisp
+    '((:lexical . "yes")))
+#+end_src
+
+#+RESULTS:
+: obi/default-params:elisp
+
+** Sandbox
+
+#+begin_src emacs-lisp
+  (let ((params (obi/BlockParams '((:lexical no)) obi/default-params:elisp)))
+    (funcall params :lexical))
+#+end_src
+
+#+RESULTS:
+| no |

@@ -4,7 +4,7 @@
 #+title: obi
 
 * TODO Iterate
-SCHEDULED: <1980-01-13 Sun +1d>
+SCHEDULED: <1980-01-14 Mon +1d>
 ** Work through [[id:D5B6CBC5-AB99-4278-A8A3-ACB9124B68F4][obi/describe-function]]
 
 * Background
