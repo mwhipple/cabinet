@@ -14,6 +14,12 @@ Iteration will involve both different models, different variants of
 the models, and possible optimizations applied to the models. This
 should all be driven by having a decent harness.
 
+Here I'll capture some of the models that I have along with some of
+their relevant information to be used for configuration, etc..
+
+This will make use of [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]], where the models will be loaded
+into the library of babel for use by other notebooks.
+
 ** gpt-oss
 :PROPERTIES:
 :ID:       D6EB63CC-2B15-45DC-8C49-33C0DB4DA1C5

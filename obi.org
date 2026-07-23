@@ -5,10 +5,6 @@
 
 * TODO Iterate
 SCHEDULED: <1980-01-13 Sun +1d>
-:PROPERTIES:
-:LAST_REPEAT: [2026-07-21 Tue 17:40]
-:END:
-- State "DONE"       from "TODO"       [2026-07-21 Tue 17:40]
 ** Work through [[id:D5B6CBC5-AB99-4278-A8A3-ACB9124B68F4][obi/describe-function]]
 
 * Background
@@ -44,6 +40,9 @@ will be encoded more directly. The content model will be able to provide
 references to itself, but such references should be passed more
 explicitly into the logic.
 
+Clearer contracts should also help understandability and prospective
+portability.
+
 ** Compared to Org-Babel
 
 The general model will begin as /very/ similar to org-babel, and will
@@ -77,6 +76,12 @@ benefit, but the popularity of spreadsheets along with the idea
 that that type of model is still called out as exemplary (such as in
 DDIA) supports that this line of thought may have some merit.
 
+** Compared to Other Stuff
+
+Beyond obvious alternatives like Jupyter, Quarto, and Marimo this will also
+look to draw on interfaces provided by other systems such as Acme and
+Oberon.
+
 ** Function Syntax
 
 One of the underlying goals as outlined in [[id:3FA03B7E-EC84-40E0-AB18-E3AED640DA89][scrapbook-interface]] is that
@@ -107,6 +112,85 @@ Initially this will probably simply be represented in lisp sexps using
 alists or plists, but what is provided should be small and simple
 enough that it could be readily replaced with something else like JSON
 or Protobufs.
+
+
+* Implementation Notes
+
+All execution should default to asynchronous evaluation.
+Basic async execution can likely be handled by splitting out the
+overall flow, but a further goal would be consistently exposing what
+is being done which will be hidden if things are being done directly
+in emacs-lisp/system calls, so using something like comint extensively
+to allow discovery of the invoked commands will be pursued.
+
+
+* Some Types
+
+** obi/BlockParams
+
+Support working with parameters for a block.  This provides a closure
+over the parameters, returning a function which can be called with a
+parameter name/keword to return the value of that parameter.
+
+This accepts parameters from a block, and defaults - where the latter
+can be used to provide per-language defaults.
+
+#+begin_src emacs-lisp :lexical yes
+  (defun obi/BlockParams (bp defaults)
+    (lambda (sym)
+      (let ((pair (or (assq sym bp)
+  		    (assq sym defaults))))
+        (if pair (cdr pair)
+  	(error "%s parameter not found" sym)))))
+#+end_src
+
+#+RESULTS:
+: obi/BlockParams
+
+*** Sandbox
+
+#+begin_src emacs-lisp :lexical yes
+  (let ((params (obi/BlockParams '((:foo "bar")) '((:foo "baz")))))
+    (funcall params :foo))
+#+end_src
+
+#+RESULTS:
+| bar |
+
+
+** obi/BlockInfo
+
+Define the type for BlockInfo.
+
+This is the type already used by org-babel, but defined more strongly.
+
+The :language org property is the language for the block which seems
+to be a reasonable part of the org API ostensibly covered elsewhere.
+
+The info structure is then composed of a list of:
+- language
+- body
+- params (merged with levels of defaults)...potentially processed and
+  with file destination resolved
+- switches?
+- name (if present)
+- start as determined by begin or post-affiliated
+- format string for block coderef
+(documented below also but what some of the things mean can be
+expanded above).
+
+#+begin_src emacs-lisp
+  (defun obi/BlockInfo-language  (bi) (nth 0 bi))
+  (defun obi/BlockInfo-body      (bi) (nth 1 bi))
+  (defun obi/BlockInfo-params    (bi) (obi/BlockParams (nth 2 bi)))
+  (defun obi/BlockInfo-switches  (bi) (nth 3 bi))
+  (defun obi/BlockInfo-name      (bi) (nth 4 bi))
+  (defun obi/BlockInfo-start     (bi) (nth 5 bi))
+  (defun obi/BlockInfo-coderef   (bi) (nth 6 bi))
+#+end_src
+
+#+RESULTS:
+: obi/BlockInfo-coderef
 
 * Introspection
 
@@ -148,28 +232,7 @@ packaging up to be less mutate-y.
 
 - [[id:1D039937-F8B4-423A-A732-20E8CDDE4BB7][obi/agenda]]
 
-* Old Info
-
-** Background
-
-One of the other fairly significant goals is that while I'll be using
-obi with org-babel and emacs for the foreseeable future, I'd also want
-that to be detachable. Therefore everything should remain fully
-transparent so that what is done could be readily extracted to some
-other interface like a boring old shell.
-
-Beyond babel and evident alternatives like Jupyter, I'm also likely to
-want to draw on ideas from other systems that had interfaces similar
-to interactive notebooks such as the Acme editor and Oberon.
-
-** Initial Design Ideas
-
-All execution should default to asynchronous evaluation.
-Basic async execution can likely be handled by splitting out the
-overall flow, but a further goal would be consistently exposing what
-is being done which will be hidden if things are being done directly
-in emacs-lisp/system calls, so using something like comint extensively
-to allow discovery of the invoked commands will be pursued.
+* Execution
 
 * TODO obi/execute-src-block
 :PROPERTIES:
@@ -181,8 +244,6 @@ Splitting up [[id:D7816316-280D-4B7B-9420-3E33264E24D2][org-babel-execute-src-bl
 I'll start by just expecting to break up what is there.
 
 ** executor-type
-
-Split out executor selection as it's a bit wordy for a let block.
 
 Return any explicitly provided value, otherwise detect based on the
 next character if it exists.
@@ -226,56 +287,6 @@ Start this off as a more focused version of what has been cribbed from
 org-babel.
     
 #+end_src
-
-** obi/BlockParams
-
-Support working with parameters for a block.  This provides a closure
-over the parameters, returning a function which can be called with a
-parameter name/keword to return the value of that parameter.
-
-#+begin_src emacs-lisp
-  (defun obi/BlockParams (bp)
-    (lambda (sym) (cdr (assq sym bp))))
-#+end_src
-
-#+RESULTS:
-: obi/BlockParams
-
-** obi/BlockInfo
-
-Define the type for BlockInfo.
-
-This is the type already used by org-babel, but defined more strongly.
-
-The :language org property is the language for the block which seems
-to be a reasonable part of the org API ostensibly covered elsewhere.
-
-The info structure is then composed of a list of:
-- language
-- body
-- params (merged with levels of defaults)...potentially processed and
-  with file destination resolved
-- switches?
-- name (if present)
-- start as determined by begin or post-affiliated
-- format string for block coderef
-(documented below also but what some of the things mean can be
-expanded above).
-
-#+begin_src emacs-lisp
-  (defun obi/BlockInfo-language  (bi) (nth 0 bi))
-  (defun obi/BlockInfo-body      (bi) (nth 1 bi))
-  (defun obi/BlockInfo-params    (bi) (obi/BlockParams (nth 2 bi)))
-  (defun obi/BlockInfo-switches  (bi) (nth 3 bi))
-  (defun obi/BlockInfo-name      (bi) (nth 4 bi))
-  (defun obi/BlockInfo-start     (bi) (nth 5 bi))
-  (defun obi/BlockInfo-coderef   (bi) (nth 6 bi))
-#+end_src
-
-#+RESULTS:
-: obi/BlockInfo-coderef
-
-** TODO Try out with elisp
 
 ** obi/evaluate-block-info
 
