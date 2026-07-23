@@ -56,6 +56,11 @@ it can make use of through senging a ToolCallRequest.
 A message (may be within a missive) from a model requesting that a
 tool be invoked.
 
+** ToolDeclaration
+
+Information about the tool that is declared in a form that can be used
+by a model.
+
 ** AL-TODO Update the content to align with the Glossary terms.
 
 Any content related to interacting with the model should make use of
@@ -103,35 +108,10 @@ multiple reasons).
   ${venv}/bin/python -m pip install llama-cpp-python
 #+end_src
 
-#+RESULTS:
-#+begin_example
-Collecting llama-cpp-python
-  Using cached llama_cpp_python-0.3.34-py3-none-macosx_26_0_arm64.whl
-Collecting typing-extensions>=4.5.0 (from llama-cpp-python)
-  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
-Collecting numpy>=1.20.0 (from llama-cpp-python)
-  Using cached numpy-2.5.1-cp314-cp314-macosx_14_0_arm64.whl.metadata (6.6 kB)
-Collecting diskcache>=5.6.1 (from llama-cpp-python)
-  Using cached diskcache-5.6.3-py3-none-any.whl.metadata (20 kB)
-Collecting jinja2>=2.11.3 (from llama-cpp-python)
-  Using cached jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
-Collecting MarkupSafe>=2.0 (from jinja2>=2.11.3->llama-cpp-python)
-  Using cached markupsafe-3.0.3-cp314-cp314-macosx_11_0_arm64.whl.metadata (2.7 kB)
-Using cached diskcache-5.6.3-py3-none-any.whl (45 kB)
-Using cached jinja2-3.1.6-py3-none-any.whl (134 kB)
-Using cached markupsafe-3.0.3-cp314-cp314-macosx_11_0_arm64.whl (12 kB)
-Using cached numpy-2.5.1-cp314-cp314-macosx_14_0_arm64.whl (5.3 MB)
-Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
-Installing collected packages: typing-extensions, numpy, MarkupSafe, diskcache, jinja2, llama-cpp-python
-
-
-Successfully installed MarkupSafe-3.0.3 diskcache-5.6.3 jinja2-3.1.6 llama-cpp-python-0.3.34 numpy-2.5.1 typing-extensions-4.16.0
-#+end_example
-
 ** ToolBelt
 
-Provide some general tool wiring support.
-Declare this early so that it can act as a shared registry of tools.
+Provide some general tool wiring support.  Declare this early so that
+it can define the interface for tools.
 
 Tools are the most straightforward way to bridge models with things
 outside fo their sandboxes, and presumably also forms the means for
@@ -143,16 +123,10 @@ clearer, where the tool calls pass back through as messages to the
 driving code/agent which is responsible for actually making the call
 and returning the response.
 
-*** Derive Tool Definition
+*** Tool Declarations
 
-Extracting information for use by the model should be done by
-reflection. Any ambiguous information should result in an error rather
-than attempting to be clever.
-
-**** Type Definition
-
-The first step will be defining the expected output since that's a gap
-in the upstream type definitions.
+The first step will be defining the shapre for tool declaratations
+since that's a gap in the upstream type definitions.
 
 Upstream basically stops at parameters so this presses on.
 
@@ -160,32 +134,35 @@ This doesn't seem particularly expressive, but that's probably a
 larger question and probably best served by what amounts to portable
 schema definition.
 
-#+name: tool-definition-type
 #+begin_src python
   from typing import List, Dict
   from typing_extensions import TypedDict, NotRequired, Literal
 
-  class ToolDefinition(TypedDict):
+  class ToolDeclaration(TypedDict):
     type: Literal["function"]
-    function: ToolFunctionDefinition
+    function: ToolFunctionDeclaration
 
-  class ToolFunctionDefinition(TypedDict):
+  class ToolFunctionDeclaration(TypedDict):
     name: str
     description: NotRequired[str]
-    parameters: ToolFunctionDefinitionParameters
+    parameters: ToolFunctionDeclarationParameters
 
-  class ToolFunctionDefinitionParameters(TypedDict):
+  class ToolFunctionDeclarationparameters(TypedDict):
     type: Literal["object"]
-    properties: Dict[str, ToolFunctionDefinitionParameterDefinition]
+    properties: Dict[str, ToolFunctionDeclarationParameterDefinition]
     required: List[str]
 
-  class ToolFunctionDefinitionParameterDefinition(TypedDict):
+  class ToolFunctionDefinitionDeclarationDefinition(TypedDict):
     type: str
 #+end_src
 
-#+RESULTS: tool-definition-type
+#+RESULTS:
 
-**** Logic
+**** Declaration Derivation
+
+Extracting information for use by the model should be done by
+reflection. Any ambiguous information should result in an error rather
+than attempting to be clever.
 
 ***** is_required_parameter
 
@@ -218,7 +195,7 @@ Introspect parameter types or throw trying
 
 #+RESULTS:
 
-***** define_tool
+***** tool_declaration
 
 This is mostly cleaned up from previously produced AI input...
 mostly to fully conform to the desired format.
@@ -230,7 +207,7 @@ extended with registries to handle additional types.
 
 #+begin_src python
   import inspect
-  def define_tool(func: callable) -> ToolFunctionDefinition:
+  def tool_declaration(func: callable) -> ToolFunctionDeclaration:
       """
       Produce a dictionary suitable for llama-cpp-python tool registration.
       """
@@ -265,33 +242,31 @@ extended with registries to handle additional types.
 
 ****** Sandbox
 
-What better way to test the definition extraction...
+What better way to test the declaration extraction...
 
 #+begin_src python
   from pprint import pprint
-  pprint(define_tool(define_tool))
+  pprint(tool_declaration(tool_declaration))
 #+end_src
 
 #+RESULTS:
 #+begin_example
-func: <built-in function callable>
 {'function': {'description': '\n'
                              'Produce a dictionary suitable for '
                              'llama-cpp-python tool registration.\n',
-              'name': 'define_tool',
+              'name': 'tool_declaration',
               'parameters': {'properties': {'func': {'type': '<built-in '
                                                              'function '
                                                              'callable>'}},
                              'required': ['func'],
                              'type': 'object'},
-              'return_type': "<class '__main__.ToolFunctionDefinition'>"},
+              'return_type': "<class '__main__.ToolFunctionDeclaration'>"},
  'type': 'function'}
 #+end_example
 
 *** apply_tool
 
-Call a function using a ToolCallMessage and return the expected
-missive.
+Call a function using a ToolCall and return the resulting tool missive.
 
 #+begin_src python
   def apply_tool(func_call, tool: callable, id: str):
@@ -319,8 +294,8 @@ Application will produce a missive to send back to the model.
       def register(self, func: Callable):
           self.tools[func.__name__] = func
 
-      def definitions(self):
-          return [define_tool(tool) for tool in self.tools.values()]
+      def declarations(self):
+          return [tool_declaration(tool) for tool in self.tools.values()]
 
       def apply(self, tool_call: ToolCall) -> ChatCompletionRequestToolMessage:
           if tool_call["type"] != "function":
