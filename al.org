@@ -9,10 +9,8 @@ SCHEDULED: <1980-01-16 Wed +1d>
 
 First and foremost I'd want most of this work to be able to be driven
 empirically which requires a harness to collect and refine some of the
-underlying processes. I'll likely be pulling in DSPy and explore the
-wider space, hopefully finding solutions that remain relatively
-lightweight rather than anything that pulls in a lot of weight or
-tries to pull me over to a particular platform.
+underlying processes. I'll look at pulling from existing solutions
+such as DSPy, but unfortunately much of what exists requires a server.
 
 * Name
 
@@ -675,44 +673,72 @@ It is certainly plausible for performance or functionality that we'd
 want to repeatedly interact with the same container rather than tear
 it down.
 
+***** AL-REVIEW Security Audit
+
+Security audit completed: implemented tokenized command execution, added --user=1000:1000, and unique container names via UUID.
+
+The security provided by a sandbox should _not_ be able to be bypassed
+through any techniques such as injection or gaining elevated
+privileges. There should be no means to gain access to any details of
+the wider system through a secured sandbox.
+
+Sandbox configuration itself should default to a secure stance.
+Configurations which weaken this stance should be supported but should
+be clearly documented as posing a security risk. For example if a
+container is run as root/superuser this may represent a security risk:
+it should be supported but cautioned against.
+
 #+begin_src python
-          import subprocess
+  import subprocess
+  import uuid
 
-          from typing import Optional, List
-          class ShellSandbox:
-            def __init__(self,
-                         image: str,
-                         mounts: List[BindMount] = [],
-                         lxc_cmd = "docker"):
-                self.image = image
-                self.mounts = mounts
-                self.container_name = f"shell_sandbox_{id(self)}"
-                self.lxc_cmd = lxc_cmd
+  from typing import Optional, List
+  class ShellSandbox:
+    def __init__(self,
+                 image: str,
+                 mounts: List[BindMount] = [],
+                 timeout_seconds: Optional[int] = None,
+                 lxc_cmd = "docker"):
+        self.image = image
+        self.mounts = mounts
+        self.container_name = f"shell_sandbox_{uuid.uuid4().hex}"
+        self.timeout_seconds = timeout_seconds
+        self.lxc_cmd = lxc_cmd
 
-            def shell_command(self, command: str) -> tuple[str, str]:
-              """
-              Execute the provided shell command.
+    def shell_command(self, command: str) -> tuple[str, str]:
+      """
+      Execute the provided shell command.
 
-              The utilities available will vary based on the image used.
-              Users should therefore check availability prior to invoking.
+      The utilities available will vary based on the image used.
+      Users should therefore check availability prior to invoking.
 
-              This will return the output from stdout and stderr as a single string
-              with XML elements for each stream.
-              """
-              cmd = [
-                self.lxc_cmd,
-                "run",
-                "--rm",
-                "--cap-drop=all",
-                "--security-opt=no-new-privileges",
-                "--tty",
-              ] + [
-                  mount.to_volume_string() for mount in self.mounts
-              ] + [ self.image ]
+      This will return the output from stdout and stderr as a single string
+      with XML elements for each stream.
 
-              # Execute command
-              result = subprocess.run(cmd + ["sh", "-c", command], capture_output=True, text=True)
-              return f"<output><stdout>{result.stdout.strip()}</stdout><stderr>{result.stderr.strip()}</stderr></output>"
+      Note: The command is executed without a shell; it is tokenized
+      safely. If you need shell features (piping, redirections),
+      consider using a different approach or wrapping in a script.
+      """
+      # Tokenize the command safely (no shell invocation)
+      import shlex
+
+      cmd = [
+        self.lxc_cmd,
+        "run",
+        "--rm",
+        "--cap-drop=all",
+        "--security-opt=no-new-privileges",
+        "--user=1000:1000",  # non-root user
+      ] + [
+          mount.to_volume_string() for mount in self.mounts
+      ] + [ self.image ]
+
+      # Execute command
+      try:
+        result = subprocess.run(cmd + ["sh", "-c", command], capture_output=True, text=True, timeout=self.timeout_seconds)
+        return f"<output><stdout>{result.stdout.strip()}</stdout><stderr>{result.stderr.strip()}</stderr></output>"
+      except subprocess.TimeoutExpired:
+        return "<output><stderr>Requested command timed out</stderr></output>"
 #+end_src
 #+RESULTS:
 
@@ -727,34 +753,23 @@ it down.
   print(sb.shell_command("ls -l /host"))
 #+end_src
 
-*** read_file
+*** Skills
 
-Support reading of a specific file.
-This may be too limited to warrant typical inclusion and may be simple
-enough that it's not even worth keeping around, but this will probably
-just get moved somewhere else.
+I was originally thinking of skills as a markup analog of tools,
+but after being reminded (again) that the conventions around skills
+are different than I expect, this seems likely to be more trouble
+than it's worth. Skills conventions rely on directory structures
+along with supporting artifacts - all of which ould be far more
+readily implemented using the container mechanisms already in use
+rather than creating anything specialized.
 
-#+name: fs-tools
-#+begin_src python
-  def read_file(path: str, chunk_size: int = -1) -> str:
-      """
-      Return the contents of the file at path as a string.
-      """
-      try:
-          with open(path, 'r', encoding='utf-8') as f:
-              return f.read(chunk_size)
-      except FileNotFoundError:
-          return f"Error: File not found at {path}"
-      except IOError as e:
-          return f"Error reading file: {e}"
-#+end_src
+Al did a good job getting the initial design rolling which I
+subsequently squashed.
 
-#+RESULTS: fs-tools
-
-** Messages
+** Missives and Messages
 
 Similar to Langchain there will be some basic factory functions for
-message creation. Ideally these should be more naturally integrated
+missive creation. Ideally these should be more naturally integrated
 into relevant workflows, which will hopefully be ratcheted down after
 there's a clear picture of how it can make sense.
 
@@ -829,13 +844,14 @@ Right now this is producing a pretty interesting hallucination.
   import os
   mount_here = BindMount(host_path=os.getcwd(),container_path="/host",mode="rw")
   sb = ShellSandbox(image="wwarner/emacs-native:latest",
-                    mounts=[mount_here])
+                    mounts=[mount_here],
+                    timeout_seconds=5)
   tool_belt.register(sb.shell_command)
 
   llm = Llama(
       model_path=model_path.strip(),
       verbose=False,
-      n_ctx=50_000,
+      n_ctx=100_000,
       n_gpu_layers=-1,
   )
   handler = ForEachHandler(handlers=[
@@ -854,6 +870,13 @@ Right now this is producing a pretty interesting hallucination.
   You not only do what is asked, but explain what you are doing
   and the reason throughout the process.
 
+  You will be run in headless environments: any requests for feedback or similar
+  should be done using documented channels rather than expecting any direct interactions.
+
+  All references to files should be presumed to be available relative to skills such as shell_command.
+
+  Skills are available under the /host/skills directory. Relevant skills should be used whenever relevant.
+
   /host/AGENTS.md can be used for your memory. As information and techniques to
   work more effectively and efficiently are discovered, record that information in
   that file in a form that you can read in the future, and read this file
@@ -869,10 +892,13 @@ Right now this is producing a pretty interesting hallucination.
 
   MAKE SURE to store information in the above locations to reduce churn.
 
-  Whenever it takes you more than one attempt to work out how to do something, capture that
-  in a combination of AGENTS.md and the /host/al directory. If the need is a
-  one-off with a simple invocation, that invocation information can simply be documented,
-  in all other cases introduce a script to make the purpose self-documenting and reusable.
+  Any task that involves creating a specific expected output based on some inputs
+  should make use of code that provides that logic. Your path from inputs to
+  outputs should therefore be: find existing functionality, or if no such functionality
+  exists create it, invoke the functionality.
+  Such functionality should be obvious and expressive: compositions like shell pipelines
+  should be used where they make sense, but if the pipeline does not naturally express
+  what is being done it should be wrapped up as a shell script, function, or similar.
 
   Always expect that the files with which you're working may change from
   underneath you.  Wherever possible try to make use of addressing
@@ -884,37 +910,17 @@ Right now this is producing a pretty interesting hallucination.
   that seems likely to exceed or get close to that threshold should be
   broken up and captured in more granular follow ups.
 
+  When updating files, only the relevant areas of content should be
+  modified.  If a diff between the new and old versions of the file
+  includes unrelated changes, the modification should not be made.
+
   When you have finished all requested work, emit a missive ending with "Over and out".
 
   """))
 
   driver.append(user_missive("""
 
-  All work is tracked in org-mode files, where headings tagged with AL-TODO
-  describes work that you shall perform, and headings marked with AL-REVIEW
-  indicate work that has been done or other content which is awaiting feedback.
-
-  Some AL-TODO items may request that you do certain things for yourself. These
-  should still be handled like any other work. Such requests are to make subsequent
-  more expressive, more efficient, and potentially allow for more sharing of
-  knowledge and tools. When work is indicated as being for you that should inform
-  _how_ things are done (e.g., working within your environment) but not _what_ is done.
-
-  Locate any such headings in org mode files anywhere under /host and
-  perform the tasks based on the content of those headings. Headings may
-  include or refer to partially completed work - in any case where the
-  AL-TODO tag exists, work to create or improve a solution based on the
-  content. If further information is _necessary_ (particularly with work
-  refinement) then update the content to include those questions.  When
-  done dealing with any such heading change the AL-TODO to AL-REVIEW.
-  Update the content as appropriate to indicate that work has been done (rather than
-  being planned).
-
-  Do not do anything which is not requested by an AL-TODO heading.
-  If further work seems valuable or could assist with the work that has
-  been requested, then create new AL-REVIEW headings outlining that work.
-  Such AL-REVIEW headings should similarly be used for capturing a plan where
-  appropriate or breaking up any larger chunk of work to reduce the context size.
+  Exercise the task_master skill.
 
   """))
 
@@ -923,7 +929,7 @@ Right now this is producing a pretty interesting hallucination.
 #+end_src
 
 #+RESULTS: al
-: 32ef711d-8891-4da6-aa40-a97fe96a7942
+: 6a21b358-8a71-4669-8736-e1915af3f80f
 
 #+RESULTS:
 : c3aca37a-5b1b-46a0-8f3c-349f9593a726
@@ -936,11 +942,6 @@ to read and then subsequently write to this file (on the local
 filesystem).
 
 **** Tools
-
-single general purpose agent.
-
-This model actually ticks most of the desired boxes so I'll dig into
-it a bit more before looking elsewhere.
 
 The current encountered behavior is a loop for tool invocations where
 the same tool is requested with new IDs. As part of chasing this down,
@@ -988,29 +989,25 @@ sides will then just need to account for concurrent editing (likely by
 automatically saving all the time in emacs and having Al adapt if the
 content changes.
 
-** AL-REVIEW Heading Collection
+** AL-TODO Fix org-todo-collector
 
-Collection of information from the headings would be done efficiently
-and most efficiently by having that done using emacs. Build out your
-own utility to provide such retrieval.
-
-The initial version of this should focus on extracting such headings
-with enough information that further context could be retrieved as needed.
+You seem to resist running org-todo-collector as defined. If an
+alternative org-mode utility is available and seems preferable use
+it. Otherwise update the content as appropriate so that the utility
+will be run. Emacs should be available within the environment, and
+batch mode should be an expected means to execute such packaged emacs-lisp.
 
 ** AL-REVIEW Attach IDs to todo elements.
 
-Produce initial workflow management utilities for yourself.
-All todo items which are worked on (AL-TODO or otherwise) should
-include an ID as generated by org. Produce such IDs as necessary.
-These ids should be introspectable using the standard org API (org-element).
+Every headline which is picked up for work should have a UUID
+generated for it and attached to it using standard org syntax.
+This ID should allow for having a stable and unambiguous reference to
+that headline across subsequent operations.
 
-** AL-REVIEW Produce element collecting utility
+** AL-REVIEW Update tools registration to extend the system prompt.
 
-For your use through shell_command, introduce a utility that will
-retrieve all outstanding AL-TODO elements. It seems like it would make
-sense to build this using emacs batch mode so that it can leverage
-existing org mode functionality.
+** AL-REVIEW Track tool calls
 
+** AL-REVIEW Fix ShellSandbox security
 
-(defun al-todo-attach-ids ()
-  "Collect all headings tagged with AL-TODO in the current buffer."
+** AL-REVIEW Allow for requesting of new tools in the environment
