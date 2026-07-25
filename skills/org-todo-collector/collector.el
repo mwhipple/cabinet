@@ -41,6 +41,3 @@ MAX-RESULTS, if supplied, limits the number of entries returned."
                       results))))))
     results))
 
-;; Example invocation:
-;;   emacs -Q -l /host/skills/org-todo-collector/collector.el \
-;;     --eval "(org-todo-collector '/host/example.org' 'AL-TODO')"
