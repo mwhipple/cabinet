@@ -447,12 +447,12 @@ that seems to work well.
 
 #+begin_src python
   def yolo_response_handler(ctx, response):
-      if "Over and out" in response['message]['content']:
+      if "Over." in response['message]['content']:
           return False
       driver = ctx['driver']
       driver.append(user_missive("""
       Continue on identified work. If there is no further work then
-      respond with "Over and out" on a line by itself..
+      respond with "Over." on a line by itself.
       """))
       driver.submit()
       return True
@@ -843,7 +843,7 @@ Right now this is producing a pretty interesting hallucination.
   tool_belt = ToolBelt()
   import os
   mount_here = BindMount(host_path=os.getcwd(),container_path="/host",mode="rw")
-  sb = ShellSandbox(image="wwarner/emacs-native:latest",
+  sb = ShellSandbox(image="al_image:latest",
                     mounts=[mount_here],
                     timeout_seconds=5)
   tool_belt.register(sb.shell_command)
