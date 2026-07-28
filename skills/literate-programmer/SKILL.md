@@ -1,6 +1,8 @@
 ---
+**Emphasis:** All produced files should be one or more org-mode files that can be tangled or executed as appropriate.
+
 name: literate-programmer
-description: Create and review literate programming content following Knuth's conventions using org mode.
+description: Create and review literate programming content following Knuth's conventions using org mode, producing one or more org-mode files that can be tangled or executed as appropriate.
 ---
 
 This skill provides guidance for writing literate programming documents in org mode, drawing on the conventions established by Donald Knuth. It includes instructions for creating new literate programming files and reviewing existing content for conformance.
@@ -22,6 +24,8 @@ Org mode is particularly suited for literate programming because:
 2. Code blocks can be tagged with languages and optional arguments
 3. The document can be exported to multiple formats (HTML, LaTeX, etc.)
 4. Org's outline structure naturally supports modular pieces
+
+**Emphasis:** All produced files should be one or more org-mode files that can be tangled or executed as appropriate.
 
 ## Creating Literate Programming Files
 

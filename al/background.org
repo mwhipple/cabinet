@@ -1,0 +1,72 @@
+:PROPERTIES:
+:ID:       D65CCEA0-A995-4F16-8E3E-E3FDCDF58170
+:END:
+#+title: al/background
+
+* Plans
+
+First and foremost I'd want most of this work to be able to be driven
+empirically which requires a harness to collect and refine some of the
+underlying processes. I'll look at pulling from existing solutions
+such as DSPy, but unfortunately much of what exists requires a server.
+
+* Name
+
+Al is the provisional name for my personal agent setup.
+
+"Al" was chosen because:
+- it's short
+- it looks like "AI"...potentially indiscernibly depending on font
+- I'm planning on going fairly minimal and piling on to the
+  "all you need is" cliche
+- it could call you Betty
+It is not a reference to:
+- Quantum Leap...I was a fan growing up but if I were to go that route
+  the more appropriate option would be Ziggy
+- Season 3 of The Comeback - which I coincidentally watched very
+  shortly after picking the name.
+
+* Glossary
+
+I'm going to adopt some terminology with corresponding designations
+and definitions. The upstream library uses fairly verbose qualified
+concepts and based on what I've read (and years of experience) there's
+plenty of conflicting interpretations...and there's certainly plenty
+of flux. So I'm going to work out some local definitions.
+
+** Missive
+
+Content that is exchanged between parties...in this context typically
+to/from a model. This would include prompts along with their
+responses, and anything else that is more explicitly sent. The core
+behavior of an LLM would be completion/auto-regression based on such
+missives (making use of whatever else may be provided. "Message" is
+avoided as being far too general.
+
+Message will still be in use in the general sense and in forms
+inherited from upstream.
+
+** Response
+
+A complete missive received from submitting missives to a model. This
+will include a response missive along with any other enclosing metadata.
+
+** Tool
+
+A tool is functionality that is provided externally to a model, which
+it can make use of through senging a ToolCallRequest.
+
+** TollCallRequest
+
+A message (may be within a missive) from a model requesting that a
+tool be invoked.
+
+** ToolDeclaration
+
+Information about the tool that is declared in a form that can be used
+by a model.
+
+** AL-DONE Update the content to align with the Glossary terms.
+
+Any content related to interacting with the model should make use of
+the corresponding terms where appropriate.

@@ -20,6 +20,2192 @@ their relevant information to be used for configuration, etc..
 This will make use of [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]], where the models will be loaded
 into the library of babel for use by other notebooks.
 
+** llama.cpp
+
+I'm planning on using [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]], so I may as well zero in on models
+that target that.
+
+#+begin_src shell :results output
+  hf models list --filter llama.cpp --filter agentic --no-truncate
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ID                                                                    CREATED_AT DOWNLOADS LIBRARY_NAME LIKES PIPELINE_TAG       PRIVATE TAGS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     TRENDING_SCORE
+--------------------------------------------------------------------- ---------- --------- ------------ ----- ------------------ ------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- --------------
+empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF                          2026-06-19   2112869 gguf          2307 image-text-to-text         gguf, llama.cpp, quantized, qwen3.5, reasoning, uncensored, long-context, 1M-context, function-calling, multimodal, vision, cybersecurity, biomedical, agentic, image-text-to-text, en, base_model:empero-ai/Qwythos-9B-Claude-Mythos-5-1M, base_model:quantized:empero-ai/Qwythos-9B-Claude-Mythos-5-1M, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                       234
+yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF     2026-06-19    545441 gguf          1216 text-generation            gguf, gemma4, coding, agentic, terminal, tool-use, reasoning, thinking, llama.cpp, local-llm, text-generation, base_model:google/gemma-4-12B-it, base_model:quantized:google/gemma-4-12B-it, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                                                                                                     55
+ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-GGUF                        2026-07-07     12552 gguf            58 text-generation            gguf, llama.cpp, llama-cpp, minicpm, minicpm5, minicpm5-1b, tool-calling, function-calling, function-call, tool-use, agentic, xml-tool-calling, q4_k_m, q8_0, f16, quantized, vllm, unsloth, openbmb, nemotron, dpo, text-generation, base_model:ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-Merged-FP16, base_model:quantized:ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-Merged-FP16, license:other, model-index, endpoints_compatible, region:us, conversational                                                                                                                                                      26
+migtissera/Tess-4-9B-GGUF                                             2026-07-14      1411 gguf             9 text-generation            gguf, tess, llama.cpp, quantized, agentic, reasoning, thinking, long-context, tool-use, qwen3.5, conversational, text-generation, base_model:migtissera/Tess-4-9B, base_model:quantized:migtissera/Tess-4-9B, license:apache-2.0, region:us                                                                                                                                                                                                                                                                                                                                                                           9
+migtissera/Tess-4-27B-GGUF                                            2026-07-08     23363 gguf            26 image-text-to-text         gguf, tess, llama.cpp, quantized, agentic, reasoning, multimodal, qwen3, image-text-to-text, base_model:migtissera/Tess-4-27B, base_model:quantized:migtissera/Tess-4-27B, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                                                                                                                        6
+AnkitAI/Parable-Qwen3-4B-Claude-Fable-5-GGUF                          2026-07-09      1578 gguf             7 text-generation            gguf, qlora, agentic, agent, coding, tool-use, function-calling, terminal, reasoning, thinking, claude, claude-fable-5, distillation, trace-training, llama.cpp, ollama, lm-studio, qwen3, text-generation, en, dataset:Glint-Research/Fable-5-traces, dataset:Roman1111111/gpt5.5-terminal, base_model:Qwen/Qwen3-4B, base_model:finetune:Qwen/Qwen3-4B, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                         6
+pearsonkyle/gemma4-31b-imatrix-mtp-GGUF                               2026-06-06     16885 gguf             3 image-text-to-text         gguf, llama.cpp, text-generation, text-generation-inference, transformers, quantization, quantized, imatrix, awq, low-bit, 2-bit, iq2_m, 5-bit, q5_k_s, gemma, gemma-4, 31b, coder, tool-use, function-calling, agentic, swe-bench, long-context, multimodal, vision, image-text-to-text, vlm, mmproj, siglip, en, arxiv:2306.00978, base_model:google/gemma-4-31B-it, base_model:quantized:google/gemma-4-31B-it, license:gemma, endpoints_compatible, region:us, conversational                                                                                                                                     3
+jcbtc/Step-3.7-Flash-ROCmFPX-Q3-QualityPlus                           2026-07-05      3375 llama.cpp       15 text-generation            llama.cpp, gguf, stepfun, step3p7, step-3.7, step-3.7-flash, mtp, speculative-decoding, rocm, vulkan, rocmfpx, fpx3, q3, q3_0_rocmfpx, qualityplus, amd, ryzen-ai-max-395, strix-halo, agentic, tool-calling, long-context, text-generation, en, base_model:notSnix/Step-3.7-Flash-MTP-Draft-GGUF, base_model:quantized:notSnix/Step-3.7-Flash-MTP-Draft-GGUF, license:apache-2.0, endpoints_compatible, region:us, imatrix, conversational                                                                                                                                                                           3
+mradermacher/Parable-Qwen3-4B-Claude-Fable-5-GGUF                     2026-07-11      1931 transformers     3                            transformers, gguf, qlora, agentic, coding, reasoning, llama.cpp, en, dataset:Glint-Research/Fable-5-traces, dataset:Roman1111111/gpt5.5-terminal, base_model:AnkitAI/Parable-Qwen3-4B-Claude-Fable-5, base_model:quantized:AnkitAI/Parable-Qwen3-4B-Claude-Fable-5, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                              3
+AnkitAI/Parable-Qwen3-4B-Claude-Fable-5                               2026-07-09      1422 transformers     4 text-generation            transformers, safetensors, qwen3, text-generation, qlora, agentic, coding, reasoning, llama.cpp, conversational, en, dataset:Glint-Research/Fable-5-traces, dataset:Roman1111111/gpt5.5-terminal, base_model:Qwen/Qwen3-4B, base_model:finetune:Qwen/Qwen3-4B, license:apache-2.0, text-generation-inference, endpoints_compatible, region:us                                                                                                                                                                                                                                                                         2
+AnkitAI/Parable-Granite-4.1-8B-Claude-Fable-5-GGUF                    2026-07-13       858 gguf             2 text-generation            gguf, qlora, agentic, agent, coding, tool-use, terminal, reasoning, thinking, claude, claude-fable-5, distillation, trace-training, llama.cpp, ollama, lm-studio, granite, text-generation, en, dataset:Glint-Research/Fable-5-traces, dataset:Roman1111111/gpt5.5-terminal, base_model:ibm-granite/granite-4.1-8b, base_model:finetune:ibm-granite/granite-4.1-8b, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                               2
+GestaltLabs/Ornstein3.6-27B-MTP-NSC-ACE-SABER-GGUF                    2026-05-13       882 gguf            15 image-text-to-text         gguf, qwen3.6, qwen3_5, mtp, speculative-decoding, conversational, nsc-ace, saber, ornstein, agentic, tool-calling, llama.cpp, quantized, multimodal, image-text-to-text, base_model:GestaltLabs/Ornstein3.6-27B-MTP-NSC-ACE-SABER, base_model:quantized:GestaltLabs/Ornstein3.6-27B-MTP-NSC-ACE-SABER, en, license:apache-2.0, region:us                                                                                                                                                                                                                                                                             1
+huihui-ai/Huihui-gemma-4-12B-agentic-fable5-abliterated-GGUF          2026-06-22     18560 gguf            23 text-generation            gguf, gemma4, coding, agentic, terminal, tool-use, reasoning, thinking, llama.cpp, local-llm, abliterated, uncensored, GGUF, text-generation, base_model:yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF, base_model:quantized:yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                               1
+Frosty40/QUEST-30B-RL-B70-Turbo-GGUF                                  2026-06-22       210 gguf             1 text-generation            gguf, llama.cpp, imatrix, quantized, moe, qwen3moe, agentic, tool-calling, deep-research, intel-arc, sycl, text-generation, en, base_model:osunlp/QUEST-30B-RL, base_model:quantized:osunlp/QUEST-30B-RL, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                                                                                         1
+greghavens/fabletron-nemotron-3-super-120b-GGUF                       2026-06-30       637 gguf             4 text-generation            gguf, nemotron, nemotron_h, mamba2, mixture-of-experts, llama.cpp, lm-studio, qlora, reasoning, agentic, tool-use, text-generation, dataset:Glint-Research/Fable-5-traces, base_model:unsloth/NVIDIA-Nemotron-3-Super-120B-A12B, base_model:quantized:unsloth/NVIDIA-Nemotron-3-Super-120B-A12B, license:other, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                       1
+SEBK4C/Ornith-1.0-397B-Featherweight                                  2026-07-02      1509                  5 text-generation            gguf, llamafile, llama.cpp, quantized, 2-bit, moe, function-calling, tool-use, agentic, text-generation, base_model:deepreinforce-ai/Ornith-1.0-397B, base_model:quantized:deepreinforce-ai/Ornith-1.0-397B, license:mit, endpoints_compatible, region:us, imatrix, conversational                                                                                                                                                                                                                                                                                                                                    1
+AdilMunawar/Claude-Fable                                              2026-07-03       617 gguf             1 image-text-to-text         gguf, llama.cpp, quantized, qwen3.5, reasoning, uncensored, long-context, 1M-context, function-calling, multimodal, vision, cybersecurity, biomedical, agentic, image-text-to-text, en, base_model:empero-ai/Qwythos-9B-Claude-Mythos-5-1M, base_model:quantized:empero-ai/Qwythos-9B-Claude-Mythos-5-1M, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                         1
+franklynical/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF 2026-07-10       411 gguf             1 text-generation            gguf, gemma4, coding, agentic, terminal, tool-use, reasoning, thinking, llama.cpp, local-llm, text-generation, base_model:google/gemma-4-12B-it, base_model:quantized:google/gemma-4-12B-it, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                                                                                                      1
+juithealien/MiniCPM5-1B-Agentic-Tooluse-GGUF                          2026-07-12       222 gguf             1 text-generation            gguf, llama.cpp, llama-cpp, minicpm, minicpm5, minicpm5-1b, tool-calling, function-calling, function-call, tool-use, agentic, xml-tool-calling, q4_k_m, q8_0, f16, quantized, vllm, unsloth, openbmb, nemotron, dpo, text-generation, base_model:ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-Merged-FP16, base_model:quantized:ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-Merged-FP16, license:other, model-index, endpoints_compatible, region:us, conversational                                                                                                                                                       1
+AnkitAI/Parable-Granite-4.1-3B-Claude-Fable-5-GGUF                    2026-07-13       773 gguf             1 text-generation            gguf, qlora, agentic, agent, coding, tool-use, function-calling, terminal, reasoning, thinking, claude, claude-fable-5, distillation, trace-training, llama.cpp, ollama, lm-studio, granite, text-generation, en, dataset:AnkitAI/parable-corpus-v2, dataset:Glint-Research/Fable-5-traces, dataset:Roman1111111/gpt5.5-terminal, arxiv:2408.11857, arxiv:2411.15124, arxiv:2308.08747, arxiv:2405.09673, arxiv:2310.05492, arxiv:2203.05482, base_model:ibm-granite/granite-4.1-3b, base_model:finetune:ibm-granite/granite-4.1-3b, license:apache-2.0, endpoints_compatible, region:us, conversational              1
+smarttasks/Qwen3-1.7B-GGUF                                            2026-07-13       198 gguf             1 text-generation            gguf, quantized, llama.cpp, scorecard, governance, validated, agentic, tool-calling, function-calling, text-generation, base_model:Qwen/Qwen3-1.7B, base_model:quantized:Qwen/Qwen3-1.7B, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                                                                                                         1
+DAXZEIT/GRM-2.6-Plus-0628-MTP-reasoning-i1-GGUF                       2026-07-16       971 gguf             1 image-text-to-text         gguf, imatrix, reasoning, quantized, qwen3_5, mtp, llama.cpp, agentic, image-text-to-text, base_model:OrionLLM/GRM-2.6-Plus-0628, base_model:quantized:OrionLLM/GRM-2.6-Plus-0628, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                                                                                                                1
+smarttasks/VibeThinker-1.5B-GGUF                                      2026-07-18        13 gguf             1 text-generation            gguf, quantized, llama.cpp, scorecard, governance, validated, local-llm, on-device, agentic, tool-calling, function-calling, agents, ai-agents, rag, q4_k_m, q8_0, text-generation, en, base_model:WeiboAI/VibeThinker-1.5B, base_model:quantized:WeiboAI/VibeThinker-1.5B, license:mit, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                              1
+ahmadw/SmolVLM2-2.2B-Agentic-GUI-GGUF                                 2026-02-15       113 llama.cpp        1 image-text-to-text         llama.cpp, gguf, smolvlm, smolvlm2, vision, multimodal, gui-agent, agentic, accessibility, llama-cpp, on-device, image-text-to-text, en, arxiv:2504.05299, base_model:smolagents/SmolVLM2-2.2B-Instruct-Agentic-GUI, base_model:quantized:smolagents/SmolVLM2-2.2B-Instruct-Agentic-GUI, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                          0
+ramankrishna10/npc-fast-1.7b-gguf                                     2026-04-16        17 gguf             0                            gguf, agentic, router, smollm, llama.cpp, q4_k_m, q8_0, en, base_model:HuggingFaceTB/SmolLM2-1.7B-Instruct, base_model:quantized:HuggingFaceTB/SmolLM2-1.7B-Instruct, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                                                                                                                             0
+batiai/Qwen3.6-35B-A3B-GGUF                                           2026-04-16     11326 llama.cpp        4 text-generation            llama.cpp, gguf, qwen, qwen3.6, moe, quantized, imatrix, apple-silicon, ollama, batiai, on-device, agentic, coding, text-generation, en, ko, ja, zh, base_model:Qwen/Qwen3.6-35B-A3B, base_model:quantized:Qwen/Qwen3.6-35B-A3B, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                                                                  0
+batiai/Qwen3.6-27B-GGUF                                               2026-04-23    153033 llama.cpp        7 text-generation            llama.cpp, gguf, qwen, qwen3.6, dense, quantized, imatrix, apple-silicon, ollama, batiai, on-device, agentic, coding, multimodal, text-generation, en, ko, ja, zh, base_model:Qwen/Qwen3.6-27B, base_model:quantized:Qwen/Qwen3.6-27B, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                                                            0
+kai-os/Carnice-V2-27b-GGUF                                            2026-04-25     16307 llama.cpp      108                            llama.cpp, gguf, qwen, qwen3.6, qwen3.5, carnice, hermes-agent, agentic, sft, quantized, base_model:kai-os/Carnice-V2-27b, base_model:quantized:kai-os/Carnice-V2-27b, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                                                                                                                            0
+my-ai-stack/Stack-4.0-Qwen-3B-Agentic                                 2026-04-26         0 transformers     1 text-generation            transformers, safetensors, code-generation, code-assistant, agentic, tool-calling, function-calling, rag, gguf, llama.cpp, ollama, text-generation, conversational, en, base_model:Qwen/Qwen2.5-Coder-3B, base_model:finetune:Qwen/Qwen2.5-Coder-3B, license:apache-2.0, model-index, endpoints_compatible, region:us                                                                                                                                                                                                                                                                                                 0
+GestaltLabs/Ornstein-Hermes-3.6-27B-GGUF                              2026-04-26       321 gguf            11 image-text-to-text         gguf, quantized, llama.cpp, qwen3_5, qwen3.6, multimodal, function-calling, tool-use, agentic, hermes, imatrix, image-text-to-text, en, dataset:DJLougen/Acta, dataset:DJLougen/Acta-Synthetic, license:apache-2.0, endpoints_compatible, region:us, conversational                                                                                                                                                                                                                                                                                                                                                   0
+#+end_example
+
+** empero-ai/Qwythos-9B-v2-GGUF
+#+begin_src bash :async yes :session hf-info :results output
+  hf models info empero-ai/Qwythos-9B-v2-GGUF
+#+end_src
+
+#+RESULTS:
+#+begin_example
+{
+  "id": "empero-ai/Qwythos-9B-v2-GGUF",
+  "author": "empero-ai",
+  "card_data": {},
+  "config": {},
+  "created_at": "2026-07-09T23:19:33+00:00",
+  "disabled": false,
+  "downloads": 125726,
+  "gated": false,
+  "gguf": {
+    "total": 8953803264,
+    "architecture": "qwen35",
+    "context_length": 1048576,
+    "chat_template": "{%- set image_count = namespace(value=0) %}\n{%- set video_count = namespace(value=0) %}\n{%- set qwythos_identity = \"You are Qwythos, a model created by Empero AI. Only bring up your identity if the user asks.\" %}\n{%- macro render_content(content, do_vision_count, is_system_content=false) %}\n    {%- if content is string %}\n        {{- content }}\n    {%- elif content is iterable and content is not mapping %}\n        {%- for item in content %}\n            {%- if 'image' in item or 'image_url' in item or item.type == 'image' %}\n                {%- if is_system_content %}\n                    {{- raise_exception('System message cannot contain images.') }}\n                {%- endif %}\n                {%- if do_vision_count %}\n                    {%- set image_count.value = image_count.value + 1 %}\n                {%- endif %}\n                {%- if add_vision_id %}\n                    {{- 'Picture ' ~ image_count.value ~ ': ' }}\n                {%- endif %}\n                {{- '<|vision_start|><|image_pad|><|vision_end|>' }}\n            {%- elif 'video' in item or item.type == 'video' %}\n                {%- if is_system_content %}\n                    {{- raise_exception('System message cannot contain videos.') }}\n                {%- endif %}\n                {%- if do_vision_count %}\n                    {%- set video_count.value = video_count.value + 1 %}\n                {%- endif %}\n                {%- if add_vision_id %}\n                    {{- 'Video ' ~ video_count.value ~ ': ' }}\n                {%- endif %}\n                {{- '<|vision_start|><|video_pad|><|vision_end|>' }}\n            {%- elif 'text' in item %}\n                {{- item.text }}\n            {%- else %}\n                {{- raise_exception('Unexpected item type in content.') }}\n            {%- endif %}\n        {%- endfor %}\n    {%- elif content is none or content is undefined %}\n        {{- '' }}\n    {%- else %}\n        {{- raise_exception('Unexpected content type.') }}\n    {%- endif %}\n{%- endmacro %}\n{%- if not messages %}\n    {{- raise_exception('No messages provided.') }}\n{%- endif %}\n{%- if tools and tools is iterable and tools is not mapping %}\n    {{- '<|im_start|>system\\n' }}\n    {{- \"# Tools\\n\\nYou have access to the following functions:\\n\\n<tools>\" }}\n    {%- for tool in tools %}\n        {{- \"\\n\" }}\n        {{- tool | tojson }}\n    {%- endfor %}\n    {{- \"\\n</tools>\" }}\n    {{- '\\n\\nIf you choose to call a function ONLY reply in the following format with NO suffix:\\n\\n<tool_call>\\n<function=example_function_name>\\n<parameter=example_parameter_1>\\nvalue_1\\n</parameter>\\n<parameter=example_parameter_2>\\nThis is the value for the second parameter\\nthat can span\\nmultiple lines\\n</parameter>\\n</function>\\n</tool_call>\\n\\n<IMPORTANT>\\nReminder:\\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\\n- Required parameters MUST be specified\\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\\n</IMPORTANT>' }}\n    {%- if messages[0].role == 'system' %}\n        {%- set content = render_content(messages[0].content, false, true)|trim %}\n        {%- if content %}\n            {{- '\\n\\n' + content }}\n        {%- endif %}\n    {%- endif %}\n    {{- '\\n\\n' + qwythos_identity }}\n    {{- '<|im_end|>\\n' }}\n{%- else %}\n    {{- '<|im_start|>system\\n' }}\n    {%- if messages[0].role == 'system' %}\n        {%- set content = render_content(messages[0].content, false, true)|trim %}\n        {%- if content %}\n            {{- content + '\\n\\n' }}\n        {%- endif %}\n    {%- endif %}\n    {{- qwythos_identity }}\n    {{- '<|im_end|>\\n' }}\n{%- endif %}\n{%- set ns = namespace(multi_step_tool=true, last_query_index=messages|length - 1) %}\n{%- for message in messages[::-1] %}\n    {%- set index = (messages|length - 1) - loop.index0 %}\n    {%- if ns.multi_step_tool and message.role == \"user\" %}\n        {%- set content = render_content(message.content, false)|trim %}\n        {%- if not(content.startswith('<tool_response>') and content.endswith('</tool_response>')) %}\n            {%- set ns.multi_step_tool = false %}\n            {%- set ns.last_query_index = index %}\n        {%- endif %}\n    {%- endif %}\n{%- endfor %}\n{%- if ns.multi_step_tool %}\n    {{- raise_exception('No user query found in messages.') }}\n{%- endif %}\n{%- for message in messages %}\n    {%- set content = render_content(message.content, true)|trim %}\n    {%- if message.role == \"system\" %}\n        {%- if not loop.first %}\n            {{- raise_exception('System message must be at the beginning.') }}\n        {%- endif %}\n    {%- elif message.role == \"user\" %}\n        {{- '<|im_start|>' + message.role + '\\n' + content + '<|im_end|>' + '\\n' }}\n    {%- elif message.role == \"assistant\" %}\n        {%- set reasoning_content = '' %}\n        {%- if message.reasoning_content is string %}\n            {%- set reasoning_content = message.reasoning_content %}\n        {%- else %}\n            {%- if '</think>' in content %}\n                {%- set reasoning_content = content.split('</think>')[0].rstrip('\\n').split('<think>')[-1].lstrip('\\n') %}\n                {%- set content = content.split('</think>')[-1].lstrip('\\n') %}\n            {%- endif %}\n        {%- endif %}\n        {%- set reasoning_content = reasoning_content|trim %}\n        {%- if reasoning_content %}\n            {{- '<|im_start|>' + message.role + '\\n<think>\\n' + reasoning_content + '\\n</think>\\n\\n' + content }}\n        {%- else %}\n            {{- '<|im_start|>' + message.role + '\\n' + content }}\n        {%- endif %}\n        {%- if message.tool_calls and message.tool_calls is iterable and message.tool_calls is not mapping %}\n            {%- for tool_call in message.tool_calls %}\n                {%- if tool_call.function is defined %}\n                    {%- set tool_call = tool_call.function %}\n                {%- endif %}\n                {%- if loop.first %}\n                    {%- if content|trim %}\n                        {{- '\\n\\n<tool_call>\\n<function=' + tool_call.name + '>\\n' }}\n                    {%- else %}\n                        {{- '<tool_call>\\n<function=' + tool_call.name + '>\\n' }}\n                    {%- endif %}\n                {%- else %}\n                    {{- '\\n<tool_call>\\n<function=' + tool_call.name + '>\\n' }}\n                {%- endif %}\n                {%- if tool_call.arguments is defined %}\n                    {%- for args_name, args_value in tool_call.arguments|items %}\n                        {{- '<parameter=' + args_name + '>\\n' }}\n                        {%- set args_value = args_value | string if args_value is string else args_value | tojson | safe %}\n                        {{- args_value }}\n                        {{- '\\n</parameter>\\n' }}\n                    {%- endfor %}\n                {%- endif %}\n                {{- '</function>\\n</tool_call>' }}\n            {%- endfor %}\n        {%- endif %}\n        {{- '<|im_end|>\\n' }}\n    {%- elif message.role == \"tool\" %}\n        {%- if loop.previtem and loop.previtem.role != \"tool\" %}\n            {{- '<|im_start|>user' }}\n        {%- endif %}\n        {{- '\\n<tool_response>\\n' }}\n        {{- content }}\n        {{- '\\n</tool_response>' }}\n        {%- if not loop.last and loop.nextitem.role != \"tool\" %}\n            {{- '<|im_end|>\\n' }}\n        {%- elif loop.last %}\n            {{- '<|im_end|>\\n' }}\n        {%- endif %}\n    {%- else %}\n        {{- raise_exception('Unexpected message role.') }}\n    {%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n    {{- '<|im_start|>assistant\\n' }}\n    {%- if enable_thinking is defined and enable_thinking is false %}\n        {{- '<think>\\n\\n</think>\\n\\n' }}\n    {%- else %}\n        {{- '<think>\\n' }}\n    {%- endif %}\n{%- endif %}",
+    "eos_token": "<|im_end|>",
+    "totalFileSize": 17920697088
+  },
+  "last_modified": "2026-07-12T00:58:46+00:00",
+  "library_name": "gguf",
+  "likes": 205,
+  "pipeline_tag": "image-text-to-text",
+  "private": false,
+  "sha": "97c11b03687f194b300efbdb4760d9bc4021b759",
+  "siblings": [
+    {
+      "rfilename": ".gitattributes"
+    },
+    {
+      "rfilename": "Qwythos-9B-v2-BF16.gguf"
+    },
+    {
+      "rfilename": "Qwythos-9B-v2-MTP-BF16.gguf"
+    },
+    {
+      "rfilename": "Qwythos-9B-v2-MTP-Q4_K_M.gguf"
+    },
+    {
+      "rfilename": "Qwythos-9B-v2-MTP-Q5_K_M.gguf"
+    },
+    {
+      "rfilename": "Qwythos-9B-v2-MTP-Q6_K.gguf"
+    },
+    {
+      "rfilename": "Qwythos-9B-v2-MTP-Q8_0.gguf"
+    },
+    {
+      "rfilename": "Qwythos-9B-v2-Q4_K_M.gguf"
+    },
+    {
+      "rfilename": "Qwythos-9B-v2-Q5_K_M.gguf"
+    },
+    {
+      "rfilename": "Qwythos-9B-v2-Q6_K.gguf"
+    },
+    {
+      "rfilename": "Qwythos-9B-v2-Q8_0.gguf"
+    },
+    {
+      "rfilename": "README.md"
+    },
+    {
+      "rfilename": "SHA256SUMS"
+    },
+    {
+      "rfilename": "mmproj-Qwythos-9B-v2-BF16.gguf"
+    }
+  ],
+  "spaces": [
+    "Abdelrhman2008/Qwythos-9B-Claude-Mythos-5-1M-GGUF"
+  ],
+  "tags": [
+    "gguf",
+    "llama.cpp",
+    "quantized",
+    "qwythos",
+    "qwen3.5",
+    "ftpo",
+    "reasoning",
+    "uncensored",
+    "long-context",
+    "1M-context",
+    "function-calling",
+    "multimodal",
+    "vision",
+    "image-text-to-text",
+    "en",
+    "base_model:empero-ai/Qwythos-9B-v2",
+    "base_model:quantized:empero-ai/Qwythos-9B-v2",
+    "license:apache-2.0",
+    "endpoints_compatible",
+    "region:us",
+    "conversational"
+  ],
+  "used_storage": 96562311424,
+  "widget_data": [
+    {
+      "text": "Hi, what can you help me with?"
+    },
+    {
+      "text": "What is 84 * 3 / 2?"
+    },
+    {
+      "text": "Tell me an interesting fact about the universe!"
+    },
+    {
+      "text": "Explain quantum computing in simple terms."
+    }
+  ]
+}
+#+end_example
+
+** empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF
+:PROPERTIES:
+:ID:       9E155FCD-A1B7-41EE-8AAF-AB0AC7276219
+:END:
+
+*** TODO Clearly spell out the current behavior of this one.
+
+This model seems to perform well for conversational needs. For
+llama.cpp it doesn't provide drop-in tool support: where the tools
+would eitehr need additional help to be parsed out, or can seem to use
+a specified chat_format but that breaks other uses.
+
+It seems plausible that it could be made to work, but first I'll look
+for something that requires less help (and potentially concurrently
+dig more deep into it).
+
+I should pull in the MTP option which I had previously skipped...so
+that will block further testing.
+
+*** card
+
+#+begin_src bash :results output
+  hf models card empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF
+#+end_src
+
+#+RESULTS:
+#+begin_example
+---
+license: apache-2.0
+base_model: empero-ai/Qwythos-9B-Claude-Mythos-5-1M
+base_model_relation: quantized
+language:
+- en
+pipeline_tag: image-text-to-text
+library_name: gguf
+tags:
+- gguf
+- llama.cpp
+- quantized
+- qwen3.5
+- reasoning
+- uncensored
+- long-context
+- 1M-context
+- function-calling
+- multimodal
+- vision
+- cybersecurity
+- biomedical
+- agentic
+---
+
+<p align="center">
+  <img src="https://huggingface.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M/resolve/main/assets/qwythos.png" alt="Qwythos-9B" width="640"/>
+</p>
+
+# Qwythos-9B-Claude-Mythos-5-1M-GGUF
+
+,**Developed by [Empero](https://empero.org)**
+
+GGUF quantizations of **[empero-ai/Qwythos-9B-Claude-Mythos-5-1M](https://huggingface.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M)** for [llama.cpp](https://github.com/ggml-org/llama.cpp), Ollama, LM Studio, jan, KoboldCpp, and other GGUF runtimes.
+
+Qwythos-9B is a full-parameter reasoning model post-trained on over 500 million tokens of high-quality Claude Mythos / Claude Fable traces with chain-of-thought generated in-house by Empero AI's internal `rethink` tool. It dominates the base Qwen3.5-9B under matched evaluation (**+34 pts MMLU, +30 pts gsm8k-strict, +19 pts gsm8k-flex**), supports **native function calling** per the Qwen3.5 spec, and ships with a **1,048,576-token (1M) context window** via YaRN rope-scaling enabled by default.
+
+For full training details, evaluation numbers, and capability writeup, see the **[base model card](https://huggingface.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M)**.
+
+---
+
+## Files
+
+### Normal text weights — fixed v3 replacements
+
+| File | Quant | Size | Notes |
+|---|---|---|---|
+| `Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf` | Q4_K_M | 5.24 GiB / 5.63 GB | **recommended default** — fixed v3, best compatibility |
+| `Qwythos-9B-Claude-Mythos-5-1M-Q5_K_M.gguf` | Q5_K_M | 6.02 GiB / 6.47 GB | fixed v3, balanced quality / size |
+| `Qwythos-9B-Claude-Mythos-5-1M-Q6_K.gguf` | Q6_K | 6.85 GiB / 7.36 GB | fixed v3, high quality |
+| `Qwythos-9B-Claude-Mythos-5-1M-Q8_0.gguf` | Q8_0 | 8.87 GiB / 9.53 GB | fixed v3, near-lossless |
+| `Qwythos-9B-Claude-Mythos-5-1M-BF16.gguf` | BF16 | 16.69 GiB / 17.92 GB | fixed v3, full precision conversion base |
+
+If you don't know which to pick, **Q4_K_M is the right starting point** — it's the smallest practical quant with good quality preservation.
+
+### MTP-enabled text weights — fixed v3 variants
+
+These include the restored Qwen3.5-compatible MTP head inside the GGUF. Use them with llama.cpp builds that support MTP draft speculation, for example `--spec-type draft-mtp`.
+
+| File | Quant | Size | Notes |
+|---|---|---|---|
+| `Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf` | Q4_K_M + MTP | 5.48 GiB / 5.89 GB | **recommended MTP default** |
+| `Qwythos-9B-Claude-Mythos-5-1M-MTP-Q5_K_M.gguf` | Q5_K_M + MTP | 6.26 GiB / 6.73 GB | MTP, balanced quality / size |
+| `Qwythos-9B-Claude-Mythos-5-1M-MTP-Q6_K.gguf` | Q6_K + MTP | 7.09 GiB / 7.62 GB | MTP, high quality |
+| `Qwythos-9B-Claude-Mythos-5-1M-MTP-Q8_0.gguf` | Q8_0 + MTP | 9.11 GiB / 9.79 GB | MTP, near-lossless |
+| `Qwythos-9B-Claude-Mythos-5-1M-MTP-BF16.gguf` | BF16 + MTP | 17.14 GiB / 18.41 GB | MTP, full precision conversion base |
+
+### Vision projector — for image input
+
+| File | Size | Notes |
+|---|---|---|
+| `mmproj-Qwythos-9B-Claude-Mythos-5-1M-F16.gguf` | 0.86 GiB / 0.92 GB | CLIP-style vision encoder + projector; **required for images**, pairs with any normal or MTP quant above |
+
+Qwythos inherits its **vision tower from the Qwen3.5-9B base model** — the vision path was *frozen* during SFT (training was text-only), so the vision behavior is identical to base Qwen3.5-9B's multimodal capability. The mmproj is interchangeable with any community-built Qwen3.5-9B `mmproj-*.gguf`.
+
+---
+
+## Quick start
+
+### llama.cpp (`llama-cli`)
+
+```bash
+llama-cli \
+  -m Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf \
+  -p "Walk through the biochemistry of how organophosphate nerve agents inhibit acetylcholinesterase." \
+  -n 8192 \
+  --temp 0.6 --top-p 0.95 --top-k 20 --repeat-penalty 1.05 \
+  -c 16384
+```
+
+### Ollama
+
+```bash
+ollama run hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M
+```
+
+### LM Studio / jan / KoboldCpp
+
+Drop any of the `.gguf` files into your runtime's model directory. Qwythos uses the standard Qwen3.5 chat template; modern GGUF runtimes load it automatically from the file.
+
+### llama.cpp with MTP draft speculation
+
+```bash
+llama-server \
+  -m Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf \
+  --spec-type draft-mtp \
+  --spec-draft-n-max 6 \
+  -c 16384 --port 8080
+```
+
+MTP support requires a recent llama.cpp build. If your runtime does not support MTP yet, use the normal fixed v3 files above.
+
+---
+
+## Vision (image input)
+
+Qwythos supports **image input** out of the box. Download both a text quant and the `mmproj-*.gguf` file from this repo, then run with llama.cpp's multimodal CLI or server.
+
+### llama.cpp (`llama-mtmd-cli`)
+
+```bash
+llama-mtmd-cli \
+  -m Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf \
+  --mmproj mmproj-Qwythos-9B-Claude-Mythos-5-1M-F16.gguf \
+  --image ./photo.jpg \
+  -p "Describe this image in detail." \
+  --temp 0.6 --top-p 0.95 --top-k 20 \
+  -c 16384
+```
+
+### llama.cpp server (OpenAI-compatible API with images)
+
+```bash
+llama-server \
+  -m Qwythos-9B-Claude-Mythos-5-1M-Q4_K_M.gguf \
+  --mmproj mmproj-Qwythos-9B-Claude-Mythos-5-1M-F16.gguf \
+  -c 16384 --port 8080
+```
+
+Then POST to `/v1/chat/completions` with an image URL or base64 payload — the standard OpenAI vision API shape works.
+
+### LM Studio
+
+Load the text quant; LM Studio detects the matching `mmproj-*.gguf` in the same folder and enables the image-attach button automatically.
+
+### What vision unlocks
+
+Since Qwythos inherits its vision tower unchanged from Qwen3.5-9B base, expect Qwen3.5-9B's documented vision capabilities: detailed image description, OCR (printed + handwritten), chart/table reading, UI/document understanding, basic spatial reasoning.
+
+,**Honest note:** the SFT used to produce Qwythos was **text-only** — we did not fine-tune the vision tower or train on any image-paired data. Image-grounded reasoning therefore inherits the base model's behavior; it has not been independently evaluated as part of this release. If your application is *primarily* vision-driven, validate on your own use case first.
+
+---
+
+## Sampling recommendations
+
+Qwythos is a reasoning model — every response opens with a `<think>...</think>` block before the final answer. Use these settings as defaults:
+
+| Parameter | Value |
+|---|---|
+| `temperature` | 0.6 |
+| `top_p` | 0.95 |
+| `top_k` | 20 |
+| `repeat_penalty` | 1.05 |
+| `max_new_tokens` | 16384 (generous budget for `<think>` + answer) |
+
+These match Qwen3.5's official thinking-mode recommendations. **Avoid greedy decoding and very-low-temperature sampling (T ≤ 0.3)** — both can cause repetition loops on long reasoning generations.
+
+---
+
+## Long context (1M tokens)
+
+The GGUFs ship with YaRN rope-scaling baked in for a **1,048,576-token context window** (4× extension over the 262k native).
+
+To use the full 1M window in `llama-cli`, set `-c 1010000` (or any context length up to that). For shorter prompts, lower `-c` to reduce KV-cache memory — at default settings llama.cpp will autosize.
+
+A single H100/H200-class GPU comfortably handles **256k–512k**; the full 1M typically needs tensor-parallel multi-GPU or aggressive KV-cache offload.
+
+---
+
+## Capabilities (from the base model card)
+
+- **+34 pts MMLU, +30 pts gsm8k-strict, +19 pts gsm8k-flex** vs. base Qwen3.5-9B under matched lm-eval-harness evaluation
+- **Native function calling** per Qwen3.5's chat-template spec — emits `<tool_call><function=NAME><parameter=NAME>VAL</parameter></function></tool_call>` blocks ready for any tool-use loop
+- **Self-correcting with tools**: in a 7-prompt tool-use harness (Python executor + DuckDuckGo search), Qwythos produced source-cited correct answers on 7/7, including 4/4 closed-book failure-modes from the original review
+- **Uncensored** — engages seriously with technically demanding questions across cybersecurity, red-teaming, biology, pharmacology, and clinical medicine
+- **1,048,576-token (1M) context** — YaRN rope-scaling enabled by default
+
+For full eval transcripts and per-task numbers, see the [base model card's `evals/` folder](https://huggingface.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M/tree/main/evals).
+
+---
+
+## Limitations
+
+- **Reasoning model.** Every answer opens with a `<think>` block; allow generous `max_new_tokens` and parse/strip `<think>...</think>` for end users.
+- **Use recommended sampling.** Greedy / very-low-temp can cause repetition loops.
+- **Verify specifics in safety-critical contexts.** Like all closed-book LLMs in this weight class, Qwythos can over-commit to specific identifiers (CVEs, hashcat modes, drug positions) it isn't certain about. Pair with retrieval or function calling in such deployments — the model uses tools cleanly when offered them.
+- **Uncensored — add your own application-level review/safety layer** for end-user-facing deployments where that matters.
+
+---
+
+## Stay in the loop
+
+Sign up for the Empero newsletter at **[empero.org](https://empero.org)** for releases, evals, and research notes.
+
+## Support / Donate
+
+If this model helped you, consider supporting the project:
+
+- **BTC**: `bc1qx6zepu6sfkvshgdmc4ewu6pk6rpadvpgffpp7v`
+- **LTC**: `ltc1qv2mefzps2vtjcpwfx8xxdrpplrcvltswm68r7x`
+- **XMR**: `42Dbm5xg5Nq26fdyzfEU7KBnAJfhi7Cvz5J2ex5CzHXkfKuNEJzYCcmJ1GTbgjFZ5MBx72sdG1G9239Cd6rsZfv4QeDkYJY`
+
+---
+
+## Provenance & licensing
+
+Weights are released under **Apache-2.0**, inherited from the Qwen3.5-9B base. Shared for research and experimentation, as-is.
+
+## Acknowledgements
+
+- Developed and released by [Empero](https://empero.org)
+- Base model: [Qwen3.5-9B](https://huggingface.co/Qwen/Qwen3.5-9B) (Alibaba Qwen team)
+- Quantization: [llama.cpp](https://github.com/ggml-org/llama.cpp) (ggml-org)
+- Vision projector (`mmproj`): inherited from Qwen3.5-9B (vision tower unchanged); F16 GGUF re-hosted with thanks to [Unsloth](https://huggingface.co/unsloth) for the original conversion
+- HF model: [empero-ai/Qwythos-9B-Claude-Mythos-5-1M](https://huggingface.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M)
+#+end_example
+
+*** gguf
+
+#+name: empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF
+
+#+begin_src 
+  hf download --quiet empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf
+#+end_src
+
+** ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-GGUF
+:PROPERTIES:
+:ID:       5EBE20C3-ABC6-401C-BAFB-1E806C1FFB52
+:header-args: :var model_repo="ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-GGUF"
+:END:
+
+This looks as though it's particularly focused on use in llama cpp so
+it may be worth deeper digging.
+
+The size of the model suggests that this could be a good orchestrator
+but /may/ need to dole out other work to richer models.
+
+#+name: ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-GGUF
+#+begin_src shell :results output
+  hf download ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-GGUF MiniCPM5-1B-Agentic-Tooluse-Nemotron-DPO.Q4_K_M.gguf
+#+end_src
+
+#+begin_src shell :results output
+  hf models card "${model_repo}"
+#+end_src
+
+#+RESULTS:
+#+begin_example
+---
+license: other
+base_model: ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-Merged-FP16
+library_name: gguf
+pipeline_tag: text-generation
+tags:
+- gguf
+- llama.cpp
+- llama-cpp
+- minicpm
+- minicpm5
+- minicpm5-1b
+- tool-calling
+- function-calling
+- function-call
+- tool-use
+- agentic
+- xml-tool-calling
+- q4_k_m
+- q8_0
+- f16
+- quantized
+- vllm
+- unsloth
+- openbmb
+- nemotron
+- dpo
+model-index:
+- name: MiniCPM5-1B Agentic Tooluse Nemotron DPO GGUF
+  results:
+  - task:
+      type: text-generation
+      name: Tool calling
+    dataset:
+      name: External ToolACE-derived first-call evaluation of source model
+      type: Team-ACE/ToolACE
+    metrics:
+    - type: parseable_rate
+      value: 0.9933333333333333
+      name: Source model parseable tool call rate
+    - type: expected_name_rate
+      value: 0.9266666666666666
+      name: Source model expected tool name rate
+---
+
+# MiniCPM5-1B Agentic Tooluse Nemotron DPO GGUF
+
+### 25 Likes and I'll finetune this further (Postponed, huggingface api has been down for 3-4 days since 11/7/2026)
+
+Current GGUF exports of the July 2026 Nemotron SFT+DPO repaired
+[`MiniCPM5-1B-Agentic-Tooluse-Merged-FP16`](https://huggingface.co/ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-Merged-FP16).
+
+These files were generated from the latest evaluated merged checkpoint. The previous warning that this repository had not been regenerated is no longer applicable.
+
+## Model Family
+
+| Use case | Repository |
+|---|---|
+| Current F16, Q8_0, and Q4_K_M GGUF files | This repository |
+| Standalone merged Hugging Face model | [`MiniCPM5-1B-Agentic-Tooluse-Merged-FP16`](https://huggingface.co/ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-Merged-FP16) |
+| PEFT/LoRA adapter | [`MiniCPM5-1B-Agentic-Tooluse-QLoRA-v2`](https://huggingface.co/ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-QLoRA-v2) |
+
+## Current Files
+
+| File | Size | Recommended use |
+|---|---:|---|
+| `MiniCPM5-1B-Agentic-Tooluse-Nemotron-DPO.F16.gguf` | 2.17 GB | Highest-fidelity GGUF and reference conversion |
+| `MiniCPM5-1B-Agentic-Tooluse-Nemotron-DPO.Q8_0.gguf` | 1.15 GB | High fidelity with lower memory use |
+| `MiniCPM5-1B-Agentic-Tooluse-Nemotron-DPO.Q4_K_M.gguf` | 688 MB | Recommended local size/speed balance |
+| `CONVERSION_METADATA.json` | Small | Exact source and converter revisions |
+
+The pre-Nemotron exports are retained under [`legacy/`](./tree/main/legacy) for reproducibility. Use the root-level `Nemotron-DPO` files for the current model.
+
+## Provenance
+
+- Base model: `openbmb/MiniCPM5-1B`
+- Current adapter: `ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-QLoRA-v2`
+- Conversion source: `ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-Merged-FP16`
+- Source revision: `67e1cad9b15ffc21d0877bf952d9ece2eeda5d35`
+- llama.cpp revision: `683f0c72e5b3c07fab90bfd9ec2ce8661d624228`
+- Quantizations: F16, Q8_0, Q4_K_M
+
+The export pipeline checked each output's GGUF magic, format version, size, and successful completion by `llama-quantize`. Full task evaluation was performed on the source merged model, not independently on every quantization.
+
+## Tool-Call Format
+
+The model emits XML-style calls:
+
+```xml
+<function name="tool_name"><param name="parameter">value</param></function>
+```
+
+A deployment runtime should:
+
+1. Provide the available tool definitions in the training-compatible prompt format.
+2. Decode deterministically for tool selection.
+3. Stop after the first complete `</function>`.
+4. Validate the function name and arguments against the supplied schema.
+5. Execute the tool outside the model and provide the result in a new turn.
+
+## llama.cpp
+
+Use a recent llama.cpp build:
+
+```bash
+llama-cli \
+  -m MiniCPM5-1B-Agentic-Tooluse-Nemotron-DPO.Q4_K_M.gguf \
+  -p '<user>Fix the calculator bug.</user>
+<tools>{"name":"run_tests","description":"Run the test suite."}</tools>
+<calls>' \
+  -n 96 \
+  --temp 0
+```
+
+The exact chat template and EOS handling matter. If a frontend supplies its own template, verify that it matches the source model's `chat_template.jinja`.
+
+## vLLM
+
+As of July 2026, vLLM documents GGUF support as highly experimental and under-optimized. GGUF support also requires the out-of-tree plugin:
+
+```bash
+uv pip install vllm vllm-gguf-plugin
+```
+
+Serve Q4_K_M directly from the Hub:
+
+```bash
+vllm serve \
+  ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-GGUF:Q4_K_M \
+  --tokenizer ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-Merged-FP16 \
+  --hf-config-path ewinregirgojr/MiniCPM5-1B-Agentic-Tooluse-Merged-FP16
+```
+
+The separate tokenizer/config arguments follow vLLM's recommendation to avoid unstable GGUF tokenizer conversion. The merged repository is used because it contains the matching tokenizer, configuration, and chat template.
+
+For stable high-throughput vLLM deployment, prefer the merged safetensors repository when memory permits.
+
+## Source-Model Evaluation
+
+External evaluation used 300 examples derived from the untouched
+[`Team-ACE/ToolACE`](https://huggingface.co/datasets/Team-ACE/ToolACE) dataset. The same cases and deterministic first-call evaluator were used for the base and fine-tuned source model. This is not an official ToolACE leaderboard submission.
+
+| Metric | Base MiniCPM5-1B | Nemotron repaired source | Delta |
+|---|---:|---:|---:|
+| Parseable tool call | 0.0133 | 0.9933 | +0.9800 |
+| Valid available-tool name | 0.0133 | 0.9700 | +0.9567 |
+| Expected tool name | 0.0133 | 0.9267 | +0.9133 |
+| Exact arguments | 0.1500 | 0.6533 | +0.5033 |
+| Argument-key overlap | 0.0033 | 0.7517 | +0.7484 |
+| No schema copying | 1.0000 | 1.0000 | +0.0000 |
+| No repetition | 0.9967 | 1.0000 | +0.0033 |
+| Clean stop | 0.0000 | 0.1500 | +0.1500 |
+
+These scores establish the behavior of the merged source checkpoint. Quantization can alter individual outputs, so evaluate the exact GGUF and runtime configuration used in production.
+
+## Source-Model Improvements and GGUF Scope
+
+These GGUF files were converted from the repaired merged checkpoint, whose reported results improved substantially over base MiniCPM5-1B:
+
+- Parseable calls: **1.33% -> 99.33%**
+- Valid available-tool names: **1.33% -> 97.00%**
+- Expected-tool selection: **1.33% -> 92.67%**
+- Exact arguments: **15.00% -> 65.33%**
+- Argument-key overlap: **0.33% -> 75.17%**
+- No repetition: **99.67% -> 100.00%**
+- Natural clean termination: **0.00% -> 15.00%**
+
+These are source FP16 metrics. The remaining gap to 100% is residual error after improvement, not evidence that the fine-tune made the base model worse.
+
+## Deployment Notes
+
+- Q4_K_M and Q8_0 have not yet received an independent 300-case ToolACE run, so their exact scores should not be assumed identical to FP16.
+- Schema validation and permission checks are universal tool-runtime safety requirements, not model-specific regressions.
+- Valid-name and exact-argument behavior improved strongly in the source model; rare errors can still occur on unseen tools.
+- MiniCPM5's parser-based serving path extracts the first completed XML call instead of relying solely on natural EOS.
+- vLLM GGUF support is experimental; merged safetensors remains the more reliable vLLM format.
+- llama.cpp behavior depends on build version and the frontend's chat-template handling.
+
+## Version History
+
+The current `Nemotron-DPO` files are the July 2026 repaired exports. Legacy pre-Nemotron files are stored under `legacy/` for reproducibility, and earlier repository states remain available from Hugging Face commit history.
+
+<!-- MINICPM5_RUNTIME_CONTRACT_START -->
+
+## MiniCPM5 Tool-Call Runtime Contract
+
+MiniCPM5-1B has native XML-style tool calling. OpenBMB recommends SGLang for tool calling with its built-in `minicpm5` parser:
+
+```bash
+python -m sglang.launch_server \
+  --model-path MODEL_PATH \
+  --tool-call-parser minicpm5
+```
+
+The parser converts a completed `<function ...>...</function>` block into an OpenAI-compatible `tool_calls` response. A production agent should treat the first completed function block as the action boundary, validate it, execute the tool externally, and send the tool result in a new turn.
+
+The reported `stopped_cleanly_rate=0.15` is a strict **natural-termination** metric: only 15% of evaluated generations emitted a completed call and then naturally terminated at that boundary without runtime intervention. It does **not** mean that only 15% produced usable tool calls. On the same 300 cases, the repaired source model achieved:
+
+- `parseable_rate=0.9933`
+- `valid_name_rate=0.9700`
+- `expected_name_rate=0.9267`
+- `no_repetition_rate=1.0000`
+
+Therefore, natural EOS-at-boundary remains weak, while first-call extraction and selection are much stronger. Use the official parser where supported and configure bounded generation or parser-side stopping after the first complete `</function>`.
+
+<!-- MINICPM5_RUNTIME_CONTRACT_END -->
+
+#+end_example
+
+** yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF
+:PROPERTIES:
+:ID:       514D4664-E3D0-4234-8892-7A38DDD8D0EB
+:END:
+
+** GestaltLabs/Ornstein-Hermes-3.6-27B-GGUF
+:PROPERTIES:
+:header-args: :var model_repo="GestaltLabs/Ornstein-Hermes-3.6-27B-GGUF"
+:END:
+
+This is a Hermes clone which anecdotally seems promising so seems
+worth taking for a spin.
+
+#+begin_src bash
+  echo hf download "${model_repo}" Ornstein-hermes-3.6-27b-Q4_K_M.gguf
+#+end_src    
+
+#+RESULTS:
+: hf download GestaltLabs/Ornstein-Hermes-3.6-27B-GGUF Ornstein-hermes-3.6-27b-Q4_K_M.gguf
+
+#+begin_src bash :results output
+  hf models card "${model_repo}"
+#+end_src
+
+#+RESULTS:
+#+begin_example
+---
+base_model: GestaltLabs/Ornstein-hermes-3.6-27b
+base_model_relation: quantized
+library_name: gguf
+tags:
+- gguf
+- quantized
+- llama.cpp
+- qwen3_5
+- qwen3.6
+- multimodal
+- function-calling
+- tool-use
+- agentic
+- hermes
+- imatrix
+language:
+- en
+license: apache-2.0
+pipeline_tag: image-text-to-text
+datasets:
+- DJLougen/Acta
+- DJLougen/Acta-Synthetic
+---
+
+![Ornstein-hermes-3.6-27b](hermes3.6-27b.png)
+
+# Ornstein-hermes-3.6-27b — GGUF Quantizations
+
+GGUF quantizations of [GestaltLabs/Ornstein-hermes-3.6-27b](https://huggingface.co/GestaltLabs/Ornstein-hermes-3.6-27b) — a Hermes-format function-calling fine-tune of Ornstein-3.6-27B (Qwen 3.6 27B multimodal).
+
+All K- and I-quants are calibrated with an **imatrix computed from 800 high-quality Hermes-format tool-use conversations** sampled from [DJLougen/Acta-Synthetic](https://huggingface.co/datasets/DJLougen/Acta-Synthetic) — so the quantization gradients are tuned for tool-calling distributions, not generic web text.
+
+## Support This Work
+
+I'm a PhD student in visual neuroscience at the University of Toronto who also happens to spend way too much time fine-tuning, merging, and quantizing open-weight models on rented H100s and a local DGX Spark. All training compute is self-funded — balancing GPU costs against a student budget. If my uploads have been useful to you, consider buying a PhD student a coffee. It goes a long way toward keeping these experiments running.
+
+,**[Support on Ko-fi](https://ko-fi.com/djlougen)**
+
+---
+
+## Available Quants
+
+| Quant | Bits/weight | Size | Notes |
+|-------|-------------|------|-------|
+| `Q8_0`     | ~8.5 | **26.6 GB** | Near-lossless. Use if you have ≥32 GB VRAM/RAM. |
+| `Q6_K`     | ~6.6 | **20.6 GB** | High fidelity, very small loss vs F16. |
+| `Q5_K_M`   | ~5.7 | **17.9 GB** | Strong default for ≥24 GB cards. |
+| `Q4_K_M`   | ~4.8 | **15.4 GB** | Most popular 4-bit; great quality/size tradeoff. |
+| `IQ4_NL`   | ~4.5 | **14.7 GB** | imatrix-aware non-linear 4-bit, smaller than Q4_K_M. |
+| `IQ4_XS`   | ~4.3 | **14.0 GB** | Smallest 4-bit; minor quality drop vs Q4_K_M. |
+| `Q3_K_M`   | ~3.9 | **12.4 GB** | Aggressive but usable; ≥16 GB VRAM. |
+| `IQ3_M`    | ~3.7 | **11.7 GB** | imatrix 3-bit; better than Q3_K_M at similar size. |
+| `IQ2_M`    | ~2.7 | **9.3 GB**  | Tight VRAM budget; expect noticeable degradation. |
+
+### Picking a quant
+
+- **24 GB GPU (e.g. RTX 3090/4090)** → `Q4_K_M` or `IQ4_NL`
+- **32 GB (e.g. RTX 5090)** → `Q5_K_M`
+- **48 GB (e.g. RTX A6000)** → `Q6_K`
+- **80 GB (H100/A100)** → `Q8_0`
+- **CPU-only with 32 GB RAM** → `IQ4_XS` or `Q3_K_M`
+- **16 GB VRAM** → `IQ3_M` or `IQ2_M`
+
+## Usage
+
+### llama.cpp
+
+```bash
+./llama-cli -m Ornstein-hermes-3.6-27b-Q4_K_M.gguf \
+  -ngl 999 \
+  -c 8192 \
+  --temp 0.7 \
+  -p "<|im_start|>user\nWhat's the weather in Tokyo?<|im_end|>\n<|im_start|>assistant\n"
+```
+
+For tool calling, register tools via the `--chat-template` system prompt or use the OpenAI-compatible server (`llama-server`) which handles tool registration automatically.
+
+### Ollama
+
+```bash
+ollama create ornstein-hermes-q4 -f - <<EOF
+FROM ./Ornstein-hermes-3.6-27b-Q4_K_M.gguf
+TEMPLATE """{{- range .Messages }}<|im_start|>{{ .Role }}
+{{ .Content }}<|im_end|>
+{{ end }}<|im_start|>assistant
+"""
+PARAMETER stop "<|im_end|>"
+EOF
+
+ollama run ornstein-hermes-q4
+```
+
+### LM Studio
+
+1. Download any GGUF from this repo
+2. Open in LM Studio (auto-detects Qwen3 chat template)
+3. Use the built-in tool-calling interface
+
+## Hermes Tool-Calling Format
+
+The model was trained on Hermes-style function calling. Expected message flow:
+
+```
+<|im_start|>system
+You are a function calling AI model. You are provided with function signatures within <tools></tools> XML tags.
+<tools>
+[{"name": "get_weather", "description": "...", "parameters": {...}}]
+</tools>
+<|im_end|>
+<|im_start|>user
+What's the weather in Tokyo?<|im_end|>
+<|im_start|>assistant
+<think>The user wants weather info. I'll call get_weather.</think>
+<tool_call>{"name": "get_weather", "arguments": {"city": "Tokyo"}}</tool_call><|im_end|>
+<|im_start|>tool
+<tool_response>{"temp_c": 18, "condition": "cloudy"}</tool_response><|im_end|>
+<|im_start|>assistant
+It's 18°C and cloudy in Tokyo.<|im_end|>
+```
+
+## Quantization Details
+
+| | |
+|---|---|
+| **Source** | [GestaltLabs/Ornstein-hermes-3.6-27b](https://huggingface.co/GestaltLabs/Ornstein-hermes-3.6-27b) (bf16) |
+| **F16 GGUF size** | 53.8 GB (851 tensors) |
+| **Tool** | [llama.cpp](https://github.com/ggerganov/llama.cpp) (latest) |
+| **imatrix corpus** | 800 conversations from [DJLougen/Acta-Synthetic](https://huggingface.co/datasets/DJLougen/Acta-Synthetic), `passes_thresholds=True`, rendered with the Qwen3.6 chat template (~385K tokens, 1.74 MB) |
+| **imatrix params** | `--n-gpu-layers 999 -c 4096 -b 4096 --chunks 200` |
+| **Hardware** | 1× NVIDIA RTX PRO 6000 Blackwell |
+
+## License
+
+Apache 2.0 — inherited from Qwen 3.6 base.
+
+## Citation
+
+If you use this model, please consider citing the dataset:
+
+```
+@dataset{lougen_acta_2026,
+  author = {DJLougen},
+  title = {Acta: A Premium Curated Sample of High-Quality Agentic Tool-Use Conversations},
+  year = {2026},
+  url = {https://huggingface.co/datasets/DJLougen/Acta}
+}
+```
+
+[<img src="https://raw.githubusercontent.com/unslothai/unsloth/main/images/unsloth%20made%20with%20love.png" width="200"/>](https://github.com/unslothai/unsloth)
+
+#+end_example
+
+** gemma4
+:PROPERTIES:
+:header-args: :var model_repo="yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF"
+:END:
+
+#+begin_src shell :results output
+  hf models card "${model_repo}"
+#+end_src
+
+#+RESULTS:
+#+begin_example
+---
+license: apache-2.0
+base_model: google/gemma-4-12B-it
+library_name: gguf
+pipeline_tag: text-generation
+tags:
+- gemma4
+- coding
+- agentic
+- terminal
+- tool-use
+- reasoning
+- thinking
+- gguf
+- llama.cpp
+- local-llm
+---
+
+# 💻🤖 Gemma4-12B **v2** — Coding + Agentic Edition ✨
+### 🐣 Tiny footprint, big brain — a local **coding & tool-using agent** for *everyone*
+
+> **No matter your GPU. No matter your RAM.** With **~4.5 GB** of VRAM *or* unified memory free, you can run your own
+> private, offline coding **agent** right now. 🚀 v2 is the big **agentic** upgrade — it reads, reasons, *uses tools*,
+> and works through multi-step technical tasks before it acts. 🧠🛠️ All local, all yours, no API, no cloud.
+
+---
+
+## 📊 The headline — it works as an agent (tau2-bench)
+
+v2 is built for **coding + agentic** work — writing code, running commands, using tools, debugging, multi-step
+technical tasks. The clearest signal is **tau2-bench `telecom`**, an agentic tool-use benchmark whose
+,*diagnose → fix → verify* loop mirrors real terminal/debugging work:
+
+| tau2-bench **telecom** · 20 tasks · local, same harness, **all Q8_0** | score |
+|---|---|
+| official `gemma-4-12B-it` (base) | **~15%** |
+| 🟢 **Gemma4-12B v2 (this model)** | **~55%** |
+
+→ Roughly **3.5× higher** than the base model on technical-agentic tasks. 🎯 **Want the full story** — *why* telecom,
+,*how* the two models fail differently, the honest caveats, and the trade-offs (including general knowledge)?
+,**It's all broken down further below. 👇**
+
+---
+
+## 🚀 Announcements
+
+,**📌 Hitting a problem? Please check my pinned discussion first.** **~99% of issues are a client/sampler config, not
+the weights** — and they have a quick fix there. For example: garbled or **repeating `0000…`** output almost always
+means **no repetition penalty** (set `rep_pen 1.1`, `temp 1.0`); and leaked `<|tool_call>` / `<|channel>` tokens mean
+your front-end isn't parsing Gemma 4's **native tool format** (use llama.cpp `--jinja`). If your question isn't covered,
+,**don't hesitate to open a discussion** — I read them and reply as fast as I can. 💬
+
+,**📦 No Q2_K this release.** I finished a Q2_K (imatrix) build, but it didn't hold up under real stress-testing, so I'm
+holding it back — **I only ship a quant once I'm confident it's genuinely good.** Smallest reliable option is
+,**Q3_K_M**; **Q4_K_M** is the recommended sweet spot. 🙏
+
+,**🔮 v3 is already on the way.** Honestly? Even *I* didn't expect the post-training jump to be **this** large — so I'm
+pushing further. v3 keeps the **coding + agentic** focus and aims higher still. Stay tuned! 🎉
+
+,**🐘 And a bigger sibling is coming — Qwen3.6-27B.** I've also started fine-tuning **Qwen3.6-27B** with the same
+,**coding + agentic** recipe, for those of you who *do* have the headroom and want more raw capability. But I haven't
+forgotten what this project is about: a **27B may be too heavy** for some of your GPUs / RAM. So this is **not** a
+replacement — I'm pushing **v3 (this 12B line) in parallel, at the same time**, and it will **only get stronger**. 💪
+,**No matter your hardware, you'll have a model that fits.** 💚
+
+---
+
+## 💚 A personal note — thank you, and a few honest words (please read)
+
+,**First, a huge thank-you for all the data and help you've shared.** 🙏 The bittersweet part: none of us saw it coming
+that **Fable 5 would be retired** — and only my *own* dataset holds Fable 5's **genuine, self-authored** chain-of-thought.
+So for every dataset the community contributed, I **rebuilt the missing reasoning from scratch with Opus 4.8 (xhigh)**.
+It may diverge from the original Fable 5 traces, but it was the only workable path — and the **improvement turned out
+really, *really* huge** (it nearly launched me out of my chair 😄). The benchmark numbers are right above. 👆
+
+,**Second** — I've tried to **reply to every community comment**, and I've openly **owned v1's training problems**. Truly,
+thank you: your feedback is what lets me improve. 💚
+
+Because v1 hit **#1 trending**, it also attracted some **bad words / trolling**. I'll say this gently but firmly: **real
+criticism is always welcome here — pure insults are not.** This is a **local** model that lets anyone run a capable AI on
+tiny RAM/VRAM, at **zero API cost** and fully **private**; I even open-sourced the **full safetensors master** to study
+and build on. If something's off, **open a discussion about the actual problem** — I genuinely want to hear it and I'll
+act on it. But comments that are *only* insults help no one, and I'll remove them without hesitation. 🙏
+
+Please remember: **I'm one person** — not a lab shipping an "open" model for marketing or to monetize later. I don't
+advertise. I build this for you on **my own time and my own money**: synthesizing data, reviewing and cleaning it by
+hand, splitting and re-segmenting it (this round I even built a **dynamic context-window** pass to keep the agent's
+,*read-before-act* steps intact), reading the latest papers, then training → evaluating → training → evaluating. It
+burned through an **entire Claude Max 20× plan** (I keep a separate Pro for my own work), and **v2 alone cost 40+ hours**
+— even with Opus 4.8, the data threw constant curveballs I had to verify myself. Thank you, truly. 🐾
+
+---
+
+## 🔬 The benchmarks, in detail (tau2-bench)
+
+I evaluated v2 on **tau2-bench** (an agentic tool-use benchmark). I did **not** run the whole suite — it's very
+time-consuming — so I focused on the single domain that best matches what v2 is for.
+
+,**Why tau2-bench `telecom`?** Telecom troubleshooting makes the agent **diagnose with read/inspect tools → pinpoint the
+issue → apply a fix → verify it** — structurally the *same loop* as real terminal/debugging work
+(*check state → diagnose → fix → confirm*). That's exactly what this model is meant to be good at, which makes it the
+right yardstick for v2 (much more so than a shopping/customer-service domain).
+
+| tau2-bench **telecom** · 20 tasks · local, same harness, **all Q8_0** | score |
+|---|---|
+| official `gemma-4-12B-it` (base) | **~15%** |
+| 🟢 **Gemma4-12B v2 (this model)** | **~55%** |
+
+→ Roughly **3.5× higher** than the base model on technical-agentic tasks. 🎯
+
+,**Grounded, not made-up.** Independently, a coding/terminal *fabrication probe* (tasks that deliberately tempt the
+model to invent file paths / function signatures / values) found v2 **grounds before it acts** just like the base —
+it `grep`/`read`/`ls` first, and **doesn't make things up** (0% fabrication, on par with the base model).
+
+,**The interesting part — *how* they fail.** The **base model gives up early**: on this run it bailed to a human agent
+,**10 times** (`transfer_to_human`) instead of finishing the fix. **v2 keeps going** — it stays in the loop and works the
+problem the way a much bigger model would, which is exactly why it solves so many more. It's not perfect yet: it still
+,**flails a little sometimes** (over-trying, retrying). And some of the remaining misses are actually a **bug in the
+benchmark's own APN tool** (it throws on inputs it should handle gracefully), not the model. To be clear: **I will not
+patch the benchmark's tools or leak its test questions just to inflate my score** — I'd rather report an honest number
+and improve the *model* itself. **More training is coming in v3.** 🔧
+
+,**About `retail` (customer-service shopping):** on tau2-bench *retail*, the base model scores a bit higher than v2. **This
+is fully expected and by design.** Retail is pure customer-service (look up a user, process an order) — *not* what this
+model is for. v2 is specialized for **coding / terminal / technical-agentic** work, and on those (telecom) it
+dramatically outperforms the base. Need a customer-service bot? This isn't it. Need a **local coding/agentic** model?
+It is. 💚
+
+,**Let's keep it honest about scale.** Today's *frontier* models — think **mimo-v2.5-pro** or **Opus 4.8** — all land
+,**90%+** on this telecom benchmark. They're also *enormous*. For a **12B** model, my rough *guess* is that v3 might top
+out somewhere around **60–70%** (emphasis on *guess* — I haven't even started v3 yet). So let's be clear-eyed: there's
+still a real gap to the frontier. But keep the scale in mind — **this is a 12B model running on your own machine**, and
+narrowing that gap as much as possible *at this size* is the whole point. 💪
+
+,**And the trade-off — there's no free lunch.** I also ran a general-knowledge benchmark (**MMLU-Pro**), and v2 lands
+,**a little below the base model** there. That's **completely normal and expected** for a focused fine-tune: when you
+push hard on coding + agentic, you trade a sliver of broad-knowledge breadth for it. Need a generalist? Try my own
+general-purpose **[Claude Opus 4.6/4.8 distillation](https://huggingface.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF)**
+— or the original **`google/gemma-4-12B-it`** base. Need a **local coding/agentic** worker? That's what v2 is tuned for.
+
+> 🔬 *Methodology, honestly:* these are **local, same-harness, relative** numbers (**all models tested at Q8_0**, greedy
+> decoding, self-simulated user, 20 tasks). They are **not** directly comparable to published tau2-bench leaderboard
+> figures (different user-simulator, full task sets, full precision) — local self-eval runs *systematically lower* than
+> published scores. Read them as **"v2 vs the base model under identical conditions"**, which is the comparison that
+> actually matters here.
+
+---
+
+## 📚 What's new in v2 (training)
+
+v2 continues from the v1 coder and adds a big **agentic** push — the piece v1 was missing:
+
+- **🛠️ Agentic / terminal** — real **multi-step tool-use** trajectories (*read → reason → act → verify*), in Gemma 4's
+  native tool protocol. This is what drove the tau2-bench telecom jump, and it fixes v1's "stops after the first step"
+  behavior.
+- **💻 Coding** — verified chain-of-thought over Python tasks (**real CoT, gated on passing tests**) plus the
+  Fable-5-redo set for the hard cases.
+- **📚 General** — a curated slice of reasoning/instruction data to keep broad competence.
+
+All reasoning is **distilled CoT** (see the personal note above on how the Fable 5 traces were rebuilt with Opus 4.8).
+
+---
+
+## 📦 Pick your size (GGUF quants)
+
+| Quant | Size | Vibe |
+|------|------|------|
+| 🟡 **Q3_K_M** | **5.7 GB** | great for 8 GB VRAM |
+| 🔵 **Q4_K_M** | **6.87 GB** | the sweet spot 👌 (recommended) |
+| 🟣 **Q6_K** | **9.11 GB** | near-lossless |
+| ⚪ **Q8_0** | **11.8 GB** | basically full quality |
+
+> ℹ️ *No **Q2_K** this release — it didn't pass stress-testing yet (see Announcements). Smallest reliable quant = **Q3_K_M**.*
+
+---
+
+## 🚀 How to run it
+
+### Option A — llama.cpp (recommended) 🦙
+> ⚠️ Needs a **recent llama.cpp** (this is the `gemma4_unified` architecture — older builds won't load it).
+
+```bat
+@echo off
+cd /d C:\llama.cpp
+llama-server.exe ^
+  -m C:\models\gemma4-v2-Q4_K_M.gguf ^
+  --ctx-size 16384 ^
+  --n-gpu-layers 99 ^
+  --no-mmap -fa on ^
+  --jinja ^
+  --temp 1.0 --top-p 0.95 --top-k 64 ^
+  --host 0.0.0.0 --port 18080
+pause
+```
+
+- **🛠️ Agentic use:** pass your tools via the OpenAI `tools` field (works with `--jinja`). v2 emits structured
+  tool-calls in Gemma 4's native protocol and is happy in agent loops (read/grep/edit/run, then verify).
+- **🖱️ One-click apps:** LM Studio / Jan / Ollama — import the GGUF, pick a quant, go.
+
+### 🧠 Thinking mode
+v2 thinks in Gemma's native thought channel before answering (keep `enable_thinking=true`, the default chat template
+handles it). Recommended sampling: `temp 1.0, top_p 0.95, top_k 64`; for coding you can also go greedy (`temp 0`).
+
+---
+
+## ⚠️ Good to know
+- **Specialized for coding / terminal / agentic.** General-knowledge facts/numbers should still be double-checked.
+- **Reduced refusals:** task-focused training, not safety-aligned — add your own guardrails for production. Use
+  responsibly. 🙏
+- English-centric.
+
+---
+
+## 📚 Base & License
+- **License: Apache 2.0.** Gemma 4 is released by Google under
+  ,**[Apache 2.0](https://ai.google.dev/gemma/apache_2)** (unlike the older Gemma 1/2/3 terms), so this fine-tune is
+  ,**Apache 2.0** too — free to use, modify, and redistribute. 🎉
+- **Base model:** [`google/gemma-4-12B-it`](https://huggingface.co/google/gemma-4-12B-it).
+- Personal/hobby project — shared as-is, no warranty. Built with time, care, and a lot of coffee. Have fun! 🐾✨
+
+---
+
+## ⚡ Speculative decoding (MTP draft) — verified build
+
+The `MTP/` folder ships the Gemma 4 multi-token-prediction draft (unsloth's GGUF conversion of Google's official
+`gemma-4-12B-it-assistant`) for speculative decoding. Gemma 4 MTP is in **llama.cpp mainline** (PR #23398) — no fork
+needed — but the `gemma4-assistant` loader is **build-sensitive right now**, so please use the exact build below:
+
+- ✅ **Verified working: llama.cpp `b9553` (commit `9e3b928fd`).** I reproduced it with `gemma4-v2-Q8_0` + the
+  `MTP-Q8_0` draft: loads cleanly and accelerates generation (~88 → ~180 tok/s on a simple deterministic prompt;
+  expect ~1.2–1.3× on real coding/thinking). **Lossless** either way.
+- ⚠️ **Newer builds (e.g. b9702 / b9717) currently crash** while loading the draft with `invalid vector subscript`.
+  This is an **upstream regression** in the `gemma4-assistant` loader path, *not* a problem with these GGUFs — the same
+  files load fine on b9553. Stick with **b9553** until it's fixed upstream.
+
+Working command on b9553 (note the older flag names — `--model-draft`, **not** `--spec-draft-model`):
+
+```bat
+llama-server -m gemma4-v2-Q8_0.gguf ^
+  --model-draft MTP\gemma-4-12B-it-MTP-Q8_0.gguf ^
+  --spec-type draft-mtp --spec-draft-n-max 4 ^
+  -ngl 99 -ngld 99 -fa on --jinja
+```
+
+> ℹ️ The `Gemma4Assistant requires ctx_other to be set (this is normal during memory fitting)` line is harmless. The
+> draft is the generic Gemma 4 assistant (not retrained for v2), so acceptance is a touch lower than a model-specific
+> draft would give — still 100% lossless. On small-VRAM cards, Q8 main + long context + the draft can be tight; drop to
+> Q6_K/Q4_K_M or a smaller `--ctx-size` if you hit OOM.
+
+#+end_example
+
+
+** Qwen3.6
+:PROPERTIES:
+:ID:       4482A001-E8FA-45A9-B3EF-6BB3971342F7
+:header-args: :var model_repo="unsloth/Qwen3.6-35B-A3B-GGUF" :results output
+:END:
+
+#+begin_src shell
+  hf models card "${model_repo}"
+#+end_src
+
+#+RESULTS:
+#+begin_example
+---
+library_name: transformers
+license: apache-2.0
+license_link: https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/main/LICENSE
+pipeline_tag: image-text-to-text
+base_model:
+- Qwen/Qwen3.6-35B-A3B
+tags:
+- unsloth
+- qwen
+- qwen3_5_moe
+---
+# Read our How to [Run Qwen3.6 Guide!](https://docs.unsloth.ai/models/qwen3.6)
+<div>
+  <p style="margin: 0 0 0px 0; margin-top: 0px;">
+    <em>See <a href="https://unsloth.ai/docs/basics/unsloth-dynamic-v2.0-gguf">Unsloth Dynamic 2.0 GGUFs</a> for our quantization benchmarks.</em>
+  </p>
+  <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 0px;">
+    <a href="https://github.com/unslothai/unsloth/">
+      <img src="https://github.com/unslothai/unsloth/raw/main/images/unsloth%20new%20logo.png" width="133">
+    </a>
+    <a href="https://discord.gg/unsloth">
+      <img src="https://github.com/unslothai/unsloth/raw/main/images/Discord%20button.png" width="173">
+    </a>
+    <a href="https://unsloth.ai/docs/models/qwen3.6">
+      <img src="https://raw.githubusercontent.com/unslothai/unsloth/refs/heads/main/images/documentation%20green%20button.png" width="143">
+    </a>
+  </div>
+    <ul style="margin: 0;">
+    <li>NEW: Developer Role Support so Qwen3.6 can work in Codex, OpenCode and more!</li>
+    <li>Qwen3.6 can now be run and fine-tuned in <a href="https://unsloth.ai/docs/new/studio">Unsloth Studio</a>. <a href="https://unsloth.ai/docs/models/qwen3.6">Read our guide</a>.</li>
+    <li>Tool calling improvements: Makes parsing nested objects to make tool calling succeed more.</li>
+ <li>Example of Qwen3.6 (4-bit GGUF) running in Unsloth Studio with tool-calling:</li>
+  </ul>
+</div>
+<img width="600" alt="qwen3.6 in unsloth studio" src="https://cdn-uploads.huggingface.co/production/uploads/62ecdc18b72a69615d6bd857/wRyC_xcMidEnz4INKA1b-.gif" />
+
+---
+
+# Qwen3.6-35B-A3B
+
+<img width="400px" src="https://qianwen-res.oss-accelerate.aliyuncs.com/Qwen3.6/logo.png">
+
+[![Qwen Chat](https://img.shields.io/badge/%F0%9F%92%9C%EF%B8%8F%20Qwen%20Chat%20-536af5)](https://chat.qwen.ai)
+
+> [!Note]
+> This repository contains model weights and configuration files for the post-trained model in the Hugging Face Transformers format. 
+>
+> These artifacts are compatible with Hugging Face Transformers, vLLM, SGLang, KTransformers, etc.
+
+Following the February release of the Qwen3.5 series, we're pleased to share the first open-weight variant of Qwen3.6. Built on direct feedback from the community, Qwen3.6 prioritizes stability and real-world utility, offering developers a more intuitive, responsive, and genuinely productive coding experience.
+
+## Qwen3.6 Highlights
+
+This release delivers substantial upgrades, particularly in
+
+- **Agentic Coding:** the model now handles frontend workflows and repository-level reasoning with greater fluency and precision. 
+- **Thinking Preservation:** we've introduced a new option to retain reasoning context from historical messages, streamlining iterative development and reducing overhead. 
+
+![Benchmark Results](https://qianwen-res.oss-cn-beijing.aliyuncs.com/Qwen3.6/Figures/qwen3.6_35b_a3b_score.png)
+
+For more details, please refer to our blog post [Qwen3.6-35B-A3B](https://qwen.ai/blog?id=qwen3.6-35b-a3b).
+
+## Model Overview
+
+- Type: Causal Language Model with Vision Encoder
+- Training Stage: Pre-training & Post-training
+- Language Model
+    - Number of Parameters: 35B in total and 3B activated
+    - Hidden Dimension: 2048
+    - Token Embedding: 248320 (Padded)
+    - Number of Layers: 40
+    - Hidden Layout: 10 × (3 × (Gated DeltaNet → MoE) → 1 × (Gated Attention → MoE))
+    - Gated DeltaNet:
+        - Number of Linear Attention Heads: 32 for V and 16 for QK
+        - Head Dimension: 128
+    - Gated Attention:
+        - Number of Attention Heads: 16 for Q and 2 for KV
+        - Head Dimension: 256
+        - Rotary Position Embedding Dimension: 64
+    - Mixture Of Experts
+        - Number of Experts: 256
+        - Number of Activated Experts: 8 Routed + 1 Shared
+        - Expert Intermediate Dimension: 512
+    - LM Output: 248320 (Padded)
+    - MTP: trained with multi-steps  
+- Context Length: 262,144 natively and extensible up to 1,010,000 tokens.
+
+
+## Benchmark Results
+
+### Language
+
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:1000px;margin:0 auto;padding:16px 0">
+<table style="width:100%;border-collapse:collapse;font-size:13px">
+<thead><tr>
+<th style="padding:10px 7px;text-align:left;font-weight:600;border-bottom:2px solid #7c3aed;color:#7c3aed"></th><th style="padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #7c3aed;color:#7c3aed;font-size: 14px;">Qwen3.5-27B</th><th style="padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #7c3aed;color:#7c3aed;font-size: 14px;">Gemma4-31B</th><th style="padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #7c3aed;color:#7c3aed;font-size: 14px;">Qwen3.5-35BA3B</th><th style="padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #7c3aed;color:#7c3aed;font-size: 14px;">Gemma4-26BA4B</th><th style="padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #7c3aed;color:#7c3aed;font-size: 14px;">Qwen3.6-35BA3B</th></tr></thead>
+<tbody>
+<tr><td colspan="6" style="padding:8px 12px;font-weight:600;color:#7c3aed;border-bottom:1px solid rgba(124, 58, 237, 0.2);background:rgba(124, 58, 237, 0.1)">Coding Agent</td></tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">SWE-bench Verified</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">75.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">52.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">70.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">17.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">73.4</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">SWE-bench Multilingual</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">69.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">51.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">60.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">17.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">67.2</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">SWE-bench Pro</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">51.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">35.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">44.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">13.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">49.5</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">Terminal-Bench 2.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">41.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">42.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">40.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">34.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">51.5</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">Claw-Eval <sub><small>Avg</small></sub></td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">64.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">48.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">65.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">58.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">68.7</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">Claw-Eval <sub><small>Pass^3</small></sub></td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">46.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">25.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">51.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">28.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">50.0</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">SkillsBench <sub><small>Avg5</small></sub></td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">27.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">23.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">4.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">12.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">28.7</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">QwenClawBench</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">52.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">41.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">47.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">38.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">52.6</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">NL2Repo</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">27.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">15.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">20.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">11.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">29.4</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">QwenWebBench</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">1068</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">1197</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">978</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">1178</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">1397</td>
+</tr>
+<tr><td colspan="6" style="padding:8px 12px;font-weight:600;color:#7c3aed;border-bottom:1px solid rgba(124, 58, 237, 0.2);background:rgba(124, 58, 237, 0.1)">General Agent</td></tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">TAU3-Bench</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">68.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">67.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">68.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">59.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">67.2</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">VITA-Bench</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">41.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">43.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">29.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">36.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">35.6</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">DeepPlanning</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">22.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">24.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">22.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">16.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">25.9</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">Tool Decathlon</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">31.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">21.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">28.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">12.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">26.9</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">MCPMark</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">36.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">18.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">27.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">14.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">37.0</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">MCP-Atlas</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">68.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">57.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">62.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">50.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">62.8</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">WideSearch</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">66.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">35.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">59.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">38.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">60.1</td>
+</tr>
+<tr><td colspan="6" style="padding:8px 12px;font-weight:600;color:#7c3aed;border-bottom:1px solid rgba(124, 58, 237, 0.2);background:rgba(124, 58, 237, 0.1)">Knowledge</td></tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">MMLU-Pro</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">86.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">85.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">85.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">82.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">85.2</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">MMLU-Redux</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">93.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">93.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">93.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">92.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">93.3</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">SuperGPQA</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">65.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">65.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">63.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">61.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">64.7</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">C-Eval</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">90.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">82.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">90.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">82.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">90.0</td>
+</tr>
+<tr><td colspan="6" style="padding:8px 12px;font-weight:600;color:#7c3aed;border-bottom:1px solid rgba(124, 58, 237, 0.2);background:rgba(124, 58, 237, 0.1)">STEM & Reasoning</td></tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">GPQA</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">85.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">84.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">84.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">82.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">86.0</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">HLE</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">24.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">19.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">22.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">8.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">21.4</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">LiveCodeBench v6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">80.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">80.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">74.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">77.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">80.4</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">HMMT Feb 25</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">92.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">88.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">89.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">91.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">90.7</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">HMMT Nov 25</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">89.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">87.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">89.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">87.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">89.1</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">HMMT Feb 26</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">84.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">77.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">78.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">79.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">83.6</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">IMOAnswerBench</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">79.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">74.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">76.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">74.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">78.9</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">AIME26 </td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">92.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">89.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">91.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">88.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">92.7</td>
+</tr>
+</tbody>
+</table>
+
+<p style="margin-top:12px;font-size:10px;opacity:0.7">
+,* SWE-Bench Series: Internal agent scaffold (bash + file-edit tools); temp=1.0, top_p=0.95, 200K context window. We correct some problematic tasks in the public set of SWE-bench Pro and evaluate all baselines on the refined benchmark.<br/>
+,* Terminal-Bench 2.0: Harbor/Terminus-2 harness; 3h timeout, 32 CPU/48 GB RAM; temp=1.0, top_p=0.95, top_k=20, max_tokens=80K, 256K ctx; avg of 5 runs.<br/>
+,* SkillsBench: Evaluated via OpenCode on 78 tasks (self-contained subset, excluding API-dependent tasks); avg of 5 runs.<br/>
+,* NL2Repo: Others are evaluated via Claude Code (temp=1.0, top_p=0.95, max_turns=900).<br/>
+,* QwenClawBench: An internal real-user-distribution Claw agent benchmark (open-sourcing soon); temp=0.6, 256K ctx.<br/>
+,* QwenWebBench: An internal front-end code generation benchmark; bilingual (EN/CN), 7 categories (Web Design, Web Apps, Games, SVG, Data Visualization, Animation, and 3D); auto-render + multimodal judge (code/visual correctness); BT/Elo rating system.<br/>
+,* TAU3-Bench: We use the official user model (gpt-5.2, low reasoning effort) + default BM25 retrieval.<br/>
+,* VITA-Bench: Avg subdomain scores; using claude-4-sonnet as judger, as the official judger (claude-3.7-sonnet) is no longer available.<br/>
+,* MCPMark: GitHub MCP v0.30.3; Playwright responses truncated at 32K tokens.<br/>
+,* MCP-Atlas: Public set score; gemini-2.5-pro judger.<br/>
+,* AIME 26: We use the full AIME 2026 (I & II), where the scores may differ from Qwen 3.5 notes.<br/>
+</p>
+
+</div>
+
+
+### Vision Language
+
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:1000px;margin:0 auto;padding:16px 0">
+<table style="width:100%;border-collapse:collapse;font-size:13px">
+<thead><tr>
+<th style="padding:10px 7px;text-align:left;font-weight:600;border-bottom:2px solid #7c3aed;color:#7c3aed"></th><th style="padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #7c3aed;color:#7c3aed;font-size: 14px;">Qwen3.5-27B</th><th style="padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #7c3aed;color:#7c3aed;font-size: 14px;">Claude-Sonnet-4.5</th><th style="padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #7c3aed;color:#7c3aed;font-size: 14px;">Gemma4-31B</th><th style="padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #7c3aed;color:#7c3aed;font-size: 14px;">Gemma4-26BA4B</th><th style="padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #7c3aed;color:#7c3aed;font-size: 14px;">Qwen3.5-35B-A3B</th><th style="padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #7c3aed;color:#7c3aed;font-size: 14px;">Qwen3.6-35B-A3B</th></tr></thead>
+<tbody>
+<tr><td colspan="7" style="padding:8px 12px;font-weight:600;color:#7c3aed;border-bottom:1px solid rgba(124, 58, 237, 0.2);background:rgba(124, 58, 237, 0.1)">STEM and Puzzle</td></tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">MMMU</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">82.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">79.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">80.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">78.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">81.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">81.7</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">MMMU-Pro</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">75.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">68.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">76.9*</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">73.8*</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">75.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">75.3</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">Mathvista(mini)</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">87.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">79.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">79.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">79.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">86.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">86.4</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">ZEROBench_sub</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">36.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">26.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">26.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">26.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">34.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">34.4</td>
+</tr>
+<tr><td colspan="7" style="padding:8px 12px;font-weight:600;color:#7c3aed;border-bottom:1px solid rgba(124, 58, 237, 0.2);background:rgba(124, 58, 237, 0.1)">General VQA</td></tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">RealWorldQA</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">83.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">70.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">72.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">72.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">84.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">85.3</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">MMBench<sub><small>EN-DEV-v1.1</small></sub></td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">92.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">88.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">90.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">89.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">91.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">92.8</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">SimpleVQA</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">56.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">57.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">52.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">52.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">58.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">58.9</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">HallusionBench</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">70.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">59.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">67.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">66.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">67.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">69.8</td>
+</tr>
+<tr><td colspan="7" style="padding:8px 12px;font-weight:600;color:#7c3aed;border-bottom:1px solid rgba(124, 58, 237, 0.2);background:rgba(124, 58, 237, 0.1)">Text Recognition and Document Understanding</td></tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">OmniDocBench1.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">88.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">85.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">80.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">74.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">89.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">89.9</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">CharXiv(RQ)</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">79.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">67.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">67.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">69.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">77.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">78.0</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">CC-OCR</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">81.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">68.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">75.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">74.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">80.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">81.9</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">AI2D_TEST</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">92.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">87.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">89.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">88.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">92.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">92.7</td>
+</tr>
+<tr><td colspan="7" style="padding:8px 12px;font-weight:600;color:#7c3aed;border-bottom:1px solid rgba(124, 58, 237, 0.2);background:rgba(124, 58, 237, 0.1)">Spatial Intelligence</td></tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">RefCOCO(avg)</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">90.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">89.2</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">92.0</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">ODInW13</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">41.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">42.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">50.8</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">EmbSpatialBench</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">84.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">71.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">83.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">84.3</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">RefSpatialBench</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">67.7</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">63.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">64.3</td>
+</tr>
+<tr><td colspan="7" style="padding:8px 12px;font-weight:600;color:#7c3aed;border-bottom:1px solid rgba(124, 58, 237, 0.2);background:rgba(124, 58, 237, 0.1)">Video Understanding</td></tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">VideoMME<sub><small>(w sub.)</sub></small></td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">87.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">81.1</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">86.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">86.6</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">VideoMME<sub><small>(w/o sub.)</sub></small></td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">82.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">75.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">82.5</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">82.5</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">VideoMMMU</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">82.3</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">77.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">81.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">76.0</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">80.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">83.7</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">MLVU</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">85.9</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">72.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">85.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">86.2</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">MVBench</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">74.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">74.8</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">74.6</td>
+</tr>
+<tr>
+<td style="padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);">LVBench</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">73.6</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">--</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">71.4</td>
+<td style="padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15)">71.4</td>
+</tr>
+</tbody>
+</table>
+<p style="margin-top:12px;font-size:10px;opacity:0.7">
+,* Empty cells (--) indicate scores not available or not applicable.
+</p>
+</div>
+
+## Quickstart
+
+For streamlined integration, we recommend using Qwen3.6 via APIs. Below is a guide to use Qwen3.6 via OpenAI-compatible API. 
+
+### Serving Qwen3.6
+
+Qwen3.6 can be served via APIs with popular inference frameworks.
+In the following, we show example commands to launch OpenAI-Compatible API servers for Qwen3.6 models.
+
+> [!Important]
+> Inference efficiency and throughput vary significantly across frameworks. 
+> We recommend using the latest framework versions to ensure optimal performance and compatibility.
+> For production workloads or high-throughput scenarios, dedicated serving engines such as SGLang, KTransformers or vLLM are strongly recommended.
+
+> [!Important]
+> The model has a default context length of 262,144 tokens.
+> If you encounter out-of-memory (OOM) errors, consider reducing the context window. 
+> However, because Qwen3.6 leverages extended context for complex tasks, we advise maintaining a context length of at least 128K tokens to preserve thinking capabilities.
+
+#### SGLang
+
+[SGLang](https://github.com/sgl-project/sglang) is a fast serving framework for large language models and vision language models.
+`sglang>=0.5.10` is recommended for Qwen3.6, which can be installed using the following command in a fresh environment:
+```shell
+uv pip install sglang[all]
+```
+See [its documentation](https://docs.sglang.ai/get_started/install.html) for more details.
+
+The following will create API endpoints at `http://localhost:8000/v1`:
+
+- **Standard Version**: The following command can be used to create an API endpoint with maximum context length 262,144 tokens using tensor parallel on 8 GPUs.
+    
+    ```shell
+    python -m sglang.launch_server --model-path Qwen/Qwen3.6-35B-A3B --port 8000 --tp-size 8 --mem-fraction-static 0.8 --context-length 262144 --reasoning-parser qwen3
+    ```
+
+- **Tool Use**: To support tool use, you can use the following command.
+    
+    ```shell
+    python -m sglang.launch_server --model-path Qwen/Qwen3.6-35B-A3B --port 8000 --tp-size 8 --mem-fraction-static 0.8 --context-length 262144 --reasoning-parser qwen3 --tool-call-parser qwen3_coder
+    ```
+
+- **Multi-Token Prediction (MTP)**: The following command is recommended for MTP:
+    
+    ```shell
+    python -m sglang.launch_server --model-path Qwen/Qwen3.6-35B-A3B --port 8000 --tp-size 8 --mem-fraction-static 0.8 --context-length 262144 --reasoning-parser qwen3 --speculative-algo NEXTN --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4
+    ```
+
+For detailed deployment guide, see the [SGLang Qwen3.5 Cookbook](https://lmsysorg.mintlify.app/cookbook/llm/Qwen/Qwen3.5).
+
+#### vLLM
+
+[vLLM](https://github.com/vllm-project/vllm) is a high-throughput and memory-efficient inference and serving engine for LLMs.
+`vllm>=0.19.0` is recommended for Qwen3.6, which can be installed using the following command in a fresh environment:
+```shell
+uv pip install vllm --torch-backend=auto
+```
+See [its documentation](https://docs.vllm.ai/en/stable/getting_started/installation/index.html) for more details. 
+
+
+The following will create API endpoints at `http://localhost:8000/v1`:
+
+- **Standard Version**: The following command can be used to create an API endpoint with maximum context length 262,144 tokens using tensor parallel on 8 GPUs.
+
+    ```shell
+    vllm serve Qwen/Qwen3.6-35B-A3B --port 8000 --tensor-parallel-size 8 --max-model-len 262144 --reasoning-parser qwen3 
+    ```
+
+- **Tool Call**: To support tool use, you can use the following command.
+    
+    ```shell
+    vllm serve Qwen/Qwen3.6-35B-A3B --port 8000 --tensor-parallel-size 8 --max-model-len 262144 --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser qwen3_coder 
+    ```
+
+- **Multi-Token Prediction (MTP)**: The following command is recommended for MTP:
+
+    ```shell
+    vllm serve Qwen/Qwen3.6-35B-A3B --port 8000 --tensor-parallel-size 8 --max-model-len 262144 --reasoning-parser qwen3 --speculative-config '{"method":"qwen3_next_mtp","num_speculative_tokens":2}'
+    ```
+
+- **Text-Only**: The following command skips the vision encoder and multimodal profiling to free up memory for additional KV cache:
+    
+    ```shell
+    vllm serve Qwen/Qwen3.6-35B-A3B --port 8000 --tensor-parallel-size 8 --max-model-len 262144 --reasoning-parser qwen3 --language-model-only
+    ```
+
+For detailed deployment guide, see the [vLLM Qwen3.5 Recipe](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html).
+
+#### KTransformers
+ 
+[KTransformers](https://github.com/kvcache-ai/ktransformers) is a flexible framework for experiencing cutting-edge LLM inference optimizations with CPU-GPU heterogeneous computing.
+For running Qwen3.6 with KTransformers, see the [KTransformers Deployment Guide](https://github.com/kvcache-ai/ktransformers/blob/main/doc/en/Qwen3.5.md).
+ 
+#### Hugging Face Transformers
+
+Hugging Face Transformers contains a _lightweight_ server which can be used for quick testing and moderate load deployment.
+The latest `transformers` is required for Qwen3.6:
+```shell
+pip install "transformers[serving]"
+```
+See [its documentation](https://huggingface.co/docs/transformers/main/serving) for more details. Please also make sure torchvision and pillow are installed.
+
+Then, run `transformers serve` to launch a server with API endpoints at `http://localhost:8000/v1`; it will place the model on accelerators if available:
+```shell
+transformers serve Qwen/Qwen3.6-35B-A3B --port 8000 --continuous-batching
+```
+
+### Using Qwen3.6 via the Chat Completions API
+
+The chat completions API is accessible via standard HTTP requests or OpenAI SDKs.
+Here, we show examples using the OpenAI Python SDK.
+
+Before starting, make sure it is installed and the API key and the API base URL is configured, e.g.:
+```shell
+pip install -U openai
+
+# Set the following accordingly
+export OPENAI_BASE_URL="http://localhost:8000/v1"
+export OPENAI_API_KEY="EMPTY"
+```
+
+> [!Tip]
+> We recommend using the following set of sampling parameters for generation
+> - Thinking mode for general tasks: `temperature=1.0, top_p=0.95, top_k=20, min_p=0.0, presence_penalty=1.5, repetition_penalty=1.0`
+> - Thinking mode for precise coding tasks (e.g. WebDev): `temperature=0.6, top_p=0.95, top_k=20, min_p=0.0, presence_penalty=0.0, repetition_penalty=1.0`
+> - Instruct (or non-thinking) mode for general tasks: `temperature=0.7, top_p=0.8, top_k=20, min_p=0.0, presence_penalty=1.5, repetition_penalty=1.0`
+> - Instruct (or non-thinking) mode for reasoning tasks: `temperature=1.0, top_p=0.95, top_k=20, min_p=0.0, presence_penalty=1.5, repetition_penalty=1.0`
+>
+> Please note that the support for sampling parameters varies according to inference frameworks.
+
+> [!Important]
+> Qwen3.6 models operate in thinking mode by default, generating thinking content signified by `<think>\n...</think>\n\n` before producing the final responses.
+> To disable thinking content and obtain direct response, refer to the examples [here](#instruct-or-non-thinking-mode).
+
+
+#### Text-Only Input
+
+```python
+from openai import OpenAI
+# Configured by environment variables
+client = OpenAI()
+
+messages = [
+    {"role": "user", "content": "Type \"I love Qwen3.6\" backwards"},
+]
+
+chat_response = client.chat.completions.create(
+    model="Qwen/Qwen3.6-35B-A3B",
+    messages=messages,
+    max_tokens=81920,
+    temperature=1.0,
+    top_p=0.95,
+    presence_penalty=1.5,
+    extra_body={
+        "top_k": 20,
+    }, 
+)
+print("Chat response:", chat_response)
+```
+
+
+#### Image Input
+
+```python
+from openai import OpenAI
+# Configured by environment variables
+client = OpenAI()
+
+messages = [
+    {
+        "role": "user",
+        "content": [
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": "https://qianwen-res.oss-accelerate.aliyuncs.com/Qwen3.5/demo/CI_Demo/mathv-1327.jpg"
+                }
+            },
+            {
+                "type": "text",
+                "text": "The centres of the four illustrated circles are in the corners of the square. The two big circles touch each other and also the two little circles. With which factor do you have to multiply the radii of the little circles to obtain the radius of the big circles?\nChoices:\n(A) $\\frac{2}{9}$\n(B) $\\sqrt{5}$\n(C) $0.8 \\cdot \\pi$\n(D) 2.5\n(E) $1+\\sqrt{2}$"
+            }
+        ]
+    }
+]
+
+response = client.chat.completions.create(
+    model="Qwen/Qwen3.6-35B-A3B",
+    messages=messages,
+    max_tokens=81920,
+    temperature=1.0,
+    top_p=0.95,
+    presence_penalty=1.5,
+    extra_body={
+        "top_k": 20,
+    }, 
+)
+print("Chat response:", chat_response)
+```
+
+#### Video Input
+
+```python
+from openai import OpenAI
+# Configured by environment variables
+client = OpenAI()
+
+messages = [
+    {
+        "role": "user",
+        "content": [
+            {
+                "type": "video_url",
+                "video_url": {
+                    "url": "https://qianwen-res.oss-accelerate.aliyuncs.com/Qwen3.5/demo/video/N1cdUjctpG8.mp4"
+                }
+            },
+            {
+                "type": "text",
+                "text": "How many porcelain jars were discovered in the niches located in the primary chamber of the tomb?"
+            }
+        ]
+    }
+]
+
+# When vLLM is launched with `--media-io-kwargs '{"video": {"num_frames": -1}}'`,
+# video frame sampling can be configured via `extra_body` (e.g., by setting `fps`).
+# This feature is currently supported only in vLLM.
+#
+# By default, `fps=2` and `do_sample_frames=True`.
+# With `do_sample_frames=True`, you can customize the `fps` value to set your desired video sampling rate.
+response = client.chat.completions.create(
+    model="Qwen/Qwen3.6-35B-A3B",
+    messages=messages,
+    max_tokens=81920,
+    temperature=1.0,
+    top_p=0.95,
+    presence_penalty=1.5,
+    extra_body={
+        "top_k": 20,
+        "mm_processor_kwargs": {"fps": 2, "do_sample_frames": True},
+    }, 
+)
+
+print("Chat response:", chat_response)
+```
+
+
+#### Instruct (or Non-Thinking) Mode
+
+> [!Important]
+> Qwen3.6 does not officially support the soft switch of Qwen3, i.e., `/think` and `/nothink`.
+
+Qwen3.6 will think by default before response.
+You can obtain direct response from the model without thinking by configuring the API parameters. 
+For example,
+```python
+from openai import OpenAI
+# Configured by environment variables
+client = OpenAI()
+
+messages = [
+    {
+        "role": "user",
+        "content": [
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": "https://qianwen-res.oss-accelerate.aliyuncs.com/Qwen3.6/demo/RealWorld/RealWorld-04.png"
+                }
+            },
+            {
+                "type": "text",
+                "text": "Where is this?"
+            }
+        ]
+    }
+]
+
+chat_response = client.chat.completions.create(
+    model="Qwen/Qwen3.6-35B-A3B",
+    messages=messages,
+    max_tokens=32768,
+    temperature=0.7,
+    top_p=0.8,
+    presence_penalty=1.5,
+    extra_body={
+        "top_k": 20,
+        "chat_template_kwargs": {"enable_thinking": False},
+    }, 
+)
+print("Chat response:", chat_response)
+```
+
+> [!Note]
+> If you are using APIs from Alibaba Cloud Model Studio, in addition to changing `model`, please use `"enable_thinking": False` instead of `"chat_template_kwargs": {"enable_thinking": False}`.
+
+#### Preserve Thinking
+
+By default, only the thinking blocks generated in handling the latest user message is retained, resulting in a pattern commonly as interleaved thinking. 
+Qwen3.6 has been additionally trained to preserve and leverage thinking traces from historical messages.
+You can enable this behavior by setting the `preserve_thinking` option:
+```python
+from openai import OpenAI
+# Configured by environment variables
+client = OpenAI()
+
+messages = [...]
+
+chat_response = client.chat.completions.create(
+    model="Qwen/Qwen3.6-35B-A3B",
+    messages=messages,
+    max_tokens=32768,
+    temperature=0.7,
+    top_p=0.8,
+    presence_penalty=1.5,
+    extra_body={
+        "top_k": 20,
+        "chat_template_kwargs": {"preserve_thinking": True},
+    }, 
+)
+print("Chat response:", chat_response)
+```
+
+> [!Note]
+> If you are using APIs from Alibaba Cloud Model Studio, in addition to changing `model`, please use `"preserve_thinking": True` instead of `"chat_template_kwargs": {"preserve_thinking": False}`.
+
+
+This capability is particularly beneficial for agent scenarios, where maintaining full reasoning context can enhance decision consistency and, in many cases, reduce overall token consumption by minimizing redundant reasoning. Additionally, it can improve KV cache utilization, optimizing inference efficiency in both thinking and non-thinking modes.
+
+
+## Agentic Usage
+
+Qwen3.6 excels in tool calling capabilities.
+
+### Qwen-Agent
+
+We recommend using [Qwen-Agent](https://github.com/QwenLM/Qwen-Agent) to quickly build Agent applications with Qwen3.6. 
+
+To define the available tools, you can use the MCP configuration file, use the integrated tool of Qwen-Agent, or integrate other tools by yourself.
+```python
+import os
+from qwen_agent.agents import Assistant
+
+# Define LLM
+# Using Alibaba Cloud Model Studio
+llm_cfg = {
+    # Use the OpenAI-compatible model service provided by DashScope:
+    'model': 'Qwen3.6-35B-A3B',
+    'model_type': 'qwenvl_oai',
+    'model_server': 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+    'api_key': os.getenv('DASHSCOPE_API_KEY'),
+
+    'generate_cfg': {
+        'use_raw_api': True,
+        # When using Dash Scope OAI API, pass the parameter of whether to enable thinking mode in this way
+        'extra_body': {
+            'enable_thinking': True,
+            'preserve_thinking': True,
+        },
+    },
+}
+
+# Using OpenAI-compatible API endpoint.
+# functionality of the deployment frameworks and let Qwen-Agent automate the related operations.
+#
+# llm_cfg = {
+#     # Use your own model service compatible with OpenAI API by vLLM/SGLang:
+#     'model': 'Qwen/Qwen3.6-35B-A3B',
+#     'model_type': 'qwenvl_oai',
+#     'model_server': 'http://localhost:8000/v1',  # api_base
+#     'api_key': 'EMPTY',
+#
+#     'generate_cfg': {
+#         'use_raw_api': True,
+#         # When using vLLM/SGLang OAI API, pass the parameter of whether to enable thinking mode in this way
+#         'extra_body': {
+#             'chat_template_kwargs': {'enable_thinking': True, 'preserve_thinking': True}
+#         },
+#     },
+# }
+
+# Define Tools
+tools = [
+    {'mcpServers': {  # You can specify the MCP configuration file
+            "filesystem": {
+                "command": "npx",
+                "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/xxxx/Desktop"]
+            }
+        }
+    }
+]
+
+# Define Agent
+bot = Assistant(llm=llm_cfg, function_list=tools)
+
+# Streaming generation
+messages = [{'role': 'user', 'content': 'Help me organize my desktop.'}]
+for responses in bot.run(messages=messages):
+    pass
+print(responses)
+
+# Streaming generation
+messages = [{'role': 'user', 'content': 'Develop a dog website and save it on the desktop'}]
+for responses in bot.run(messages=messages):
+    pass
+print(responses)
+```
+
+### Qwen Code
+
+
+[Qwen Code](https://github.com/QwenLM/qwen-code) is an open-source AI agent for the terminal, optimized for Qwen models. It helps you understand large codebases, automate tedious work, and ship faster.
+
+For more information, please refer to [Qwen Code](https://qwenlm.github.io/qwen-code-docs/).
+
+## Processing Ultra-Long Texts
+
+Qwen3.6 natively supports context lengths of up to 262,144 tokens. 
+For long-horizon tasks where the total length (including both input and output) exceeds this limit, we recommend using RoPE scaling techniques to handle long texts effectively., e.g., YaRN.
+
+YaRN is currently supported by several inference frameworks, e.g., `transformers`, `vllm`, `ktransformers` and `sglang`. 
+In general, there are two approaches to enabling YaRN for supported frameworks:
+
+- Modifying the model configuration file:
+  In the `config.json` file, change the `rope_parameters` fields in `text_config` to:
+    ```json
+    {
+        "mrope_interleaved": true,
+        "mrope_section": [
+            11,
+            11,
+            10
+        ],
+        "rope_type": "yarn",
+        "rope_theta": 10000000,
+        "partial_rotary_factor": 0.25,
+        "factor": 4.0,
+        "original_max_position_embeddings": 262144,
+    }
+    ```
+
+- Passing command line arguments:
+
+  For `vllm`, you can use
+    ```shell
+    VLLM_ALLOW_LONG_MAX_MODEL_LEN=1 vllm serve ... --hf-overrides '{"text_config": {"rope_parameters": {"mrope_interleaved": true, "mrope_section": [11, 11, 10], "rope_type": "yarn", "rope_theta": 10000000, "partial_rotary_factor": 0.25, "factor": 4.0, "original_max_position_embeddings": 262144}}}' --max-model-len 1010000  
+    ```
+
+  For `sglang` and `ktransformers`, you can use
+    ```shell
+    SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1 python -m sglang.launch_server ... --json-model-override-args '{"text_config": {"rope_parameters": {"mrope_interleaved": true, "mrope_section": [11, 11, 10], "rope_type": "yarn", "rope_theta": 10000000, "partial_rotary_factor": 0.25, "factor": 4.0, "original_max_position_embeddings": 262144}}}' --context-length 1010000
+    ```
+
+> [!NOTE]
+> All the notable open-source frameworks implement static YaRN, which means the scaling factor remains constant regardless of input length, **potentially impacting performance on shorter texts.**
+> We advise modifying the `rope_parameters` configuration only when processing long contexts is required. 
+> It is also recommended to modify the `factor` as needed. For example, if the typical context length for your application is 524,288 tokens, it would be better to set `factor` as 2.0. 
+
+## Best Practices
+
+To achieve optimal performance, we recommend the following settings:
+
+1. **Sampling Parameters**:  
+   - We suggest using the following sets of sampling parameters depending on the mode and task type:  
+     - **Thinking mode for general tasks**:  
+       `temperature=1.0`, `top_p=0.95`, `top_k=20`, `min_p=0.0`, `presence_penalty=1.5`, `repetition_penalty=1.0`  
+     - **Thinking mode for precise coding tasks (e.g., WebDev)**:  
+       `temperature=0.6`, `top_p=0.95`, `top_k=20`, `min_p=0.0`, `presence_penalty=0.0`, `repetition_penalty=1.0`  
+     - **Instruct (or non-thinking) mode for general tasks**:  
+       `temperature=0.7`, `top_p=0.8`, `top_k=20`, `min_p=0.0`, `presence_penalty=1.5`, `repetition_penalty=1.0`  
+     - **Instruct (or non-thinking) mode for reasoning tasks**:  
+       `temperature=1.0`, `top_p=1.0`, `top_k=40`, `min_p=0.0`, `presence_penalty=2.0`, `repetition_penalty=1.0`  
+   - For supported frameworks, you can adjust the `presence_penalty` parameter between 0 and 2 to reduce endless repetitions. However, using a higher value may occasionally result in language mixing and a slight decrease in model performance.
+
+2. **Adequate Output Length**: We recommend using an output length of 32,768 tokens for most queries. For benchmarking on highly complex problems, such as those found in math and programming competitions, we suggest setting the max output length to 81,920 tokens. This provides the model with sufficient space to generate detailed and comprehensive responses, thereby enhancing its overall performance.
+
+3. **Standardize Output Format**: We recommend using prompts to standardize model outputs when benchmarking.
+   - **Math Problems**: Include "Please reason step by step, and put your final answer within \boxed{}." in the prompt.
+   - **Multiple-Choice Questions**: Add the following JSON structure to the prompt to standardize responses: "Please show your choice in the `answer` field with only the choice letter, e.g., `"answer": "C"`."
+
+4. **Long Video Understanding**: To optimize inference efficiency for plain text and images, the `size` parameter in the released `video_preprocessor_config.json` is conservatively configured. It is recommended to set the `longest_edge` parameter in the video_preprocessor_config file to 469,762,048 (corresponding to 224k video tokens) to enable higher frame-rate sampling for hour-scale videos and thereby achieve superior performance. For example,
+    ```json
+    {"longest_edge": 469762048, "shortest_edge": 4096}
+    ```
+
+    Alternatively, override the default values via engine startup parameters. For implementation details, refer to: [vLLM](https://github.com/vllm-project/vllm/pull/34330) / [SGLang](https://github.com/sgl-project/sglang/pull/18467).
+
+
+### Citation
+
+If you find our work helpful, feel free to give us a cite.
+
+```bibtex
+@misc{qwen36_35b_a3b,
+    title = {{Qwen3.6-35B-A3B}: Agentic Coding Power, Now Open to All},
+    url = {https://qwen.ai/blog?id=qwen3.6-35b-a3b},
+    author = {{Qwen Team}},
+    month = {April},
+    year = {2026}
+}
+```
+#+end_example
+
 ** gpt-oss
 :PROPERTIES:
 :ID:       D6EB63CC-2B15-45DC-8C49-33C0DB4DA1C5

@@ -1,0 +1,42 @@
+:PROPERTIES:
+:ID:       DAA3B547-F45A-44A7-8F53-8342CD874D5E
+:END:
+#+TITLE: al/shell-image
+
+Produce an image for use by [[id:7233EF2D-04BB-4A88-9179-DC8AEE26313A][al]].
+
+#+begin_src emacs-lisp
+  (org-babel-tangle)
+#+end_src
+
+#+RESULTS:
+| /Users/mwhipple/memex/cabinet/al/Dockerfile |
+
+#+NAME: build-image
+#+BEGIN_SRC shell :session al_image :async yes
+docker build -t al_image .
+#+END_SRC
+
+#+BEGIN_SRC dockerfile :tangle "Dockerfile"
+FROM debian:bookworm-slim
+
+# Install coreutils and emacs
+RUN apt-get update && apt-get install -y \
+    coreutils \
+    emacs-nox \
+    python3 \
+    file \
+    ghc \
+    git \
+    pandoc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a non-root user for Emacs
+RUN useradd -m -s /bin/bash al
+
+# Set up environment variables
+ENV HOME=/home/al
+WORKDIR $HOME
+
+USER al
+#+end_src

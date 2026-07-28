@@ -7,6 +7,8 @@ An efficient session is one that produces results with the minimal amount of tim
 (prioritized in that order).
 
 - Locate all missives (logs, messages, session data) for the current session.
+  - This primarily consists of all of the messages sent to and from the model...this
+    should be readily available and should not need to be located.
 - For each missive, extract any information or suggestions that could have enabled more efficient work.
   - This should include anything within the message along with any indication of effort that could have been avoided
 - Factors such as repeated work also be tracked so that redundancy can be reduced

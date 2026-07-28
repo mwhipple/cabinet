@@ -3,10 +3,14 @@ name: task-master
 description: Plan out work to be done.
 ---
 
+- Use the following skills wherever appropriate:
+  - file-editor
+  - literate-programmer
+  - org-todo-collector
 - Have org-todo-collector locate tasks.
 - Do NOT do anything which is not requested by such tasks.
   - If work is identified that is not requested, then include that in the feedback produced
-- For each task perform some work...
+- Identify a single task to do (the first found) and for that task:
   - *all* tasks should result in work being done
   - if a request is for you to do something for yourself,
     it should result in the creation of tools and documentation that can drive
