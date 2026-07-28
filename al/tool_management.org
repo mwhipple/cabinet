@@ -1,0 +1,4 @@
+:PROPERTIES:
+:ID:       32945CC7-E5FF-435A-8D00-29C87E9727AE
+:END:
+#+title: al/tool-management

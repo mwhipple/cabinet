@@ -1,0 +1,5 @@
+:PROPERTIES:
+:ID:       10B07080-3A98-411F-BBEC-98A11700F556
+:END:
+#+title: lean-software
+

@@ -2,7 +2,8 @@
 :ID:       2E17867A-8CB5-4CE8-924B-B78764E0D442
 :END:
 #+title: al/index
-
-[[id:D65CCEA0-A995-4F16-8E3E-E3FDCDF58170][al/background]]
+* [[id:D65CCEA0-A995-4F16-8E3E-E3FDCDF58170][al/background]]
 #+transclude: [[id:D65CCEA0-A995-4F16-8E3E-E3FDCDF58170][al/background]]
 
+* [[id:DE72620E-D29F-4E9F-B448-53C7C3B82332][al/agent]]
+#+transclude: [[id:DE72620E-D29F-4E9F-B448-53C7C3B82332][al/agent]]

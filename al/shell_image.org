@@ -17,22 +17,30 @@ Produce an image for use by [[id:7233EF2D-04BB-4A88-9179-DC8AEE26313A][al]].
 docker build -t al_image .
 #+END_SRC
 
-#+BEGIN_SRC dockerfile :tangle "Dockerfile"
-FROM debian:bookworm-slim
+#+RESULTS: build-image
+#+begin_example
+docker build -t al_image .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
 
-# Install coreutils and emacs
-RUN apt-get update && apt-get install -y \
-    coreutils \
-    emacs-nox \
-    python3 \
-    file \
-    ghc \
-    git \
-    pandoc \
-    && rm -rf /var/lib/apt/lists/*
+Sending build context to Docker daemon  19.46kB
+Step 1/5 : FROM pandoc/core
+ ---> 8d7467e8ee40
+Step 2/5 : RUN adduser -s /bin/bash al
+ ---> Running in 1251fb707506
+Changing password for al
+New password: 
+passwd: password for al is unchanged
+The command '/bin/sh -c adduser -s /bin/bash al' returned a non-zero code: 1
+[?2004hecho 'ob_comint_async_shell_end_1521aef5-2922-4bdb-a77d-03dd042b50fa'[?2004l
+#+end_example
+
+#+BEGIN_SRC dockerfile :tangle "Dockerfile"
+FROM pandoc/core
 
 # Create a non-root user for Emacs
-RUN useradd -m -s /bin/bash al
+RUN adduser -s /bin/bash al
 
 # Set up environment variables
 ENV HOME=/home/al

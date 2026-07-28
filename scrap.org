@@ -1,0 +1,39 @@
+:PROPERTIES:
+:ID:       874E8D47-B2B2-49F4-AF01-87B26B4C6247
+:END:
+#+title: scrap
+
+Working on some lower-level literate programming support.
+
+#+name: test
+#+begin_src bash :test foo
+  echo "${test}"
+#+end_src
+
+#+begin_results :from test :handle stdout
+#+end_results
+
+* AL-TODO
+
+Build out initial support for notebook support using pandoc to fill
+out this file.
+This should be authored using haskell code that uses pandoc as a
+library.
+
+When a block is encoutered with a ~from~ attribute it locates the
+block with that name.
+For the block with that name, it locates a shell script in the
+~evaluators~ directory with the name for the current language - for
+example ~#+begin_src tla~ block will look for an ~evaluators/tla~
+shell script.
+The shell script is invoked in a temp file with stdout and stderr redirected to
+correspondingly named files within that directory - each attribute for the fence
+block is set as an environment variable for the script, for example:
+~#+begin_src foo :baz bar~ would result in the ~foo~ script being
+invoked with baz=bar in its environment. The body of the block is
+passed as stdin to the script. The body of the block with the from
+attribute is populated with the results of the corresponding file,
+defaulting to stdin.
+
+The script should be run so that it updates existing files, and it
+should be run against this file.

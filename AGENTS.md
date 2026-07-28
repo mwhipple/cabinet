@@ -73,3 +73,12 @@ Applied agent-kaizen analysis to current session.
 **Observation:** The agent-kaizen skill was applied to this session. Multiple shell commands were issued sequentially to explore the skills directory and read SKILL.md. This resulted in several tool invocations when a single combined operation could suffice.
 
 **Proposal (AL-REVIEW):** For future sessions, consider batching related file operations or using more targeted queries to reduce the number of tool calls. Over.
+
+## AL-TODO extraction via pandoc
+
+- Created `/host/al/org-todo-filter.hs` – a Haskell pandoc filter that parses an org-mode document, traverses its AST, and collects all headings whose tag list contains `AL-TODO`. It prints each matching title on its own line.
+- Created `/host/al/org-todo-extract.sh` – a shell script that recursively finds all `.org` files under `/host` and runs `pandoc --filter /host/al/org-todo-filter.hs` on each, discarding any errors (non‑org files are ignored). The output is the concatenated list of AL‑TODO titles.
+- Updated `/host/skills/task-master` to simply execute the new extraction script, thereby replacing the previous emacs‑based implementation.
+
+**Why this design?**  
+The filter is written in Haskell because it can directly use pandoc’s AST API (`parsePandoc`, `AST`, `Heading`, etc.), which makes the logic concise and type‑safe. The shell wrapper automatically searches the entire `/host` tree, so callers don’t need to enumerate files. This also avoids any dependency on Emacs or its org-mode parser.

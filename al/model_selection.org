@@ -1,3 +1,6 @@
+:PROPERTIES:
+:ID:       3B03D516-BE0A-4F3F-8C8B-75B37693BE9F
+:END:
 #+title: al/model-selection
 
 There should maybe be multiple involved and I don't have a mature

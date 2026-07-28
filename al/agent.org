@@ -1,0 +1,37 @@
+:PROPERTIES:
+:ID:       DE72620E-D29F-4E9F-B448-53C7C3B82332
+:END:
+#+title: al/agent
+
+* Coding the Agent
+:PROPERTIES:
+:header-args: :var venv="/tmp/al" :python /tmp/al/bin/python :async yes :results output :session al
+:END:
+
+I'm hoping to just use [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]] as directly as possible through the
+python bindings project. I've ended up moving away from richer
+harnesses due to feeling like they are more likely to chase richer
+functionality than I want and the perpsective that I should be able to
+use the agent to help build itself (which should effectively dissolve
+the traditional benefits of using more packaged software).
+
+** Setup the venv
+
+The dependencies are minimal. As touched on above [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]] is an
+assumed host dependency (which could also be taken care of by
+[[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]] but splitting out management from use seems wise for
+multiple reasons).
+
+#+begin_src bash :session al-venv
+  python -m venv "${venv}"
+  ${venv}/bin/python -m pip install llama-cpp-python
+#+end_src
+
+#+RESULTS:
+: Requirement already satisfied: llama-cpp-python in /private/tmp/al/lib/python3.14/site-packages (0.3.34)
+: Requirement already satisfied: typing-extensions>=4.5.0 in /private/tmp/al/lib/python3.14/site-packages (from llama-cpp-python) (4.16.0)
+: Requirement already satisfied: numpy>=1.20.0 in /private/tmp/al/lib/python3.14/site-packages (from llama-cpp-python) (2.5.1)
+: Requirement already satisfied: diskcache>=5.6.1 in /private/tmp/al/lib/python3.14/site-packages (from llama-cpp-python) (5.6.3)
+: Requirement already satisfied: jinja2>=2.11.3 in /private/tmp/al/lib/python3.14/site-packages (from llama-cpp-python) (3.1.6)
+: Requirement already satisfied: MarkupSafe>=2.0 in /private/tmp/al/lib/python3.14/site-packages (from jinja2>=2.11.3->llama-cpp-python) (3.0.3)
+
