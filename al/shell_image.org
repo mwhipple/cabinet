@@ -5,46 +5,79 @@
 
 Produce an image for use by [[id:7233EF2D-04BB-4A88-9179-DC8AEE26313A][al]].
 
+* Rest
+
 #+begin_src emacs-lisp
   (org-babel-tangle)
 #+end_src
 
 #+RESULTS:
-| /Users/mwhipple/memex/cabinet/al/Dockerfile |
+| /Users/mwhipple/memex/cabinet/al/Dockerfile | /Users/mwhipple/memex/cabinet/al/.gitignore |
 
 #+NAME: build-image
 #+BEGIN_SRC shell :session al_image :async yes
 docker build -t al_image .
 #+END_SRC
 
-#+RESULTS: build-image
-#+begin_example
-docker build -t al_image .
-DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
-            Install the buildx component to build images with BuildKit:
-            https://docs.docker.com/go/buildx/
+Starting from https://github.com/pandoc/dockerfiles/tree/main
 
-Sending build context to Docker daemon  19.46kB
-Step 1/5 : FROM pandoc/core
- ---> 8d7467e8ee40
-Step 2/5 : RUN adduser -s /bin/bash al
- ---> Running in 1251fb707506
-Changing password for al
-New password: 
-passwd: password for al is unchanged
-The command '/bin/sh -c adduser -s /bin/bash al' returned a non-zero code: 1
-[?2004hecho 'ob_comint_async_shell_end_1521aef5-2922-4bdb-a77d-03dd042b50fa'[?2004l
-#+end_example
+To start the expectation is that Al will be building some haskell
+with pandoc, so we'll largely crib from the builder-base image
+which would have those components available.
+
+There seems to be some quirks around getting the cabal install to be
+picked up which is being worked through.
+This is likely due to wanting it to be run as the user,
+
+This should be broken up and better commented.
 
 #+BEGIN_SRC dockerfile :tangle "Dockerfile"
 FROM pandoc/core
 
-# Create a non-root user for Emacs
-RUN adduser -s /bin/bash al
+RUN apk --no-cache add \
+        alpine-sdk \
+        bash \
+        ca-certificates \
+        cabal \
+        ed \
+        fakeroot \
+        ghc \
+        git \
+        gmp-dev \
+        libffi \
+        libffi-dev \
+        lua5.4-dev \
+        pkgconfig \
+        shadow \
+        yaml \
+        zlib-dev
+
+ENV USERNAME=al
+ENV HOME=/home/$USERNAME
+# Create a non-root user for al
+RUN groupadd -r $USERNAME \
+    && useradd -r -g $USERNAME -d $HOME -m -s /bin/bash $USERNAME
 
 # Set up environment variables
-ENV HOME=/home/al
+
+USER $USERNAME
 WORKDIR $HOME
 
-USER al
+# Setup and configure cabal
+ENV CABAL_CONFIG=$HOME/.config/cabal/config
+
+RUN cabal user-config init \
+  && cabal --version \
+  && ghc --version \
+  && cabal update \
+  && cabal install \
+    --jobs=1 \
+    --ghc-options='-O1 -optc-Os -optl=-pthread -fPIC -j' \
+    --ghc-options='+RTS -M1.5G -RTS' \
+    --install-method=copy \
+    pandoc \
+    --lib pandoc-types
+
+ENTRYPOINT ["/bin/bash", "-c"]
+
 #+end_src

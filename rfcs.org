@@ -1,0 +1,38 @@
+:PROPERTIES:
+:ID:       0916CF02-65DB-493A-AFAC-A9287447483E
+:END:
+#+title: rfcs
+* TODO Read RFC                                                     :reading:
+SCHEDULED: <1980-01-17 Thu +1d>
+** https://www.rfc-editor.org/info/rfc1/
+IMP Network Protocol details
+** [[https://www.rfc-editor.org/info/rfc2/]]
+Further IMP link and handshake details
+** https://www.rfc-editor.org/info/rfc3/
+Early documentation conventions (promoting flow of information)
+** [[https://www.rfc-editor.org/info/rfc4]]
+Enumerate some items as a bulleted list.
+** [[https://www.rfc-editor.org/info/rfc5]]
+Document DEL language for insulating clients from network.
+** [[https://www.rfc-editor.org/info/rfc6]]
+Summarization of brief conversation about encoding
+** https://www.rfc-editor.org/info/rfc7
+More details and questions around early networking protocols
+** https://www.rfc-editor.org/info/rfc8
+Fairly illegible handwritten notes with diagrams for networking and DEL
+** [[https://www.rfc-editor.org/info/rfc9]]
+Provide some handwritten protocol notes.
+** [[https://www.rfc-editor.org/info/rfc10]]
+Minimal documentation conventions and contact info for the working group.
+** [[https://www.rfc-editor.org/info/rfc11]]
+Specify some betworking algorithms in informal text.
+** [[https://www.rfc-editor.org/info/rfc12]]
+Provide diagram of some interactions.
+** [[https://www.rfc-editor.org/info/rfc13]]
+Minimal proposal for use of zero length EOF
+** [[https://www.rfc-editor.org/info/rfc14]]
+Missing
+** [[https://www.rfc-editor.org/info/rfc15]]
+Provide initial outline for telnet.
+** [[https://www.rfc-editor.org/info/rfc16]]
+Update mailing list contact info.

@@ -2,8 +2,22 @@
 :ID:       2E17867A-8CB5-4CE8-924B-B78764E0D442
 :END:
 #+title: al/index
+
+* Files
+
+#+begin_src text :tangle .gitignore
+  # A dockerfile to extend a base image with standard desired utilities.
+  Dockerfile
+  # ToolBelt support
+  tool_belt.py
+#+end_src
+
 * [[id:D65CCEA0-A995-4F16-8E3E-E3FDCDF58170][al/background]]
 #+transclude: [[id:D65CCEA0-A995-4F16-8E3E-E3FDCDF58170][al/background]]
 
-* [[id:DE72620E-D29F-4E9F-B448-53C7C3B82332][al/agent]]
+* [[id:DE72620E-D29F-4E9F-B448-53C7C3B82332][al/venv]]
 #+transclude: [[id:DE72620E-D29F-4E9F-B448-53C7C3B82332][al/agent]]
+* [[id:C7B04713-B224-467C-A355-0F76F2FD5578][al/tool-belt]]
+#+transclude: [[id:C7B04713-B224-467C-A355-0F76F2FD5578][al/tool-belt]]
+
+

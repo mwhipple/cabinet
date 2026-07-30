@@ -8,8 +8,9 @@ advantages that it tends to be readily available and it generally
 seems to encourage good documentation practices (or any for that
 matter).
 * TODO Increment                                                    :reading:
-SCHEDULED: <1980-01-17 Thu +1d>
+SCHEDULED: <1980-01-18 Fri +1d>
 ** DONE Info (2026)
 ** Emacs
 
-[[info:emacs#Arguments][emacs#Arguments]]
+[[info:emacs#Repeating][emacs#Repeating]]
+

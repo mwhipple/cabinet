@@ -70,3 +70,13 @@ by a model.
 
 Any content related to interacting with the model should make use of
 the corresponding terms where appropriate.
+
+* Design
+
+I'm hoping to just use [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]] as directly as possible through the
+python bindings project. I've ended up moving away from richer
+harnesses due to feeling like they are more likely to chase richer
+functionality than I want and the perpsective that I should be able to
+use the agent to help build itself (which should effectively dissolve
+the traditional benefits of using more packaged software).
+

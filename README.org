@@ -9,62 +9,76 @@ This project is called a "cabinet" which is a reference to a physical
 zettelkasten setup which is likely to involve a card cabinet, and this
 project uses org-roam to provide that model
 
-* Setup
+* Project Structure
 
-This provides documentation for two modes of setup, self-contained and embedded.
+The project primarily consists of a top-level listing of directories,
+where each directory houses a particular topic (which may be a
+project). Each directory will contain an index.org file which serves
+as the landing page for that topic, and any additional source or
+generated files for the topic.
+
+** ID Links
+
+Links to UUIDs refence the sections with those IDs. These can be efficiently
+discovered using org-roam, but outside of org and until an alternative interface
+to that database is provided, approaches such as grep can be used to locate
+the destination.
+
+** Composed Documents
+
+Many of the documents will be composed using transclusion.
+This allows the referenced files to provide a smaller context,
+reduce the likelihood of editing collisions, and be easier to work with.
+
+For any non-trivial topic, the index.org file will be composed of other
+notebooks within the directory.
+
+*** Transclusion vs. Tangling (for Source)
+
+The wider project will make use of a combination of tranclusion (to embed
+an external file within a notebook) and tangling (to produce external files
+from a notebook; these effectively amount to supporting the information
+flowing in both directions (transclusion flows into notebooks, tangling out).
+
+Notebooks should contain all /source/ and that should guide when to
+use which approach. If any file or information (or its equivalent)
+should be able to be reproduced by evaluating the content of the notebook,
+then it is not source and should be transcluded. If information is present
+in content which is not clearly captured elsewhere in the notebook, then it
+should be included in the notebook and tangled.
+
+In terms of AI-assisted work, this should lend itself to a model where
+specifications and information acting as prompts should be captured in the
+notebook, whereas what is produced from that information can be transcluded.
 
 ** Self-Contained
 
-A self contained setup is one where the directoy acts as an independent cabinet.
-This makes use of ~.dir-locals~.
+The information within this space should be self-contained and should evolve as needed.
+Rather than presuming constant connectivity it should be conducive to working in
+an offline mode.
 
-This has the advantage of not accidentally getting tangled with any other org-roam
-configurations, but has the disadvantage that it can't become part of a larger subgraph.
+*** Using Help
 
-*** ~.dir-locals.el~
+Working with available resources should always be the initial preference. This should
+include making use of any available help facilities. Whenever such information is used
+it should be captured for future reference in an appropriate topic. In cases where
+the help provides the necessary information, this should be handled by a flow such as:
 
-To prepare for working with this repository, the ~.dir-locals.el~
-file must be tangled to configure the [[info:emacs#Directory Variables][directory variables]] that can be used
-for a local [[id:BD998169-D426-4D3C-A775-D2D9ED6DCFA3][org-roam]] cabinet.
+- Create/find notebook content which invokes a help command producing relevant information
+- As necessary, update that notebook to transclude that information
+- Include a reference to that notebook content where it was used
 
-~.dir-locals.el~ makes use of static values, so this leverages some noweb expansion
-to populate the appropriate directory at the time of tangling.
+*** Capturing Usage
 
-#+name: pwd
-#+begin_src emacs-lisp
-  default-directory
-#+end_src
+When provided help is not immediately clear for any reason, produce clarifying notebook
+content which more clearly demonstrates the behaviors.
 
-#+RESULTS: pwd
-: /Users/mwhipple/memex/cabinet/
+*** External References
 
-#+begin_src emacs-lisp :noweb yes :tangle .dir-locals.el
-  ((nil . ((org-roam-directory  . "<<pwd()>>")
-           (org-roam-db-location . "<<pwd()>>org-roam.db"))))
-#+end_src
-
-#+RESULTS:
-
-#+begin_src emacs-lisp
-  org-roam-directory
-#+end_src
-
-#+RESULTS:
-: /Users/mwhipple/memex
-
-#+begin_src emacs-lisp
-  org-roam-db-location
-#+end_src
-
-#+RESULTS:
-: ~/.emacs.d/org-roam.db
-
-** Embedded
-
-An embdded setup is one in which this is loaded a subdirectory of an
-existing cabinet.
-
-The model used in this case is that this should be treated as somewhat
-of a public tenant within a wider graph, and that the enclosing
-cabinet should be able to reference the data within this subgraph, but
-edges going in the other direction should be avoided/prevented.
+When information is not locally available (or to help bootstrap that local availability),
+references to external sources should be included. This should be complemented by capturing
+necessary information locally, in a form similar to Capturing Usage above. The end result of
+this should be to support self-containment/offline usage, but should **not** extend to
+reproducing all of the external information. Only that information which is directly relevant
+to what is needed should be captured locally, and any further clarifying information should
+be referenced but not duplicated.

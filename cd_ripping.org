@@ -348,7 +348,13 @@ This needs the redirection magic
 : ++ WARN: open (/dev/rdisk7): Permission denied
 : ++ WARN: open (/dev/rdisk4): Permission denied
 : ++ WARN: open (/dev/rdisk6): Permission denied
-: ++ WARN: search for kIOCDMediaClass/kIODVDMediaClass/kIOBDMediaClass came up empty
+
+#+begin_src shell :session cd :async
+  cd-paranoia --batch -- -8
+#+end_src
+
+#+RESULTS:
+: 76af84d9-a1fc-4844-878c-895cae9202ae
 
 ** 405: Option not supported by drive
 

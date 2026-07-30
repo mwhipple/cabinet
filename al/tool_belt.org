@@ -1,0 +1,185 @@
+:PROPERTIES:
+:ID:       C7B04713-B224-467C-A355-0F76F2FD5578
+:END:
+#+title: al/tool-belt
+
+* Tool Management
+
+Tools are the most straightforward way to bridge models with things
+outside fo their sandboxes, and presumably also forms the means for
+many other typically expected agent behaviors (and may be the route I
+pursue even if there are alternatives).
+
+Working outside of a harness seems to make the interactions a bit
+clearer, where the tool calls pass back through as messages to the
+driving code/agent which is responsible for actually making the call
+and returning the response.
+
+There is planned work to extend this model to also behaviors like
+system prompt enrichment - the logic here reflects the initial approach.
+
+** Declaration
+
+Declaration is used to refer to the information that is passed to a
+model so that it is aware of tools and how to use them.
+
+*** Types
+
+The first step will be defining the shape for tool declaratations
+since that's a gap in the upstream type definitions.
+
+Upstream basically stops at parameters so this presses on.
+
+This doesn't seem particularly expressive, but that's probably a
+larger question and probably best served by what amounts to portable
+schema definition.
+
+#+begin_src python :results silent :tangle tool_belt.py
+  from typing import List, Dict
+  from typing_extensions import TypedDict, NotRequired, Literal
+
+  class ToolDeclaration(TypedDict):
+    type: Literal["function"]
+    function: ToolFunctionDeclaration
+
+  class ToolFunctionDeclaration(TypedDict):
+    name: str
+    description: NotRequired[str]
+    parameters: ToolFunctionDeclarationParameters
+
+  class ToolFunctionDeclarationParameters(TypedDict):
+    type: Literal["object"]
+    properties: Dict[str, ToolFunctionDeclarationParameter]
+    required: List[str]
+
+  class ToolFunctionDeclarationParameter(TypedDict):
+    type: str
+#+end_src
+
+*** Derive Declarations
+
+Extracting information for use by the model should be done by
+reflection. Any ambiguous information should result in an error rather
+than attempting to be clever.
+
+**** is_required_parameter
+
+Indicate whether a parameter is required.
+
+This includes positional parameters that have no default.
+
+#+begin_src python :results silent :tangle tool_belt.py
+  import inspect
+  def is_required_parameter(param):
+      return param.default is inspect.Parameter.empty and (
+        param.kind not in (inspect.Parameter.VAR_POSITIONAL,
+                           inspect.Parameter.VAR_KEYWORD))
+#+end_src
+
+**** param_type
+
+Introspect parameter types or throw trying
+
+#+begin_src python :results silent :tangle tool_belt.py
+  def param_type(param):
+      if param.annotation == inspect.Parameter.empty:
+          raise TypeError(
+              f"Parameter '{param['name']}' lacks a type annotation;"
+              "add a type hint (e.g., def foo(x: int) -> str).")
+      return str(param.annotation)
+#+end_src
+
+**** tool_declaration
+
+Derive a declaration for a callable.
+
+This does /not/ attempt to be comprehensive. As needed this should be
+extended with registries to handle additional types.
+
+This largely just produces a structure conforming to what is expected.
+
+#+begin_src python :results silent :tangle tool_belt.py
+  import inspect
+  def tool_declaration(func: callable) -> ToolFunctionDeclaration:
+      """
+      Produce a dictionary suitable for llama-cpp-python tool registration.
+      """
+
+      description = func.__doc__
+      if not description:
+          raise TypeError("Function must have a non-empty docstring.")
+
+      sig = inspect.signature(func)
+      params = sig.parameters.items()
+
+      return {
+          "type": "function",
+          "function": {
+              "name": func.__name__,
+              "description": description,
+              "parameters": {
+                  "type": "object",
+                  "properties": {
+                      param_name: {
+                          "type": param_type(param),
+                      }
+                  for param_name, param in params},
+                  "required": [param_name for param_name, param in params if is_required_parameter(param)],
+              },
+              "return_type": str(sig.return_annotation),
+          },
+      }
+#+end_src
+
+***** Sandbox
+
+What better way to test the declaration extraction...
+
+#+begin_src python
+  from pprint import pprint
+  pprint(tool_declaration(tool_declaration))
+#+end_src
+
+** apply_tool
+
+Call a function using a ToolCall and return the resulting tool missive.
+
+#+begin_src python :results silent :tangle tool_belt.py
+  def apply_tool(func_call, tool: callable, id: str):
+    results = tool(**func_call["arguments"])
+    return { "role": "tool",
+             "content": results,
+             "name": func_call["name"],
+             "tool_call_id": id }
+#+end_src
+
+** ToolBelt
+
+The ToolBelt object will handle advertising of available tools and
+their subsequent use.
+
+Application will produce a missive to send back to the model.
+
+#+begin_src python :results silent :tangle tool_belt.py
+  class ToolBelt():
+      def __init__(self):
+          self.tools = {}
+
+      def register(self, func: Callable):
+          self.tools[func.__name__] = func
+
+      def declarations(self):
+          return [tool_declaration(tool) for tool in self.tools.values()]
+
+      def apply(self, tool_call: ToolCall) -> ChatCompletionRequestToolMessage:
+          if tool_call["type"] != "function":
+              raise TypeError("Only functions suppored")
+          func = tool_call["function"]
+          tool_name = func["name"]
+          tool = self.tools.get(tool_name)
+          if tool is None:
+              return { "role": "user",
+                       "content": f"The tool {tool_name} was requested but is not available." }
+          return apply_tool(func, tool, tool_call["id"])
+#+end_src
+

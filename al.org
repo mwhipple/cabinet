@@ -1,233 +1,11 @@
 :PROPERTIES:
 :ID:       7233EF2D-04BB-4A88-9179-DC8AEE26313A
+:header-args: :var venv="/tmp/al" :python /tmp/al/bin/python :async yes :results output :session al
 :END:
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-16 Wed +1d>
-
-** Tool Management
-
-Provide some general tool wiring support.  Declare this early so that
-it can define the interface for tools.
-
-Tools are the most straightforward way to bridge models with things
-outside fo their sandboxes, and presumably also forms the means for
-many other typically expected agent behaviors (and may be the route I
-pursue even if there are alternatives).
-
-Working outside of a harness seems to make the interactions a bit
-clearer, where the tool calls pass back through as messages to the
-driving code/agent which is responsible for actually making the call
-and returning the response.
-
-*** Tool Declarations
-
-The first step will be defining the shapre for tool declaratations
-since that's a gap in the upstream type definitions.
-
-Upstream basically stops at parameters so this presses on.
-
-This doesn't seem particularly expressive, but that's probably a
-larger question and probably best served by what amounts to portable
-schema definition.
-
-#+begin_src python :results silent
-  from typing import List, Dict
-  from typing_extensions import TypedDict, NotRequired, Literal
-
-  class ToolDeclaration(TypedDict):
-    type: Literal["function"]
-    function: ToolFunctionDeclaration
-
-  class ToolFunctionDeclaration(TypedDict):
-    name: str
-    description: NotRequired[str]
-    parameters: ToolFunctionDeclarationParameters
-
-  class ToolFunctionDeclarationParameters(TypedDict):
-    type: Literal["object"]
-    properties: Dict[str, ToolFunctionDeclarationParameter]
-    required: List[str]
-
-  class ToolFunctionDeclarationParameter(TypedDict):
-    type: str
-#+end_src
-
-**** Declaration Derivation
-
-Extracting information for use by the model should be done by
-reflection. Any ambiguous information should result in an error rather
-than attempting to be clever.
-
-***** is_required_parameter
-
-Indicate whether a parameter is required.
-
-This includes positional parameters that have no default.
-
-#+begin_src python :results silent
-  import inspect
-  def is_required_parameter(param):
-      return param.default is inspect.Parameter.empty and (
-        param.kind not in (inspect.Parameter.VAR_POSITIONAL,
-                           inspect.Parameter.VAR_KEYWORD))
-#+end_src
-
-***** param_type
-
-Introspect parameter types or throw trying
-
-#+begin_src python :results silent
-  def param_type(param):
-      if param.annotation == inspect.Parameter.empty:
-          raise TypeError(
-              f"Parameter '{param['name']}' lacks a type annotation;"
-              "add a type hint (e.g., def foo(x: int) -> str).")
-      return str(param.annotation)
-#+end_src
-
-***** tool_declaration
-
-This is mostly cleaned up from previously produced AI input...
-mostly to fully conform to the desired format.
-Reference sources should be provided which is also something that
-should be included in the system prompt.
-
-This does /not/ attempt to be comprehensive. As needed this should be
-extended with registries to handle additional types.
-
-This function handles responses from the model, checking for completion signals.
-It receives two arguments: ctx (the context containing a driver for tool calls)
-and response (a dict with a 'message' key containing the content).
-
-#+begin_src python
-  import inspect
-  def tool_declaration(func: callable) -> ToolFunctionDeclaration:
-      """
-      Produce a dictionary suitable for llama-cpp-python tool registration.
-      """
-
-      description = func.__doc__
-      if not description:
-          raise TypeError("Function must have a non-empty docstring.")
-
-      sig = inspect.signature(func)
-      params = sig.parameters.items()
-
-      return {
-          "type": "function",
-          "function": {
-              "name": func.__name__,
-              "description": description,
-              "parameters": {
-                  "type": "object",
-                  "properties": {
-                      param_name: {
-                          "type": param_type(param),
-                      }
-                  for param_name, param in params},
-                  "required": [param_name for param_name, param in params if is_required_parameter(param)],
-              },
-              "return_type": str(sig.return_annotation),
-          },
-      }
-#+end_src
-
-#+RESULTS:
-
-
-
-****** Sandbox
-
-What better way to test the declaration extraction...
-
-#+begin_src python
-  from pprint import pprint
-  pprint(tool_declaration(tool_declaration))
-#+end_src
-
-#+RESULTS:
-#+begin_example
-{'function': {'description': '\n'
-                             'Produce a dictionary suitable for '
-                             'llama-cpp-python tool registration.\n',
-              'name': 'tool_declaration',
-              'parameters': {'properties': {'func': {'type': '<built-in '
-                                                             'function '
-                                                             'callable>'}},
-                             'required': ['func'],
-                             'type': 'object'},
-              'return_type': "<class '__main__.ToolFunctionDeclaration'>"},
- 'type': 'function'}
-#+end_example
-
-
-#+begin_example
-{'function': {'description': '\n'
-                             'Produce a dictionary suitable for '
-                             'llama-cpp-python tool registration.\n',
-              'name': 'tool_declaration',
-              'parameters': {'properties': {'func': {'type': '<built-in '
-                                                             'function '
-                                                             'callable>'}},
-                             'required': ['func'],
-                             'type': 'object'},
-              'return_type': "<class '__main__.ToolFunctionDeclaration'>"},
- 'type': 'function'}
-#+end_example
-
-*** apply_tool
-
-Call a function using a ToolCall and return the resulting tool missive.
-
-#+begin_src python
-  def apply_tool(func_call, tool: callable, id: str):
-    results = tool(**func_call["arguments"])
-    return { "role": "tool",
-             "content": results,
-             "name": func_call["name"],
-             "tool_call_id": id }
-#+end_src
-
-#+RESULTS:
-
-
-
-*** ToolBelt
-
-The ToolBelt object will handle advertising of available tools and
-their subsequent use.
-
-Application will produce a missive to send back to the model.
-
-#+begin_src python
-  class ToolBelt():
-      def __init__(self):
-          self.tools = {}
-
-      def register(self, func: Callable):
-          self.tools[func.__name__] = func
-
-      def declarations(self):
-          return [tool_declaration(tool) for tool in self.tools.values()]
-
-      def apply(self, tool_call: ToolCall) -> ChatCompletionRequestToolMessage:
-          if tool_call["type"] != "function":
-              raise TypeError("Only functions suppored")
-          func = tool_call["function"]
-          tool_name = func["name"]
-          tool = self.tools.get(tool_name)
-          if tool is None:
-              return { "role": "user",
-                       "content": f"The tool {tool_name} was requested but is not available." }
-          return apply_tool(func, tool, tool_call["id"])
-
-#+end_src
-
-#+RESULTS:
-
-
+SCHEDULED: <1980-01-17 Thu +1d>
 
 ** Driving/Orchestrating Interactions
 
@@ -345,6 +123,9 @@ Track missives and pass them through MessageHandlers.
           self.missives.append(choice['message'])
           on_response = self.on_response # Assign to avoid method call
           on_response({"driver": self}, choice)
+          # This is likely a mild smell unless we can rely on TCO
+          # Especially as something like streaming comes in this will probably be re-shuffled
+          # to a more async/event loop-y model.
           self.submit()
 #+end_src
 
@@ -445,8 +226,6 @@ The match itself is done by the caller.
 #+end_src
 
 #+RESULTS:
-
-
 
 **** tool_call_request_from_qwen_match
 
@@ -603,25 +382,64 @@ that anything other than such file protections would be prevented.
 Defining mounts is a straightforward way to enable and control access
 to files within the container.
 
-#+begin_src python
+#+begin_src python :results silent
   from dataclasses import dataclass
 
   @dataclass
   class BindMount:
     host_path: str
     container_path: str
-    mode: Literal["rw", "ro"] = "ro"
+    readonly: bool = False
 
-    def to_volume_string(self) -> str:
-      """Render this mount as a Docker volume flag."""
-      return f"--volume={self.host_path}:{self.container_path}:{self.mode}"
+    def as_docker_run_argument(self) -> list[str]:
+      """Render this as a mount argument."""
+      return ["--mount",
+              f"type=bind,source={self.host_path},destination={self.container_path},readonly={str(self.readonly).lower()}"]
 #+end_src
 
-#+RESULTS:
+**** TmpFSMount
 
+OK...I created this but I'm not sure if it is entirely useless (or
+just mostly useless). I think it's actually not useless, but the
+current issue would be that the each call spins up a separate
+container - so if this can make use of a volume or similar it could be useful.
 
+Getting ShellSandbox split out and documented would also help with
+some of the recurring stumbling blocks around how these pieces fit together.
+
+#+begin_src python :results silent
+  from dataclasses import dataclass
+
+  @dataclass
+  class TmpFSMount:
+      container_path: str = "/tmp"
+      mode: str = "1777"
+      size: int = 104_857_600
+
+      def as_docker_run_argument(self) -> list[str]:
+          """Render this as a mount argument."""
+          return ["--mount",
+                  f"type=tmpfs,destination={self.container_path},tmpfs-size={self.size},tmpfs-mode={self.mode}"]
+
+#+end_src
+
+**** EnvironmentVariable
+
+#+begin_src python :results silent
+  from dataclasses import dataclass
+
+  @dataclass
+  class EnvironmentVariable:
+      name: str
+      value: str
+
+      def as_docker_run_argument(self) -> list[str]:
+          return ["--env", f"{self.name}={self.value}"]
+#+end_src
 
 **** ShellSandbox
+
+This should be complemented with definitions of container conventions.
 
 Compose and invoke the command for containerized execution.
 This is currently oriented towards single/stateless evaluation.
@@ -644,7 +462,7 @@ be clearly documented as posing a security risk. For example if a
 container is run as root/superuser this may represent a security risk:
 it should be supported but cautioned against.
 
-#+begin_src python
+#+begin_src python :results silent
   import subprocess
   import uuid
 
@@ -652,11 +470,11 @@ it should be supported but cautioned against.
   class ShellSandbox:
     def __init__(self,
                  image: str,
-                 mounts: List[BindMount] = [],
+                 args: list = [],
                  timeout_seconds: Optional[int] = None,
                  lxc_cmd = "docker"):
         self.image = image
-        self.mounts = mounts
+        self.args = args
         self.container_name = f"shell_sandbox_{uuid.uuid4().hex}"
         self.timeout_seconds = timeout_seconds
         self.lxc_cmd = lxc_cmd
@@ -676,6 +494,7 @@ it should be supported but cautioned against.
       consider using a different approach or wrapping in a script.
       """
       # Tokenize the command safely (no shell invocation)
+      # The security this is intended to provide should be pushed into the image.
       import shlex
 
       cmd = [
@@ -684,27 +503,28 @@ it should be supported but cautioned against.
         "--rm",
         "--cap-drop=all",
         "--security-opt=no-new-privileges",
-        "--user=1000:1000",  # non-root user
       ] + [
-          mount.to_volume_string() for mount in self.mounts
-      ] + [ self.image ]
+          cmd for arg in self.args for cmd in arg.as_docker_run_argument()
+      ] + [self.image ]
 
       # Execute command
       try:
-        result = subprocess.run(cmd + ["sh", "-c", command], capture_output=True, text=True, timeout=self.timeout_seconds)
+        result = subprocess.run(cmd + [command], capture_output=True, timeout=self.timeout_seconds)
         return f"<output><stdout>{result.stdout.strip()}</stdout><stderr>{result.stderr.strip()}</stderr></output>"
       except subprocess.TimeoutExpired:
         return "<output><stderr>Requested command timed out</stderr></output>"
 #+end_src
 
-#+RESULTS:
+This was previously above, but should be another guard that is
+probably pushed more into the image.
+        "--user=1000:1000",  # non-root user
 
 **** AL-DONE Longer form options should also be preferred throughout.
 **** AL-DONE BindMounts should self render
 
 **** Sandbox
 
-#+begin_src python
+#+begin_src python :session sb_test :results silent
   import os
   sb = ShellSandbox(image="alpine:latest", mounts=[BindMount(host_path=os.getcwd(),container_path="/host")])
   print(sb.shell_command("ls -l /host"))
@@ -784,6 +604,8 @@ Right now this is producing a pretty interesting hallucination.
       (org-babel-execute-src-block)))
 #+end_src
 
+I think for temp directories I'm hitting the mismatch related to macOS virtualization.
+
 #+name: al
 #+begin_src python :var model_path="/Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-v2-GGUF/snapshots/97c11b03687f194b300efbdb4760d9bc4021b759/Qwythos-9B-v2-MTP-Q4_K_M.gguf" :results silent
   from pprint import pprint
@@ -791,10 +613,19 @@ Right now this is producing a pretty interesting hallucination.
 
   tool_belt = ToolBelt()
   import os
-  mount_here = BindMount(host_path=os.getcwd(),container_path="/host",mode="rw")
+  import tempfile
+  tmp_dir_obj = tempfile.TemporaryDirectory(dir=f"{os.getcwd()}")
+  tmp_path=tmp_dir_obj.name
+
+  mount_here = BindMount(host_path=os.getcwd(),container_path="/host")
+  mount_tmp = BindMount(host_path=tmp_path,container_path=tmp_path)
   sb = ShellSandbox(image="al_image:latest",
-                    mounts=[mount_here],
-                    timeout_seconds=10)
+                    args=[
+                        EnvironmentVariable(name="TMPDIR", value=tmp_path),
+                        mount_here,
+                        mount_tmp,
+                    ],
+                    timeout_seconds=60*10)
   tool_belt.register(sb.shell_command)
 
   llm = Llama(
@@ -807,41 +638,22 @@ Right now this is producing a pretty interesting hallucination.
       lambda ctx, msg: pprint(msg, width=240),
       FirstActiveHandler(handlers=[
           QwenToolCallResponseHandler(tool_belt),
-          kaizen_response_handler,
           yolo_response_handler,
       ]),
   ])
-  driver = ChatDriver(model=llm,
-                      on_response=handler,
-                      tools=tool_belt.declarations(),
-                      system_prompt="""
 
-  You are my personal AI asssistant named Al.
+  al_name = "You are my personal AI asssistant named Al."
+  al_readme = """
+  Consult /host/README.org for information about this project and follow all guidance therein.
+  """
+  al_tmp = f"""
+  Place any temporary files in {tmp_path}.
+  Files in other temp directories (such as /tmp) may be inaccessible to tools.
 
+  """
+  al_chain = """
   You not only do what is asked, but explain what you are doing
   and the reason throughout the process.
-
-  You will be run in headless environments: any requests for feedback or similar
-  should be done using documented channels rather than expecting any direct interactions.
-
-  All references to files should be presumed to be available relative to skills such as shell_command.
-
-  Skills are available under the /host/skills directory. Relevant skills should be used whenever relevant.
-
-  /host/AGENTS.md can be used for your memory. As information and techniques to
-  work more effectively and efficiently are discovered, record that information in
-  that file in a form that you can read in the future, and read this file
-  before starting work.
-
-  You can also create and own a /host/al/ directory which you can use to store
-  additional information and tools.
-  For the utilities that you create for yourself, you should *only* make use of
-  what you have available and should not presume access to anything that may be documented.
-  If a particular additional tool would offer significant benefits (such as
-  being able to entirely obviate custom logic or reduce such logic in half) then that information
-  should be recorded through adding a new AL-REVIEW heading to this file.
-
-  MAKE SURE to store information in the above locations to reduce churn.
 
   Any task that involves creating a specific expected output based on some inputs
   should make use of code that provides that logic. Your path from inputs to
@@ -850,20 +662,94 @@ Right now this is producing a pretty interesting hallucination.
   Such functionality should be obvious and expressive: compositions like shell pipelines
   should be used where they make sense, but if the pipeline does not naturally express
   what is being done it should be wrapped up as a shell script, function, or similar.
+  """
+  al_headless = """
+  You will be run in headless environments: any requests for feedback or similar
+  should be done using documented channels rather than expecting any direct interactions.
+
+  All references to files should be presumed to be available using skills such as shell_command.
+
+  The environment should provide any dependencies...if any need to be installed then submit
+  feedback indicating what was missing and request that it be installed.
+
+  """
+  al_local = """
+  Always prefer use of what is locally available.  Prefer
+  local/offline-compliant execution wherever feasible, unless
+  specifically requested to consult a remote source (such as getting the
+  latest information).  Installing new tools or accessing remote
+  resources should only be used after verifying lack of an eisting
+  precence and exhausting locally available options.  In all cases
+  anything that seems absent from the provided environment should be
+  communicated as feedback.
+
+  When not explicitly requested ALWAYS explain the rationale for performing
+  an action that makes a remote call and explain what local options have
+  been attempted.
+
+  An exception to the above is when developing software that pulls in dependencies.
+  In such cases the dependencies should be declared so that they can be pulled in
+  by an appropriate build tool and either use a cached copy or download them as necessary.
+
+  """
+  al_verify = """
+  Only perform work that you expect to be able to verify.
+  Code should only be written if you expect to be able to compile and test it.
+  The presence of tools necessary to do such verification should be checked
+  prior to work, but can be recorded in and read from AGENTS.md across sessions
+  (along with usage guidelines).
+  If necessary tools are missing, provide appropriate feedback.
+  """
+  al_memory = """
+  /host/AGENTS.md can be used for your memory. As information and techniques to
+  work more effectively and efficiently are discovered, record that information in
+  that file in a form that you can read in the future, and read this file
+  before starting work.
+
+  MAKE SURE to store information in the above locations to reduce churn.
+
+  Whenever you have perform an insepction task in order to determine whether something
+  is available or where to find it, record the information in AGENTS.md for
+  subsequent use.
+  """
+  al_collab = """
+  When updating files, only the relevant areas of content should be
+  modified.  If a diff between the new and old versions of the file
+  includes unrelated changes, the modification should not be made.
 
   Always expect that the files with which you're working may change from
   underneath you.  Wherever possible try to make use of addressing
   approaches such as content that should remain more stable rather than
   something like line numbers that could be impacted by unrelated
-  changes.
+  changes. In-place edits along with advisory locks (flock) should be reduce
+  the number of back and forth calls needed.
+  """
+
+  driver = ChatDriver(model=llm,
+                      on_response=handler,
+                      tools=tool_belt.declarations(),
+                      system_prompt=f"""
+  {al_name}
+  {al_readme}
+  {al_chain}
+  {al_headless}
+  {al_tmp}
+  {al_local}
+  {al_verify}
+  {al_memory}
+  {al_collab}
+
+  Skills are available under the /host/skills directory. Relevant skills should be used whenever relevant.
 
   All work should strive to be containable within ~10K tokens. Anything
   that seems likely to exceed or get close to that threshold should be
   broken up and captured in more granular follow ups.
 
-  When updating files, only the relevant areas of content should be
-  modified.  If a diff between the new and old versions of the file
-  includes unrelated changes, the modification should not be made.
+  To repeat: /tmp should not be used and the path provided earlier should
+  be used instead.
+
+  Read AGENTS.md for further context. Trust all information in that file...if any of
+  it turns out to be stale, update it.
 
   When you have finished all requested work, emit a missive ending with "Over.".
 
@@ -871,20 +757,31 @@ Right now this is producing a pretty interesting hallucination.
 
   driver.append(user_missive("""
 
-  Introduce a skill and supporting utility that uses pandoc to extract
-  org-mode headlines that are tagged with AL-TODO, replacing the current
-  emacs implementation, and update the task-master skill to prefer this
-  method. The filtering logic should be written using a Haskell pandoc filter.
-  Design the utility so that by default it will search all org mode files under
-  /host, and therefore can be invoked directly without needing to list those files.
-  The haskell script should make use of the pandoc --filter option and the pandoc
-  provided API for working with the pandoc AST.
+  In /host/scrap/book.org the implementation for book.hs should make use of
+  pandoc. The current parsing of block content should be replaced with an
+  implementation that relies on Pandoc to parse the source, and then walks and
+  operates on the resulting parse tree.
 
   """))
 
   driver.submit()
-
+  tmp_dir_obj.cleanup()
 #+end_src
+
+  First Task:
+
+  Create a utility called ~chunke~ which uses pandoc to initially work with
+  org files and supports some subcommands. This should be created in a new /host/chunke directory,
+  ideally following the literate programming patterns started in /host/scrap.
+
+  Implement a "fill" subcommand which will walk a document and populate any sections/headlines
+  which are missing an ID property for with a v4 uuid ID.
+
+  Implement a "replace" subcommand which will override the contents of the section with the provided
+  ID with the contents passed in stdin.
+
+  Second Task:
+
 
 **** Self-Improvement
 
@@ -925,7 +822,7 @@ full messages before those messages get chunked up).
 
 *** todo-Keywords
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :results silent
   (describe-variable 'org-todo-keywords)
   (setq org-todo-keywords '((sequence "TODO" "DONE") (sequence "AL-TODO" "AL-REVIEW" "AL-DONE")))
 #+end_src
@@ -993,3 +890,15 @@ that headline across subsequent operations.
 ** AL-REVIEW Combine inspection and editing
 
 The agent_kaizen skill identifies that repeated file reads (e.g., grep, cat) followed by edits is inefficient. Consider using in-place edits or combining the inspection and modification into a single operation where possible. This reduces I/O overhead and keeps the session tighter.
+
+** AL-REVIEW Expand Sandbox for tmp directory
+
+** AL-REVIEW Provide sessionization in scrap
+
+This is likely to get a bit funky.
+The general idea of interacting with a session can be enabled through
+the use of named pipes - there will probably need to be some general
+concept of identifying actions and retrieving outputs.
+
+Ideally this could be handled using a consistent model where
+sesssionized calls are just alternative evaluators.

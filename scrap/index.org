@@ -1,0 +1,85 @@
+:PROPERTIES:
+:ID:       874E8D47-B2B2-49F4-AF01-87B26B4C6247
+:END:
+#+title: scrap-book
+
+Some lower-level literate notebook support.
+
+* Example: basic evaluation
+
+#+begin_src bash :from test
+  echo "Hello from scrap-book!"
+#+end_src
+
+#+begin_results :from test :output stdout
+  Hello from scrap-book!
+#+end_results
+
+This evaluation logic is called "scrap-book". It evaluates code
+blocks marked with a :from attribute by running corresponding shell
+scripts from the evaluators/ directory.
+
+** How it works**
+
+1. Org blocks containing ~#+begin_src ...~ (any fence type) are identified as source blocks.
+2. The source code is executed via the appropriate evaluator script in
+   ~evaluators/~.
+3. For each block that has a ~:from~ attribute, its content is treated
+   as a destination. The output of the corresponding source block
+   (determined by the name after ~:from~) is written into this
+   destination block. This is similar to how formula cells work in spreadsheets.
+
+* Usage
+
+** Command-line invocation
+
+Run scrap-book on an Org file:
+
+#+begin_src bash
+  cd /host/scrap && runhaskell eval.hs <file.org>
+#+end_src
+
+This will parse the Org file, evaluate any source blocks, and populate
+the content of any destination blocks (those with a `:from` attribute)
+with the evaluated output.
+
+** Supported evaluators
+
+Evaluators live in the ~evaluators/~ subdirectory. Each language has
+its own script; for example ~bash~ is provided for Bash code.
+
+** Evaluation semantics
+
+Source blocks are evaluated using their declared language (or
+defaulting to ~bash~). The name after ~:from~ on a destination block
+identifies which source's output should be placed there. The evaluator
+scripts write their output to ~/host/scrap/evaluators/stdout~; this is
+read and inserted into the destination block.
+
+For example, given:
+
+#+begin_src bash :from foo
+  echo "Hello, foo!"
+#+end_src
+
+#+begin_results :from foo :output stdout
+#+end_results
+
+the second block will be filled with ~Hello, foo!~.
+
+** Quick start
+
+To use scrap-book:
+
+1. Create an Org file with source blocks (any fence type) that contain code.
+2. Add destination blocks with a ~:from~ attribute to receive the output.
+3. From the ~scrap~ directory, run:
+   ```
+   runhaskell book.hs <your-file.org>
+   ```
+4. The tool will evaluate each source block and insert its output into
+   the corresponding destination block.
+
+You can mix multiple languages; see the ~evaluators/~ subdirectory for
+supported languages (bash, python, etc.).
+

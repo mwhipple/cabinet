@@ -1,0 +1,49 @@
+:PROPERTIES:
+:ID:       3DA5F51A-929C-4548-BF2C-9B0579059C1F
+:END:
+#+title: ai-models
+
+Selection of AI models should be driven by quantifiable metrics.
+
+With local inference particularly during devleopment, one of the
+biggest considerations is performance, and therefore I'll default to a
+model that I have locally that seems to provide the lowest latency,
+and will iterate from there.
+
+Iteration will involve both different models, different variants of
+the models, and possible optimizations applied to the models. This
+should all be driven by having a decent harness.
+
+Here I'll capture some of the models that I have along with some of
+their relevant information to be used for configuration, etc..
+
+This will make use of [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]], where the models will be loaded
+into the library of babel for use by other notebooks.
+
+** llama.cpp
+
+I'm planning on using [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]], so I may as well zero in on models
+that target that.
+
+*** Model List
+
+I currently have a model that /seems/ workable where it feels likes
+the more pressing concern is getting it a good setup to work within,
+and then also ideally looking at building out an evaluation harness -
+so that's it for now.
+
+#+begin_src shell :results silent
+  hf models list --filter llama.cpp --filter agentic --no-truncate > model_list.out
+#+end_src
+
+[[file:model_list.out][model_list]]
+#+transclude: [[file:model_list.out][model_list]]
+
+** empero-ai/Qwythos-9B-v2-GGUF
+#+begin_src bash :async yes :session hf-info :results silent
+  hf models info empero-ai/Qwythos-9B-v2-GGUF > qwythos2_card.out
+#+end_src
+
+[[file:qwythos2_card.out][qwythos2_card]]
+#+transclude: [[file:qwythos2_card.out][qwythos2_card]]
+
