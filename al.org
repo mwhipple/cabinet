@@ -7,164 +7,6 @@
 * TODO Increment
 SCHEDULED: <1980-01-17 Thu +1d>
 
-** Driving/Orchestrating Interactions
-
-When dealing with lower level interactions, it feels like one of the
-main pieces is the component that handles sending missives and dealing
-with responses which will be defined here as a ChatDriver.
-
-The focus is that message coordination, and providing relevant
-extension points to add additional behavior.
-
-This could certainly benefit from a bit more encapsulation around the
-types of interactions and messages, but to start its unclear where the
-best seams are that won't just create a ball of mud.
-
-Messages will be sent using [[id:C6047B7D-4B82-45B9-886A-FACBF966030B][create_chat_completion]].
-
-*** MessageHandler
-
-MessageHandler defines handler functions which enable observing and
-reacting to the various events that occur when interacting with models.
-It will be passed a dictionary [[id:3A3B17B9-0761-4DB1-A663-B12BC13155B4][context-argument]] and a generic message,
-and should return a boolean indicating whether it was activated or not.
-
-To start the context will be left as a general dictionary (and the
-types generally be gradually tightened).
-
-#+begin_src python
-  from collections.abc import Callable
-
-  type MessageHandler[M] = Callable[[dict, M], bool]
-#+end_src
-
-#+RESULTS:
-
-The references should make use of the Composite pattern which will
-also enable tuning of details such as routing. Some standard
-implementations are provided here.
-
-**** ForEachHandler
-
-Represent a list of multiple handlers all of which will be called (if any).
-
-#+begin_src python
-  class ForEachHandler:
-    def __init__(self, handlers=[]):
-      self.handlers = handlers
-    def __call__(self, ctx, msg) -> bool:
-      result = False
-      for h in self.handlers:
-        result = h(ctx, msg) or result
-#+end_src
-
-#+RESULTS:
-
-
-
-**** FirstActiveHandler
-
-Provide a chain of responibility style handler which will look for the
-first handler is activated.
-
-#+begin_src python :results silent
-  class FirstActiveHandler:
-      def __init__(self, handlers=[]):
-          self.handlers = handlers
-      def __call__(self, ctx, msg):
-          for h in self.handlers:
-              if h(ctx, msg):
-                  return True
-          return False
-#+end_src
-
-**** ChatDriver
-
-Track missives and pass them through MessageHandlers.
-
-#+begin_src python
-  from llama_cpp import Llama
-  from llama_cpp.llama_types import (
-      ChatCompletionRequestMessage,
-  )
-
-  class ChatDriver:
-      def __init__(self,
-                   model: Llama,
-                   tools = [],
-                   on_response: MessageHandler = ForEachHandler(),
-                   system_prompt: str = ""):
-          self.model = model
-          self.missives: list[ChatCompletionRequestMessage] = []
-          self.tools = tools
-          self.on_response = on_response
-          self.pending_missives: list[Callable[[], ChatCompletionRequestMessage]] = []
-          if system_prompt:
-              self.pending_missives.append(lambda: {"role": "system", "content": system_prompt})
-
-      def append(self,
-                 msg: ChatCompletionRequestMessage,
-                 caught_up: bool = False):
-          self.pending_missives.append(lambda: msg)
-
-      def submit(self):
-          if not self.pending_missives:
-              return
-          self.missives += [func() for func in self.pending_missives]
-          self.pending_missives.clear()
-          resp = self.model.create_chat_completion(
-              messages = self.missives,
-              tools = self.tools,
-              tool_choice = "auto",
-              temperature=0.4,
-              repeat_penalty=1.05,
-          )
-          choice = single_choice(resp)
-          self.missives.append(choice['message'])
-          on_response = self.on_response # Assign to avoid method call
-          on_response({"driver": self}, choice)
-          # This is likely a mild smell unless we can rely on TCO
-          # Especially as something like streaming comes in this will probably be re-shuffled
-          # to a more async/event loop-y model.
-          self.submit()
-#+end_src
-
-#+RESULTS:
-
-*** on_response
-
-on_response is one of the most crucial MessageHandlers as it will
-process the responses from the model and therefore be the point at
-which logic can be triggered based on those responses.
-
-**** yolo_response_handler
-
-Models will often pause and await feedback or confirmation, but I
-typically want them to just keep going. Such stopping is likely
-valuable when there's a cost per token, but with local inference I'll
-instead by default want to first optimize wall time which the stopping
-conflicts with (with resource consumption optimization being a
-secondary goal).
-
-Trying to get the models to keep working through prompting seems to
-have mixed results and sucks up context, so this offers an alternative
-that seems to work well.
-
-#+begin_src python
-  def yolo_response_handler(ctx, response):
-      if "Over." in response['message']['content']:
-          return False
-      driver = ctx['driver']
-      driver.append(user_missive("""
-      Continue on identified work. If there is no further work then
-      respond with "Over." on a line by itself.
-      """))
-      driver.submit()
-      return True
-#+end_src
-
-#+RESULTS:
-
 ** Tool Call Parsing and Integration
 
 The ToolBox previously defined above will be oriented towards standard
@@ -248,12 +90,7 @@ the match itself is done by the caller.
                                    re.finditer(r'<parameter=([\w.\-]+)>([\s\S]*?)</parameter>', match.group(2)))},
           },
       }
-
 #+end_src
-
-#+RESULTS:
-
-
 
 **** qwen_tool_call_requests
 
@@ -268,8 +105,6 @@ the match itself is done by the caller.
 #+end_src
 
 #+RESULTS:
-
-
 
 **** QwenToolCallResponseHandler
 
@@ -294,8 +129,6 @@ When the missives are embedded there may not be further indications
 #+end_src
 
 #+RESULTS:
-
-
 
 ***** Sandbox
 
@@ -334,7 +167,7 @@ current session, then returns True.
           return True
       # Over. -> request agent_kaizen skill
       driver = ctx['driver']
-      driver.append(user_missive("""
+      driver.user_missive("""
       Apply agent_kaizen skill to the current session.
       Upon completion send a message with a final "Over and out." on a line by itself.
       """))
@@ -447,6 +280,8 @@ It is certainly plausible for performance or functionality that we'd
 want to repeatedly interact with the same container rather than tear
 it down.
 
+***** AL-TODO Time calls and optionally log slow calls (and timeouts)
+
 ***** AL-REVIEW Security Audit
 
 Security audit completed: implemented tokenized command execution, added --user=1000:1000, and unique container names via UUID.
@@ -542,36 +377,6 @@ rather than creating anything specialized.
 
 Al did a good job getting the initial design rolling which I
 subsequently squashed.
-
-** Missives and Messages
-
-Similar to Langchain there will be some basic factory functions for
-missive creation. Ideally these should be more naturally integrated
-into relevant workflows, which will hopefully be ratcheted down after
-there's a clear picture of how it can make sense.
-
-These are trivial means to produce the expected dicts.
-
-#+begin_src python :results silent
-  from llama_cpp.llama_types import ChatCompletionRequestMessage
-
-  def user_missive(content: str) -> ChatCompletionRequestMessage:
-      return {"role": "user", "content": content}
-#+end_src
-
-*** single_choice
-
-Return a presumed single choice from a response or throw trying.
-
-#+begin_src python :results silent
-  def single_choice(msg):
-      if "choices" not in msg:
-          raise TypeError(f"choices not in msg: {msg}")
-      choices = msg["choices"]
-      if (len(choices) != 1):
-          raise TypeError(f"Only one choice is expected: {msg}")
-      return choices[0]
-#+end_src
 
 ** Beget Al
 
@@ -724,6 +529,20 @@ I think for temp directories I'm hitting the mismatch related to macOS virtualiz
   changes. In-place edits along with advisory locks (flock) should be reduce
   the number of back and forth calls needed.
   """
+  al_listen = """
+  ALWAYS prioritize the information in the prompt or work request over other sources
+  such as the existing implementation or information elsewhere. If the request input
+  requests something specific then either do it, or request explanation but DO NOT
+  independently decide that some alternative is preferable without clear guidance that
+  such an alternative is acceptable.
+
+  Any instructions with "shall" or "must" MUST be satsified
+  Any instructions with "should" must either be satisfied or result in questions/feedback
+  Any instructions with phrases to the effect of "such as" should use the suggested
+  solution or something comparable in terms of chracteristics (and should typically seek
+  to minimize how much custom code is written).
+
+  """
 
   driver = ChatDriver(model=llm,
                       on_response=handler,
@@ -738,6 +557,7 @@ I think for temp directories I'm hitting the mismatch related to macOS virtualiz
   {al_verify}
   {al_memory}
   {al_collab}
+  {al_listen}
 
   Skills are available under the /host/skills directory. Relevant skills should be used whenever relevant.
 

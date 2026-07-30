@@ -1,0 +1,50 @@
+:PROPERTIES:
+:ID:       B5E5C956-434C-4B34-B81C-CCE0EB011AD3
+:END:
+#+title: al/yolo-response-handler
+
+When running with local inference, my primary optimization target is
+my personal time: efficiency is valid but secondary. This overall
+leads to the perspective that I want an agent to do as much as
+possible on its own. It takes /me/ roughly an equal amount of time to
+answer the question of "how should I do this?" as it does to
+retroactively say "you did this wrong", and with the optimistic goal
+that the agent will do things right the latter option would cost no
+time whereas the former would still require my input. Another major
+contributing factor is that I want to run local inference without
+a large hardware investment...so I mostly want to let things chug away
+in the background with the expectation that they may take a while.
+
+A particularly straightforward way of accomplishing this is to just
+respond to any missives other than those that communicate that the
+work is complete with a bit of a rubber stamp. This seems to work more
+consistently then trying to push that behavior ahead of time, and in
+any case it seems preferable to just make sure the feedback is
+provided at an appropriate time rather than piling on to a context
+that has a bunch of other information and trying to reinforce it so
+that it doesn't get lost.
+
+This does not imply that corresponding guidance should not be in the
+prompt, but this offers a belt-and-suspenders approach.
+
+This makes use of the keyword driven workflows documented in [[id:987D73C3-C0DB-439A-860B-C161FDC295E8][al/chat-driver]].
+
+This is generalized to allow for modifying the prompt.
+If this is done then the message and keyword should be coordinated
+otherwise the model could loop endlessly.
+
+#+begin_src python :results silent :tangle yolo_response_handler.py
+  from dataclass import dataclass
+
+  class YoloResponseHandler(keyword: str = "Over.",
+                            message: str = """
+                            Continue on identified work. If there is no further work then
+                            respond with "Over." on a line by itself.
+                            """):
+      def __call__(ctx, response):
+          if self.keyword in response['message']['content']:
+              return False
+          user_missive = ctx['user_missive']
+          user_missive(self.message)
+          return True
+#+end_src

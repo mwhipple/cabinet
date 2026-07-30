@@ -21,10 +21,6 @@ will generally be gradually tightened). The context could potentially
 also be defined by a type parameter...but I think I'm already on the
 brink of going overboard with type hints without stronger guarantees.
 
-The context will typically include a ~driver~ ChatDriver...but that
-would not be defined here in the current design as it would introduce
-a low-value cycle.
-
 #+begin_src python :results silent :tangle message_handling.py
   from collections.abc import Callable
 
@@ -32,6 +28,10 @@ a low-value cycle.
 #+end_src
 
 * General Handlers
+
+Handlers should prefer using the Composite pattern as that allows
+modification of both handling and routing. Some supporting helpers are
+defined here.
 
 ** ForEachHandler
 

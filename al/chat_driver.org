@@ -1,0 +1,107 @@
+:PROPERTIES:
+:ID:       987D73C3-C0DB-439A-860B-C161FDC295E8
+:END:
+#+title: al/chat-driver
+
+The ChatDriver is the component that orchestrates all of the messages
+flowing between models and other components. Driver is used to be
+somewhat analogous to a driver in compilation (rather than a device
+driver), and seems slightly less likely to cause confusion in this
+context when compared to an alternative like orchestrator (where
+something like agent orchestration could be built on top of this).
+
+This component is focused on communicating with a model, and
+coordinating the messages with components that can be wired into
+provided extension points. It should therefore be expected to contain
+whatever knowledge is necessary to interact with the model, but the
+definition here should remain ignorant of any of the more specialized
+pieces that work on top of that.
+
+Beyond the basics, this should enable automated interactions...maybe
+"agentic loops" but my buzzword compliance has lapsed so I'm not sure
+if that's accurate.
+
+In particular beyond initial context, I'll be tentatively layering on
+workflows driven by messages. Rather than requesting multiple things
+at once this will allow for requesting one thing at a time where a
+keyword in the response triggers the next step in the flow (for
+example to request what amounts to a retrospective after completion).
+
+Messages will be sent using [[id:C6047B7D-4B82-45B9-886A-FACBF966030B][create_chat_completion]].
+
+* ChatDriver
+
+This provides extension points for configuring and providing models,
+and plugging in [[id:0C1AC947-C54C-4458-9F5E-F405F3DBD475][al/message-handling]].
+
+The current interaction model tracks all messages that the have been
+sent or received from the model in the ~missives~ property, and
+records those that have yet to be sent as thunks in
+~pending_missives~. The thunk model allows for some delayed expansion
+or further processing. The immediate use for this would be to support
+system prompt composition.
+
+The on_response handler is one of the most crucial extension points as
+it allows for reacting to model responses. It is called with a context
+that provides a ~user_missive~ function to request additional missives
+to be sent to the model. The driver itself is not passed to expose a
+more controlled API (and disallow things like submit).
+
+#+begin_src python :results silent :tangle chat_driver.py
+  from llama_cpp import Llama
+  from llama_cpp.llama_types import ChatCompletionRequestMessage
+
+  class ChatDriver:
+      def __init__(self,
+                   model: Llama,
+                   tools = [],
+                   on_response: MessageHandler = ForEachHandler(),
+                   system_prompt: str = ""):
+          self.model = model
+          self.missives: list[ChatCompletionRequestMessage] = []
+          self.tools = tools
+          self.on_response = on_response
+          self.pending_missives: list[Callable[[], ChatCompletionRequestMessage]] = []
+          if system_prompt:
+              self.pending_missives.append(lambda: {"role": "system", "content": system_prompt})
+
+      def user_missive(self,
+                       content: str):
+          self.pending_missives.append(lambda: {"role": "user", "content": conent})
+
+      def submit(self):
+          if not self.pending_missives:
+              return
+          self.missives += [func() for func in self.pending_missives]
+          self.pending_missives.clear()
+          resp = self.model.create_chat_completion(
+              messages = self.missives,
+              tools = self.tools,
+              tool_choice = "auto",
+              temperature=0.4,
+              repeat_penalty=1.05,
+          )
+          choice = single_choice(resp)
+          self.missives.append(choice['message'])
+          on_response = self.on_response # Assign to avoid method call
+          on_response({"user_missive": self.user_missive}, choice)
+          # This is likely a mild smell unless we can rely on TCO
+          # Especially as something like streaming comes in this will probably be re-shuffled
+          # to a more async/event loop-y model.
+          self.submit()
+#+end_src
+
+** single_choice
+
+Return a presumed single choice from a response or throw trying.
+
+#+begin_src python :results silent :tangle chat_driver.py
+  def single_choice(msg):
+      if "choices" not in msg:
+          raise TypeError(f"choices not in msg: {msg}")
+      choices = msg["choices"]
+      if (len(choices) != 1):
+          raise TypeError(f"Only one choice is expected: {msg}")
+      return choices[0]
+#+end_src
+
