@@ -82,3 +82,8 @@ this should be to support self-containment/offline usage, but should **not** ext
 reproducing all of the external information. Only that information which is directly relevant
 to what is needed should be captured locally, and any further clarifying information should
 be referenced but not duplicated.
+
+** Exemplars
+
+The following folders follow the desired structure:
+- [[file:ai_models/][ai_models]]

@@ -11,33 +11,7 @@ assumed host dependency (which could also be taken care of by
 [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]] but splitting out management from use seems wise for
 multiple reasons).
 
-#+begin_src bash :session al-venv
+#+begin_src bash :session al-venv :results silent
   python -m venv "${venv}"
   ${venv}/bin/python -m pip install llama-cpp-python typing_extensions
 #+end_src
-
-#+RESULTS:
-#+begin_example
-Collecting llama-cpp-python
-  Using cached llama_cpp_python-0.3.34-py3-none-macosx_26_0_arm64.whl
-Collecting typing_extensions
-  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
-Collecting numpy>=1.20.0 (from llama-cpp-python)
-  Using cached numpy-2.5.1-cp314-cp314-macosx_14_0_arm64.whl.metadata (6.6 kB)
-Collecting diskcache>=5.6.1 (from llama-cpp-python)
-  Using cached diskcache-5.6.3-py3-none-any.whl.metadata (20 kB)
-Collecting jinja2>=2.11.3 (from llama-cpp-python)
-  Using cached jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
-Collecting MarkupSafe>=2.0 (from jinja2>=2.11.3->llama-cpp-python)
-  Using cached markupsafe-3.0.3-cp314-cp314-macosx_11_0_arm64.whl.metadata (2.7 kB)
-Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
-Using cached diskcache-5.6.3-py3-none-any.whl (45 kB)
-Using cached jinja2-3.1.6-py3-none-any.whl (134 kB)
-Using cached markupsafe-3.0.3-cp314-cp314-macosx_11_0_arm64.whl (12 kB)
-Using cached numpy-2.5.1-cp314-cp314-macosx_14_0_arm64.whl (5.3 MB)
-Installing collected packages: typing_extensions, numpy, MarkupSafe, diskcache, jinja2, llama-cpp-python
-
-
-Successfully installed MarkupSafe-3.0.3 diskcache-5.6.3 jinja2-3.1.6 llama-cpp-python-0.3.34 numpy-2.5.1 typing_extensions-4.16.0
-#+end_example
-

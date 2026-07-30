@@ -36,7 +36,7 @@ so that's it for now.
   hf models list --filter llama.cpp --filter agentic --no-truncate > model_list.out
 #+end_src
 
-[[file:model_list.out][model_list]]
+**** [[file:model_list.out][model_list]]
 #+transclude: [[file:model_list.out][model_list]]
 
 ** empero-ai/Qwythos-9B-v2-GGUF
@@ -44,6 +44,6 @@ so that's it for now.
   hf models info empero-ai/Qwythos-9B-v2-GGUF > qwythos2_card.out
 #+end_src
 
-[[file:qwythos2_card.out][qwythos2_card]]
+*** [[file:qwythos2_card.out][qwythos2_card]]
 #+transclude: [[file:qwythos2_card.out][qwythos2_card]]
 
