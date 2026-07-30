@@ -11,10 +11,6 @@ This specific model is /not/ the trendiest, but is a newer version of
 one of the trendiest which ostensibly has some guards against some
 looping (that I think I've experienced).
 
-#+name: model-file
-#+begin_src shell :async no :session none :results output :cache yes
-  hf download --quiet empero-ai/Qwythos-9B-v2-GGUF Qwythos-9B-v2-MTP-Q4_K_M.gguf
+#+begin_src shell :results silent
+  hf download --quiet empero-ai/Qwythos-9B-v2-GGUF Qwythos-9B-v2-MTP-Q4_K_M.gguf > gguf_path.out
 #+end_src
-
-#+RESULTS[43c48731461531f7fdf007b29a39b30263a5048e]: model-file
-: /Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-v2-GGUF/snapshots/97c11b03687f194b300efbdb4760d9bc4021b759/Qwythos-9B-v2-MTP-Q4_K_M.gguf

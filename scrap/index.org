@@ -1,85 +1,66 @@
 :PROPERTIES:
-:ID:       874E8D47-B2B2-49F4-AF01-87B26B4C6247
+:ID:       0DC5A06B-8D69-4CC4-AA03-009E55BFEDCF
 :END:
-#+title: scrap-book
+#+title: scrap
 
-Some lower-level literate notebook support.
+* Overview
 
-* Example: basic evaluation
+scrap is what I'm calling my set of of utilities for working with
+literate programming style notebooks, as described in
+[[id:3FA03B7E-EC84-40E0-AB18-E3AED640DA89][scrapbook-interface]].
 
-#+begin_src bash :from test
-  echo "Hello from scrap-book!"
-#+end_src
+Most of these are expected to be Haskell programs written on top of
+Pandoc.
 
-#+begin_results :from test :output stdout
-  Hello from scrap-book!
-#+end_results
+** Why Haskell?
 
-This evaluation logic is called "scrap-book". It evaluates code
-blocks marked with a :from attribute by running corresponding shell
-scripts from the evaluators/ directory.
+Pandoc itself is written in haskell, but has very nice support for
+building on top of it in other languages, most notably (but not
+limited to) Python and Lua. There are several factors that went into
+using haskell.
 
-** How it works**
+*** Squishy Factors
 
-1. Org blocks containing ~#+begin_src ...~ (any fence type) are identified as source blocks.
-2. The source code is executed via the appropriate evaluator script in
-   ~evaluators/~.
-3. For each block that has a ~:from~ attribute, its content is treated
-   as a destination. The output of the corresponding source block
-   (determined by the name after ~:from~) is written into this
-   destination block. This is similar to how formula cells work in spreadsheets.
+Using the /same/ language avoids the need to any type of translation
+across the bindings and makes reading the code throughout more
+seamless.
 
-* Usage
+Subjectively a lot of the logic that needs to be written can be very
+naturally represented with pattern matching, which is more naturally
+supported in haskell than in either python or lua.
 
-** Command-line invocation
+Aspirationally I also think that if AI is used for coding then we
+should move towards languages that may be more difficult or onerous to
+write but provide stronger guarantees. Given that the AI should absorb
+the actual cost of writing, this can provide a means to have higher
+confidence in the result - particularly if there are means to provide
+formal verification (which outside of the pandoc variable would push
+me towards Idris).
 
-Run scrap-book on an Org file:
+*** Concrete Factor
 
-#+begin_src bash
-  cd /host/scrap && runhaskell eval.hs <file.org>
-#+end_src
+The primary deciding factor is based on past experience. I've built
+out functionality on top of pandoc a few times in the past and have
+generally gravitated towards lua given that it is not only more
+accessible to most developers than haskell, but it also has a built-in
+interpreter (and therefore virtually no additional environmental
+setup).
 
-This will parse the Org file, evaluate any source blocks, and populate
-the content of any destination blocks (those with a `:from` attribute)
-with the evaluated output.
+Lua extensions work very well...but in one of the less trivial
+projects where I have such a setup one nuisance is lack of build-time
+guarantees. When working with something like pandoc there is a subset
+of behavior that may be of interest at a given time, but the code
+needs to handle all of it. I'd therefore run into belated feedback
+when something I hadn't cared about (and therefore hadn't
+specified/tested) would fail at runtime at some point in the future
+due to some proximal change knocking something loose. Having live
+specifications can protect against that while also providing helpful
+documentation (the referenced project makes heavy use of BATS for
+tests), but having stronger guarantees throughout the process seems
+more economical - particularly for more personal projects where
+comprehensive documentation/specification may otherwise be overkill.
 
-** Supported evaluators
+* [[file:book.org][book]]
+#+transclude: [[file:book.org][book]] :level 2
 
-Evaluators live in the ~evaluators/~ subdirectory. Each language has
-its own script; for example ~bash~ is provided for Bash code.
-
-** Evaluation semantics
-
-Source blocks are evaluated using their declared language (or
-defaulting to ~bash~). The name after ~:from~ on a destination block
-identifies which source's output should be placed there. The evaluator
-scripts write their output to ~/host/scrap/evaluators/stdout~; this is
-read and inserted into the destination block.
-
-For example, given:
-
-#+begin_src bash :from foo
-  echo "Hello, foo!"
-#+end_src
-
-#+begin_results :from foo :output stdout
-#+end_results
-
-the second block will be filled with ~Hello, foo!~.
-
-** Quick start
-
-To use scrap-book:
-
-1. Create an Org file with source blocks (any fence type) that contain code.
-2. Add destination blocks with a ~:from~ attribute to receive the output.
-3. From the ~scrap~ directory, run:
-   ```
-   runhaskell book.hs <your-file.org>
-   ```
-4. The tool will evaluate each source block and insert its output into
-   the corresponding destination block.
-
-You can mix multiple languages; see the ~evaluators/~ subdirectory for
-supported languages (bash, python, etc.).
 

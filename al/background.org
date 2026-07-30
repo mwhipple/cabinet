@@ -66,11 +66,6 @@ tool be invoked.
 Information about the tool that is declared in a form that can be used
 by a model.
 
-** AL-DONE Update the content to align with the Glossary terms.
-
-Any content related to interacting with the model should make use of
-the corresponding terms where appropriate.
-
 * Design
 
 I'm hoping to just use [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]] as directly as possible through the
@@ -79,4 +74,3 @@ harnesses due to feeling like they are more likely to chase richer
 functionality than I want and the perpsective that I should be able to
 use the agent to help build itself (which should effectively dissolve
 the traditional benefits of using more packaged software).
-

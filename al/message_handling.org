@@ -1,0 +1,64 @@
+:PROPERTIES:
+:ID:       0C1AC947-C54C-4458-9F5E-F405F3DBD475
+:END:
+#+title: al/message-handling
+
+Much (all?) of the automated agentic interactions will be driven
+by the messages flowing to and from models and other components.
+This module defines a basic message handling framework, and a
+combination of some general and specialized handlers.
+
+* MessageHandler Type Definition
+
+~MessageHandler~ defines handler functions which enable observing and
+reacting to the various events that occur when interacting with models
+(and elsewhere).  It will be passed a dictionary [[id:3A3B17B9-0761-4DB1-A663-B12BC13155B4][context-argument]] and
+a generic message, and should return a boolean indicating whether it
+was activated or not.
+
+To start the context will be left as a general dictionary (types
+will generally be gradually tightened). The context could potentially
+also be defined by a type parameter...but I think I'm already on the
+brink of going overboard with type hints without stronger guarantees.
+
+The context will typically include a ~driver~ ChatDriver...but that
+would not be defined here in the current design as it would introduce
+a low-value cycle.
+
+#+begin_src python :results silent :tangle message_handling.py
+  from collections.abc import Callable
+
+  type MessageHandler[M] = Callable[[dict, M], bool]
+#+end_src
+
+* General Handlers
+
+** ForEachHandler
+
+Represent a list of multiple handlers all of which will be called (if any).
+
+#+begin_src python :results silent :tangle message_handling.py
+  class ForEachHandler:
+    def __init__(self, handlers=[]):
+      self.handlers = handlers
+    def __call__(self, ctx, msg) -> bool:
+      result = False
+      for h in self.handlers:
+        result = h(ctx, msg) or result
+#+end_src
+
+** FirstActiveHandler
+
+Provide a chain of responibility style handler which will look for the
+first handler is activated.
+
+#+begin_src python :results silent :tangle message_handling.py
+  class FirstActiveHandler:
+      def __init__(self, handlers=[]):
+          self.handlers = handlers
+      def __call__(self, ctx, msg):
+          for h in self.handlers:
+              if h(ctx, msg):
+                  return True
+          return False
+#+end_src

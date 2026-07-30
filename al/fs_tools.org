@@ -14,8 +14,7 @@ This may be too limited to warrant typical inclusion and may be simple
 enough that it's not even worth keeping around, but this will probably
 just get moved somewhere else.
 
-#+name: fs-tools
-#+begin_src python
+#+begin_src python :results silent
   def read_file(path: str, chunk_size: int = -1) -> str:
       """
       Return the contents of the file at path as a string.
@@ -28,5 +27,3 @@ just get moved somewhere else.
       except IOError as e:
           return f"Error reading file: {e}"
 #+end_src
-
-#+RESULTS: fs-tools

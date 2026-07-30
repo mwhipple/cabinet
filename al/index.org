@@ -12,12 +12,17 @@
   tool_belt.py
 #+end_src
 
-* [[id:D65CCEA0-A995-4F16-8E3E-E3FDCDF58170][al/background]]
-#+transclude: [[id:D65CCEA0-A995-4F16-8E3E-E3FDCDF58170][al/background]]
-
-* [[id:DE72620E-D29F-4E9F-B448-53C7C3B82332][al/venv]]
-#+transclude: [[id:DE72620E-D29F-4E9F-B448-53C7C3B82332][al/agent]]
-* [[id:C7B04713-B224-467C-A355-0F76F2FD5578][al/tool-belt]]
-#+transclude: [[id:C7B04713-B224-467C-A355-0F76F2FD5578][al/tool-belt]]
-
-
+* [[id:D65CCEA0-A995-4F16-8E3E-E3FDCDF58170][background]]
+#+transclude: [[id:D65CCEA0-A995-4F16-8E3E-E3FDCDF58170][al/background]] :level 2
+* Environment Setup
+** [[file:model_selection.org][model_selection]]
+#+transclude: [[file:model_selection.org][model_selection]] :level 3
+** [[file:shell_image.org][shell_image]]
+#+transclude: [[file:shell_image.org][shell_image]] :level 3
+** [[id:DE72620E-D29F-4E9F-B448-53C7C3B82332][venv]]
+#+transclude: [[id:DE72620E-D29F-4E9F-B448-53C7C3B82332][al/agent]] :level 3
+* lib
+** [[id:C7B04713-B224-467C-A355-0F76F2FD5578][tool-belt]]
+#+transclude: [[id:C7B04713-B224-467C-A355-0F76F2FD5578][al/tool-belt]] :level 3
+** [[file:message_handling.org][message-handling]]
+#+transclude: [[file:message_handling.org][message-handling]] :level 3

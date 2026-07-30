@@ -5,29 +5,60 @@
 
 Produce an image for use by [[id:7233EF2D-04BB-4A88-9179-DC8AEE26313A][al]].
 
-* Rest
+* How This Model Works (Currently)
 
-#+begin_src emacs-lisp
-  (org-babel-tangle)
-#+end_src
+This image is used in support of the idea where an economical way to
+allow an agent to perform work while being able to control such work
+is to give it a container in which to operate.
 
-#+RESULTS:
-| /Users/mwhipple/memex/cabinet/al/Dockerfile | /Users/mwhipple/memex/cabinet/al/.gitignore |
+The containers provide a bit of isolation, which can then make use of
+the typical means to get things in and out of those containers, where
+I'll start with the use of bind mounts.
 
-#+NAME: build-image
-#+BEGIN_SRC shell :session al_image :async yes
-docker build -t al_image .
-#+END_SRC
+The end state is a bit interesting in that there's a host which drives
+everything and can communicate with the model and the container...and
+must relay information back and forth between those (all while also
+accounting for the separation between the container and the host).
 
-Starting from https://github.com/pandoc/dockerfiles/tree/main
+_Currently_ the tooling launches a container for each invocation...
+this may be notably inefficient and may be revisited for that purpose
+alone, but also makes each container fully ephemeral and therefore
+some options (such as using a tmpfs within a container) useless.
+What is there seems to work, and therefore such optimization will be
+pursued after more foundational pieces are smoothed out.
+
+** On MacOS
+
+On MacOS an additional consideration is that containers will be run
+within virtual machines. This is beneficial from the perspective of
+isolation, but introduces additional concerns in terms of performance,
+configuration, and footprint.
+
+This /may/ cause some tension with some of the goals of resource
+consumption for local inference, but I'm optimistic that that could be
+tuned out.
+
+Generally, anything that requires enough resources that this becomes a
+concern should likely be split out into a distinct tool so that it can
+be optimized separately (prospectively bypassing containerization).
+
+Another fairly persistent concern with containers on macOS is making
+sure that the system architectures match - though that should be able
+to be handled by appropriate attention nowadays (unlike ~5 years ago
+when wanting support for arm64 blew up any related work).
+
+* Image Construction
+
+For now I'll be starting with a single image which is oriented
+towards letting Al perform some standard functions and optimize
+how to work with this project. Particularly as the image grows,
+it should be expected to be replaced with a catalog for different tools.
+
+Largely starting from https://github.com/pandoc/dockerfiles/tree/main
 
 To start the expectation is that Al will be building some haskell
 with pandoc, so we'll largely crib from the builder-base image
 which would have those components available.
-
-There seems to be some quirks around getting the cabal install to be
-picked up which is being worked through.
-This is likely due to wanting it to be run as the user,
 
 This should be broken up and better commented.
 
@@ -81,3 +112,15 @@ RUN cabal user-config init \
 ENTRYPOINT ["/bin/bash", "-c"]
 
 #+end_src
+
+* Image Building
+
+#+begin_src emacs-lisp :results silent
+  (org-babel-tangle)
+#+end_src
+
+#+NAME: build-image
+#+BEGIN_SRC shell :session al_image :async yes :results silent
+docker build -t al_image .
+#+END_SRC
+

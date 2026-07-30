@@ -87,3 +87,4 @@ be referenced but not duplicated.
 
 The following folders follow the desired structure:
 - [[file:ai_models/][ai_models]]
+- [[file:al][al]]
