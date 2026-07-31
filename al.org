@@ -5,8 +5,7 @@
 #+title: al
 
 * TODO Increment
-SCHEDULED: <1980-01-17 Thu +1d>
-
+SCHEDULED: <1980-01-18 Fri +1d>
 ** Tool Call Parsing and Integration
 
 The ToolBox previously defined above will be oriented towards standard

@@ -63,4 +63,5 @@ comprehensive documentation/specification may otherwise be overkill.
 * [[file:book.org][book]]
 #+transclude: [[file:book.org][book]] :level 2
 
-
+* [[file:tangle.org][tangle]]
+#+transclude: [[file:tangle.org][tangle]] :level 2

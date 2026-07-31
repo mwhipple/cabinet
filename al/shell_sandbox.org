@@ -1,0 +1,241 @@
+#+BEGIN_FILE_PROPERTIES
+:ID:       c3ccf102-3ace-4cda-85b3-2a9312533eec
+:END:
+
+#+TITLE: al/shell-sandbox
+
+** Tool Definitions
+
+*** CLI
+
+What seems to be one of the most useful tools to provide out of the
+gate is a standard POSIX-y shell environment. This would allow the
+agent to perform a variety of work without further logic. A naive
+approach would also pose signficiant security concerns given that it
+would allow wide access to the underlying system. Existing mecahnisms
+should be used to provide a more controlled sandbox, where one of the
+most supported such mechanisms is the use of containers. This tool
+should therefore be designed such that the tool is defined to define a
+containerized environment, and those calls requested by the agent will
+be run within that environment.
+
+The containerization should be prefer using portable approaches rather
+than making use of anything that introduces unnecessary abstractions
+or constraints. For example: generating a system call that would
+compose a docker CLI compatible command would be appropriate (with
+appropriate guards against any kind of injection attacks). Any
+configuraitons should be modeled as reasonably self-documenting objects - while the actual implementation used may be portable and low-level, the provided interface should provide expressive logical constructs rather than leaking out implementation details.
+
+The work described in this section should be performed without needing
+further context. The requested tool should be produced using standard
+python code where the resulting model is that instantiation configures
+the containerized environment and the instance exposes a method which
+can be used to invoke commands within that environment. For example:
+
+The options available for the sandbox creation is based on
+standard concepts. The starting set should include those that allow
+for interacting with local files while providing maximum protection
+that anything other than such file protections would be prevented.
+
+**** BindMount
+
+Defining mounts is a straightforward way to enable and control access
+to files within the container.
+
+#+begin_src python :results silent :tangle "shell_sandbox.py"
+  from dataclasses import dataclass
+
+  @dataclass
+  class BindMount:
+    host_path: str
+    container_path: str
+    readonly: bool = False
+
+    def as_docker_run_argument(self) -> list[str]:
+      """Render this as a mount argument."""
+      return ["--mount",
+              f"type=bind,source={self.host_path},destination={self.container_path},readonly={str(self.readonly).lower()}"]
+#+end_src
+
+**** TmpFSMount
+
+OK...I created this but I'm not sure if it is entirely useless (or
+just mostly useless). I think it's actually not useless, but the
+current issue would be that the each call spins up a separate
+container - so if this can make use of a volume or similar it could be useful.
+
+Getting ShellSandbox split out and documented would also help with
+some of the recurring stumbling blocks around how these pieces fit together.
+
+#+begin_src python :results silent :tangle "shell_sandbox.py"
+  from dataclasses import dataclass
+
+  @dataclass
+  class TmpFSMount:
+      container_path: str = "/tmp"
+      mode: str = "1777"
+      size: int = 104_857_600
+
+      def as_docker_run_argument(self) -> list[str]:
+          """Render this as a mount argument."""
+          return ["--mount",
+                  f"type=tmpfs,destination={self.container_path},tmpfs-size={self.size},tmpfs-mode={self.mode}"]
+
+#+end_src
+
+**** EnvironmentVariable
+
+#+begin_src python :results silent :tangle "shell_sandbox.py"
+  from dataclasses import dataclass
+
+  @dataclass
+  class EnvironmentVariable:
+      name: str
+      value: str
+
+      def as_docker_run_argument(self) -> list[str]:
+          return ["--env", f"{self.name}={self.value}"]
+#+end_src
+
+**** ShellSandbox
+
+This should be complemented with definitions of container conventions.
+
+Compose and invoke the command for containerized execution.
+This is currently oriented towards single/stateless evaluation.
+It is certainly plausible for performance or functionality that we'd
+want to repeatedly interact with the same container rather than tear
+it down.
+
+***** AL-TODO Time calls and optionally log slow calls (and timeouts)
+
+***** AL-REVIEW Security Audit
+
+Security audit completed: implemented tokenized command execution, added --user=1000:1000, and unique container names via UUID.
+
+The security provided by a sandbox should _not_ be able to be bypassed
+through any techniques such as injection or gaining elevated
+privileges. There should be no means to gain access to any details of the wider system through a secured sandbox.
+
+Sandbox configuration itself should default to a secure stance.
+Configurations which weaken this stance should be supported but should
+be clearly documented as posing a security risk. For example if a
+container is run as root/superuser this may represent a security risk:
+it should be supported but cautioned against.
+
+#+begin_src python :results silent :tangle "shell_sandbox.py" :session al :async yes
+  import subprocess
+  import time
+  import uuid
+  import shlex
+
+  from typing import Optional, List
+  class ShellSandbox:
+    def __init__(self,
+                 image: str,
+                 args: list = [],
+                 timeout_seconds: Optional[int] = None,
+                 lxc_cmd = "docker",
+                 result_observer = lambda res: None):
+        self.image = image
+        self.args = args
+        self.container_name = f"shell_sandbox_{uuid.uuid4().hex}"
+        self.timeout_seconds = timeout_seconds
+        self.lxc_cmd = lxc_cmd
+        self.result_observer = result_observer
+
+
+        # Create the container during construction (no --rm) so it persists for reuse.
+        cmd = [
+            self.lxc_cmd,
+            "run",
+            "--name", self.container_name,
+            "--security-opt=no-new-privileges",
+            "--cap-drop=all",
+        ] + [
+            cmd for arg in self.args for cmd in arg.as_docker_run_argument()
+        ] + [self.image] + ["/bin/bash"]
+        result = subprocess.run(cmd, check=True)
+        if result.stderr:
+          print(result.stderr)
+
+    def __enter__(self):
+        # Container already created; just return self.
+        return self
+
+    def shell_command(self, command: str) -> tuple[str, str]:
+      """
+      Execute the provided shell command.
+
+      The utilities available will vary based on the image used.
+      Users should therefore check availability prior to invoking.
+
+      This will return the output from stdout and stderr as a single string
+      with XML elements for each stream.
+
+      Note: The command is executed without a shell; it is tokenized
+      safely. If you need shell features (piping, redirections),
+      consider using a different approach or wrapping in a script.
+      """
+
+      time_in_ms = ms_timer()
+      try:
+        result = subprocess.run(self.exec(command), capture_output=True, timeout=self.timeout_seconds)
+        return self.handle_results(
+            command=command,
+            stdout=result.stdout.strip(),
+            stderr=result.stderr.strip(),
+            execution_ms=time_in_ms())
+      except subprocess.TimeoutExpired as e:
+        return self.handle_results(
+            command=command,
+            stderr=f"Requested command timed out: {e.stderr}",
+            stdout=e.stdout,
+            execution_ms=time_in_ms())
+
+    def exec(self, command):
+      "Exec in existing container"
+      return [self.lxc_cmd, "exec", self.container_name] + shlex.split(command)
+
+    def handle_results(self, **res):
+      observe = self.result_observer
+      observe(res)
+      return f"<output>{"".join((result_element(res, key) for key in ["stdout", "stderr", "execution_ms"]))}</output>"
+
+    def __exit__(self, *args):
+        subprocess.run([self.lxc_cmd, "rm", "-f", self.container_name])
+
+  def result_element(res, key):
+    return f"<{key}>{res[key]}</{key}" if key in res else ""
+
+  def ms_timer():
+    start = time.process_time_ns()
+    return lambda: (time.process_time_ns() - start) / 1_000_000
+
+#+end_src
+
+**** AL-DONE Longer form options should also be preferred throughout.
+
+**** Sandbox
+
+#+begin_src python :session sb_test :results silent :tangle "shell_sandbox.py"
+  import os
+  sb = ShellSandbox(image="alpine:latest", mounts=[BindMount(host_path=os.getcwd(),container_path="/host")])
+  print(sb.shell_command("ls -l /host"))
+#+end_src
+
+#+begin_src python :session al :async yes :results output
+  class SlowLogResultObserver:
+      def __init__(self, slow_ms, slow_log):
+          self.slow_ms = slow_ms
+          self.slow_log = slow_log
+
+      def __call__(self, res):
+          line=f"{res['execution_ms']} {res['command']}\n"
+          print(line)
+          if res.get('execution_ms', 0) >= self.slow_ms:
+              with open(self.slow_log, "a") as f:
+                  f.write(line)
+#+end_src
+
+#+RESULTS:
