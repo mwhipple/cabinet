@@ -144,14 +144,15 @@ it should be supported but cautioned against.
         self.lxc_cmd = lxc_cmd
         self.result_observer = result_observer
 
-
         # Create the container during construction (no --rm) so it persists for reuse.
         cmd = [
             self.lxc_cmd,
             "run",
             "--name", self.container_name,
             "--security-opt=no-new-privileges",
+            "--interactive",
             "--cap-drop=all",
+            "--detach",
         ] + [
             cmd for arg in self.args for cmd in arg.as_docker_run_argument()
         ] + [self.image] + ["/bin/bash"]
@@ -203,7 +204,7 @@ it should be supported but cautioned against.
       return f"<output>{"".join((result_element(res, key) for key in ["stdout", "stderr", "execution_ms"]))}</output>"
 
     def __exit__(self, *args):
-        subprocess.run([self.lxc_cmd, "rm", "-f", self.container_name])
+      subprocess.run([self.lxc_cmd, "rm", "-f", self.container_name])
 
   def result_element(res, key):
     return f"<{key}>{res[key]}</{key}" if key in res else ""
