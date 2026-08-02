@@ -2,7 +2,6 @@
 :ID:       22E2131D-5ADF-46AD-BEBB-8A5745CBA94F
 :END:
 #+title: meta
-
 A notebook for this project itself.
 
 This project is called a "cabinet" which is a reference to a physical
@@ -83,8 +82,14 @@ reproducing all of the external information. Only that information which is dire
 to what is needed should be captured locally, and any further clarifying information should
 be referenced but not duplicated.
 
+** Coding Style
+
+The [[./coding_style][coding-style]] topic contains a range of practices which may both
+explain patterns and in existing code, and should be followed for
+any new development.
 ** Exemplars
 
 The following folders follow the desired structure:
 - [[file:ai_models/][ai_models]]
 - [[file:al][al]]
+- [[./computational_constructs][computational_constructs]]

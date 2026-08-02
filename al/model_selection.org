@@ -2,7 +2,6 @@
 :ID:       3B03D516-BE0A-4F3F-8C8B-75B37693BE9F
 :END:
 #+title: al/model-selection
-
 There should maybe be multiple involved and I don't have a mature
 selection framework as documented elsewhere, so for now I'll start
 with the trendiest option du jour from [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]].
@@ -10,7 +9,6 @@ with the trendiest option du jour from [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028
 This specific model is /not/ the trendiest, but is a newer version of
 one of the trendiest which ostensibly has some guards against some
 looping (that I think I've experienced).
-
 #+begin_src shell :results silent
   hf download --quiet empero-ai/Qwythos-9B-v2-GGUF Qwythos-9B-v2-MTP-Q4_K_M.gguf > gguf_path.out
 #+end_src

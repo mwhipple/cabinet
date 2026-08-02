@@ -2,14 +2,11 @@
 :ID:       D65CCEA0-A995-4F16-8E3E-E3FDCDF58170
 :END:
 #+title: al/background
-
 * Plans
-
 First and foremost I'd want most of this work to be able to be driven
 empirically which requires a harness to collect and refine some of the
 underlying processes. I'll look at pulling from existing solutions
 such as DSPy, but unfortunately much of what exists requires a server.
-
 * Name
 
 Al is the provisional name for my personal agent setup.

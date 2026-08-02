@@ -1,0 +1,24 @@
+:PROPERTIES:
+:ID:       AA3EB684-A0DE-4EDB-8AE6-D9ED383BF7F4
+:END:
+#+title: coding-style/demarcate-purity
+Pure logic should be separated from those that are impure.  Some
+functional languages may enforce this, and in some languages there may
+be (often unrecognized) incidental costs that may result when this is
+not done (such as Go's error handling).
+
+In some cases this can be facilitated through making use of different
+syntaxes for expression and statement blocks (which can align with pure
+vs. impure logic respectively).
+
+This also benefits from [[id:C0F5C440-6F05-4306-ADDB-9FC318FEA34C][codding-style/stingy-scope]] where pure logic is
+defined and plugged in for use in impure contexts.
+* Rationale
+
+Independently of language used this tends to be useful across the
+board both in terms of understanding the logic itself and some of the
+related control flow concerns (and can help provide combinations of
+more robust code and a reduced need for error handling code).
+
+Beyond error conditions, this can also help guard against more subtle
+control flow issues such as temporal coupling.

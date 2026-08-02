@@ -1,8 +1,8 @@
 :PROPERTIES:
 :ID:       987D73C3-C0DB-439A-860B-C161FDC295E8
+:header-args: :session al
 :END:
 #+title: al/chat-driver
-
 The ChatDriver is the component that orchestrates all of the messages
 flowing between models and other components. Driver is used to be
 somewhat analogous to a driver in compilation (rather than a device
@@ -28,9 +28,7 @@ keyword in the response triggers the next step in the flow (for
 example to request what amounts to a retrospective after completion).
 
 Messages will be sent using [[id:C6047B7D-4B82-45B9-886A-FACBF966030B][create_chat_completion]].
-
 * ChatDriver
-
 This provides extension points for configuring and providing models,
 and plugging in [[id:0C1AC947-C54C-4458-9F5E-F405F3DBD475][al/message-handling]].
 
@@ -67,7 +65,7 @@ more controlled API (and disallow things like submit).
 
       def user_missive(self,
                        content: str):
-          self.pending_missives.append(lambda: {"role": "user", "content": conent})
+          self.pending_missives.append(lambda: {"role": "user", "content": content})
 
       def submit(self):
           if not self.pending_missives:
@@ -84,7 +82,10 @@ more controlled API (and disallow things like submit).
           choice = single_choice(resp)
           self.missives.append(choice['message'])
           on_response = self.on_response # Assign to avoid method call
-          on_response({"user_missive": self.user_missive}, choice)
+          on_response({
+              "user_missive": self.user_missive,
+              "append": lambda msg: self.pending_missives.append(lambda: msg),
+          }, choice)
           # This is likely a mild smell unless we can rely on TCO
           # Especially as something like streaming comes in this will probably be re-shuffled
           # to a more async/event loop-y model.

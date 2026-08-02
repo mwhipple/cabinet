@@ -1,15 +1,13 @@
 :PROPERTIES:
 :ID:       0C1AC947-C54C-4458-9F5E-F405F3DBD475
+:header-args: :session al
 :END:
 #+title: al/message-handling
-
 Much (all?) of the automated agentic interactions will be driven
 by the messages flowing to and from models and other components.
 This module defines a basic message handling framework, and a
 combination of some general and specialized handlers.
-
 * MessageHandler Type Definition
-
 ~MessageHandler~ defines handler functions which enable observing and
 reacting to the various events that occur when interacting with models
 (and elsewhere).  It will be passed a dictionary [[id:3A3B17B9-0761-4DB1-A663-B12BC13155B4][context-argument]] and

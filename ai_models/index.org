@@ -2,7 +2,6 @@
 :ID:       3DA5F51A-929C-4548-BF2C-9B0579059C1F
 :END:
 #+title: ai-models
-
 Selection of AI models should be driven by quantifiable metrics.
 
 With local inference particularly during devleopment, one of the
@@ -19,7 +18,6 @@ their relevant information to be used for configuration, etc..
 
 This will make use of [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]], where the models will be loaded
 into the library of babel for use by other notebooks.
-
 ** llama.cpp
 
 I'm planning on using [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]], so I may as well zero in on models

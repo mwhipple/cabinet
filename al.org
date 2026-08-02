@@ -3,16 +3,9 @@
 :header-args: :var venv="/tmp/al" :python /tmp/al/bin/python :async yes :results output :session al
 :END:
 #+title: al
-
 * TODO Increment
 SCHEDULED: <1980-01-18 Fri +1d>
 ** Tool Call Parsing and Integration
-
-The ToolBox previously defined above will be oriented towards standard
-interfaces, but there may be need to be some additional adaptation
-between those standards and what passes to and from the model (and
-maybe elsewhere).
-
 Such adapaters will be defined separately and plugged in where
 appropriate to the missive passing and handling machinery...so this
 defines a configuraable integration layer rather than something that
