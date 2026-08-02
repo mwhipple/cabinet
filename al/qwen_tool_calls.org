@@ -1,0 +1,6 @@
+:PROPERTIES:
+:ID:       43AF7157-3E81-48DC-A143-C3C2FFE7BC05
+:END:
+#+title: al/qwen-tool-calls
+Provide support for Qwen style tools to work with the [[id:C7B04713-B224-467C-A355-0F76F2FD5578][al/tool-belt]] and
+[[id:987D73C3-C0DB-439A-860B-C161FDC295E8][al/chat-driver]].

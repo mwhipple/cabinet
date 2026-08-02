@@ -2,7 +2,6 @@
 :ID:       25057DA1-FADB-44EA-8A54-045FEAEC2A9C
 :END:
 #+title: language-culture
-
 Potentially one of the biggest factors that should guide selection of
 something like a programming language is the culture that surrounds
 it.

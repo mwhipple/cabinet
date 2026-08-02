@@ -47,7 +47,6 @@ When passed a regex capture for ~<paramter={}>{}</parameter>~,
 return a tuple of name and parameter value.
 
 The match itself is done by the caller.
-
 #+begin_src python
   import json
   def tool_call_parameter_from_qwen_match(match):
@@ -111,12 +110,12 @@ When the missives are embedded there may not be further indications
 
       def __call__(self, ctx, resp):
           calls = qwen_tool_call_requests(resp['message']['content'])
-          driver = ctx['driver']
           if not calls: # Don't submit at the end
               return False
           for call in calls:
               output = self.tool_belt.apply(call)
-              driver.append(output)
+              append = ctx['append']
+              append(output)
           return True
 #+end_src
 
@@ -162,7 +161,7 @@ current session, then returns True.
       driver.user_missive("""
       Apply agent_kaizen skill to the current session.
       Upon completion send a message with a final "Over and out." on a line by itself.
-      """))
+      """)
       return True
 #+end_src
 
@@ -170,15 +169,6 @@ current session, then returns True.
 
 *** CLI
 
-What seems to be one of the most useful tools to provide out of the
-gate is a standard POSIX-y shell environment. This would allow the
-agent to perform a variety of work without further logic. A naive
-approach would also pose signficiant security concerns given that it
-would allow wide access to the underlying system. Existing mecahnisms
-should be used to provide a more controlled sandbox, where one of the
-most supported such mechanisms is the use of containers. This tool
-should therefore be designed such that the tool is defined to define a
-containerized environment, and those calls requested by the agent will
 be run within that environment.
 
 The containerization should be prefer using portable approaches rather

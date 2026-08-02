@@ -44,7 +44,6 @@ it allows for reacting to model responses. It is called with a context
 that provides a ~user_missive~ function to request additional missives
 to be sent to the model. The driver itself is not passed to expose a
 more controlled API (and disallow things like submit).
-
 #+begin_src python :results silent :tangle chat_driver.py
   from llama_cpp import Llama
   from llama_cpp.llama_types import ChatCompletionRequestMessage

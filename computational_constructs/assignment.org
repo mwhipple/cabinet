@@ -3,7 +3,6 @@
 :ROAM_ALIASES: variable-assignment
 :END:
 #+title: assignment
-
 Variable assignment is updating the value associated with an
 identifier.
 
@@ -15,7 +14,6 @@ This may also be stretched to include assignment style behavior in
 languages that do not provide mutable bindings but may provide similar
 sugar that provides something like producing nested binding
 environments.
-
 * is-an-assignment
 :PROPERTIES:
 :ID:       A9B288C5-5358-4CA7-82CC-F2294AEFB057

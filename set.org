@@ -2,7 +2,6 @@
 :ID:       1354F2E3-6D9D-4464-BC05-7B4609F5EA96
 :END:
 #+title: set
-
 Sets are a concept used heavily in mathematics (e.g., set theory) and
 are also a common collection type in programming.
 

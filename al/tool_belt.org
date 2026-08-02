@@ -1,8 +1,8 @@
 :PROPERTIES:
 :ID:       C7B04713-B224-467C-A355-0F76F2FD5578
+:header-args: :session al
 :END:
 #+title: al/tool-belt
-
 * Tool Management
 
 Tools are the most straightforward way to bridge models with things
@@ -135,7 +135,7 @@ This largely just produces a structure conforming to what is expected.
 
 What better way to test the declaration extraction...
 
-#+begin_src python
+#+begin_src python :results output
   from pprint import pprint
   pprint(tool_declaration(tool_declaration))
 #+end_src

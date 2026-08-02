@@ -1,0 +1,71 @@
+:PROPERTIES:
+:ID:       F456E71B-7A87-43EB-8BDB-85856E9E136E
+:END:
+#+title: docker
+Docker is a popular containerization tool.
+
+I /may/ be more likely to prefer an alternative - docker for the most
+part is built on top of OSS solutions, largely those provided by the
+Linux kernel. I therefore have some wariness about docker being a
+product that may have conflicting incentives. I've lost track of what
+the current state of that ecosystem is so for now I'll continue to
+default to docker but with the plan to swap if anything seems amiss.
+* Installation
+** [[id:61678BF7-A363-45C2-A3E2-54A1EB15EF68][brew]]
+#+begin_src bash :session brew :async :results silent
+  brew install docker
+#+end_src
+* Verification
+#+begin_src bash :results silent
+  docker --version
+#+end_src
+* Help
+#+begin_src bash :results silent
+  docker --help > help.out
+#+end_src
+#+transclude: [[./help.out]]
+** run
+#+begin_src bash :results silent
+  docker run --help > run-help.out
+#+end_src
+#+transclude: [[./run-help.out]]
+#+begin_src bash :results silent
+  man docker-run > run-man.out
+#+end_src
+* Cleanup
+#+begin_src bash :results silent
+docker builder prune --all -f
+docker system prune --volumes -f
+#+end_src
+* [[id:516B3C9A-4288-4ACF-8DEE-3526DFD21083][macOS]]
+Docker relies on Linux and therefore requires some virtualization help
+on macOS. One of the more popular options for this and the one I've
+been using for a while now is colima.
+** Colima
+*** [[id:61678BF7-A363-45C2-A3E2-54A1EB15EF68][brew]]
+#+begin_src bash :session brew :async :results silent
+  brew install --yes colima
+#+end_src
+*** verification
+#+begin_src bash :results silent
+  colima --version
+#+end_src
+*** help
+#+begin_src bash :results silent
+  colima help > colima-help.out
+#+end_src
+#+transclude: [[./colima-help.out]]
+*** start
+**** help
+#+begin_src bash :results silent
+  colima start --help > colima-start-help.out
+#+end_src
+#+transclude: [[./colima-start-help.out]]
+**** start
+Start with any options.
+
+I've previously tweaked the allocated resources, but I'll start with the defaults without
+captured data.
+#+begin_src bash :results silent :session colima
+  colima start
+#+end_src

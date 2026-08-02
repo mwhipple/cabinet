@@ -1,0 +1,7 @@
+:PROPERTIES:
+:ID:       4A7E5C45-C9D5-4888-83A8-F06F74324DAA
+:END:
+#+title: computational-constructs
+Define a range of constructs used for computation.
+* [[id:05401C30-3767-4E79-8B02-DECF434EB69E][assignment]]
+#+transclude: [[id:05401C30-3767-4E79-8B02-DECF434EB69E][assignment]] :level 2

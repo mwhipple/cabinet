@@ -2,7 +2,6 @@
 :ID:       3B8BCBF8-8E95-4D00-A9B3-18235E512D76
 :END:
 #+title: serde
-
 serde is common shorthand for serialization/deserialization in the
 spirit of similar terms like modem and codec. I personally like
 marshun which I've used in the past...but I don't know of anyone else

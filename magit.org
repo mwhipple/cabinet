@@ -2,7 +2,6 @@
 :ID:       DB768A45-AE61-4876-9E00-A7F1A50402D9
 :END:
 #+title: magit
-
 Interface for [[file:git.org][git]] in [[file:emacs.org][emacs]].
 
 * magit-stage

@@ -22,7 +22,6 @@ into the library of babel for use by other notebooks.
 
 I'm planning on using [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]], so I may as well zero in on models
 that target that.
-
 *** Model List
 
 I currently have a model that /seems/ workable where it feels likes

@@ -2,7 +2,6 @@
 :ID:       58037216-DD41-4C5F-AE7C-7A621EF9D319
 :END:
 #+title: list
-
 Lists are one of the most fundamental compound data types in
 programming languages.
 

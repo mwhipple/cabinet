@@ -7,7 +7,6 @@ A notebook for this project itself.
 This project is called a "cabinet" which is a reference to a physical
 zettelkasten setup which is likely to involve a card cabinet, and this
 project uses org-roam to provide that model
-
 * Project Structure
 
 The project primarily consists of a top-level listing of directories,

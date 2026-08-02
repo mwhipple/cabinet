@@ -1,16 +1,13 @@
 :PROPERTIES:
 :ID:       DE72620E-D29F-4E9F-B448-53C7C3B82332
-:header-args: :var venv="/tmp/al" :async yes :results output
+:header-args: :var venv="/tmp/al" :async yes
 :END:
 #+title: al/venv
-
 * Setup the venv
-
 The dependencies are minimal. As touched on above [[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]] is an
 assumed host dependency (which could also be taken care of by
 [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]] but splitting out management from use seems wise for
 multiple reasons).
-
 #+begin_src bash :session al-venv :results silent
   python -m venv "${venv}"
   ${venv}/bin/python -m pip install llama-cpp-python typing_extensions
