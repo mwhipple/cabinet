@@ -1,0 +1,6 @@
+:PROPERTIES:
+:ID:       78DB43D1-F1CA-4BE7-ACCA-43D795C6398A
+:END:
+#+title: emacs
+* [[file:core.org][core]]
+#+transclude: [[file:core.org][core]] :level 2

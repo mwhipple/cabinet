@@ -3,7 +3,6 @@
 :header-args: :results output
 :END:
 #+title: brew
-
 Homebrew is a package manager for [[id:516B3C9A-4288-4ACF-8DEE-3526DFD21083][macOS]].
 
 At one point it seemed like brew and MacPorts were competing, but it

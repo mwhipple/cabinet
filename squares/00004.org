@@ -1,4 +1,7 @@
-#TITLE: Models Are Hypotheses
+:PROPERTIES:
+:ID:       1D347EEF-0628-4D5C-8808-6361CF22A088
+:END:
+#+title: Models Are Hypotheses
 
 #+begin_src quote
   All models are wrong, but some are useful

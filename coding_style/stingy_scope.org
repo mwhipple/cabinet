@@ -1,0 +1,16 @@
+:PROPERTIES:
+:ID:       C0F5C440-6F05-4306-ADDB-9FC318FEA34C
+:END:
+#+title: coding-style/stingy-scope
+When wiring logic, as much of the logic will be written with a
+narrower scope, and then may be pulled into for use elsewhere.
+
+For example, in cases where methods make use of significant logic,
+that logic will be written as functions (outside of the objects),
+which are then called by simpler methods.
+* Rationale
+This helps keep the scope as narrow and as well defined as possible.
+This is particularly useful when dealing with non-trivial logic, where
+having the signature as narrow as possible (having all of the
+parameters be completely logically significant) can help in being able to
+understand the code.

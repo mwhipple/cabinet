@@ -1,4 +1,7 @@
-#+TITLE: Knowledge is Power, Products are Dependence
+:PROPERTIES:
+:ID:       F1CC76F3-981C-40B9-B443-765C4B376EF4
+:END:
+#+title: Knowledge is Power, Products are Dependence
 
 One of the most important factors contributing to the advancements in
 the modern world is humanity's optimization of knowledge sharing. This

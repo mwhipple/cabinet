@@ -1,0 +1,15 @@
+:PROPERTIES:
+:ID:       44FF18EC-D963-4A86-A54B-928559E42C45
+:END:
+#+title: logic
+This will be mostly focused on formal logic, specifically first-order:
+the mechanisms through which a range of information can be captured in
+formal systems typically consisting of some defined axioms and rules
+which allow for theorems to derive additional information from those
+axioms.
+
+* Proposition
+
+* Syllogisms
+
+* Quantifiers

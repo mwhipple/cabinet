@@ -2,7 +2,6 @@
 :ID:       083CCE11-4732-459E-81FE-3738C8920016
 :END:
 #+title: dictionary
-
 A dictionary represents a structure where values are associated with
 keys. This includes what may also be called associative arrays, maps,
 or (the most implementation biased) hashes.

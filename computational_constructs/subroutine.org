@@ -1,0 +1,19 @@
+:PROPERTIES:
+:ID:       494D7D29-DAD2-4831-ACFA-47EF6273168A
+:END:
+#+title: subroutine
+Subroutine is used as a general term for a reusable block of code that
+can be called. Depending on the language this is likely to be called
+something like a functinon, method, or procedure - but out of the
+options "subroutine" _feels_ like it carries the least baggage.
+
+* function
+
+Functions should typically behave like mathematical functions. While I
+don't /think/ I'll be overly pedantic about this and instead use
+qualifiers such as "pure" functions...that may change.
+
+** is-a-function-defintion
+:PROPERTIES:
+:ID:       B2A0D090-5BDE-42A5-B6C3-C0EC260A9498
+:END:

@@ -2,7 +2,6 @@
 :ID:       7EA4F965-0CDF-4937-8C2F-B152685870F4
 :END:
 #+title: richer-model
-
 One of my general preferences when developing systems is to keep the
 models relatively rich. This does /not/ translate to something like
 die-hard application of object definition, but fairly directly aligns

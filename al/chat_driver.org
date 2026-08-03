@@ -90,11 +90,8 @@ more controlled API (and disallow things like submit).
           # to a more async/event loop-y model.
           self.submit()
 #+end_src
-
 ** single_choice
-
 Return a presumed single choice from a response or throw trying.
-
 #+begin_src python :results silent :tangle chat_driver.py
   def single_choice(msg):
       if "choices" not in msg:
@@ -104,4 +101,3 @@ Return a presumed single choice from a response or throw trying.
           raise TypeError(f"Only one choice is expected: {msg}")
       return choices[0]
 #+end_src
-

@@ -3,7 +3,6 @@
 :ID:       B55CCD9A-F769-4369-AB9E-AD1F64A3B9C6
 :END:
 #+title: c
-
 The C language.
 
 C holds a pretty entrenched place in programming.

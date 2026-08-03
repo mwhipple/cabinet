@@ -2,7 +2,6 @@
 :ID:       D9194777-FAE7-441E-9309-850BE5AD8E63
 :END:
 #+title: Concept-First Programming Language
-
 I think many years ago I read a section in Programming Language
 Pragmatics (a book I don't currently have access to to confirm) to the
 effect that programming is a conversation between two people (the

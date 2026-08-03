@@ -5,7 +5,6 @@
 #+title: ghostscript
 * Installation
 ** [[id:61678BF7-A363-45C2-A3E2-54A1EB15EF68][brew]]
-
 #+begin_src shell
   brew install gs
 #+end_src

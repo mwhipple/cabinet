@@ -1,0 +1,169 @@
+:PROPERTIES:
+:ID:       CA35AEB5-EDB3-4ED0-9ACE-A52C693E6152
+:END:
+#+title: Local Inference
+Here I'll capture some more narrative information about my setup for
+running local inference.
+
+* Motivation
+
+For some quick background: I strongly prefer local inference for both
+reasons of control, and the desire to reduce dependence on data
+centers for a variety of reasons which seem to be gaining
+momentum. Regarding control: a primary and evident driver is gaining
+deeper familiarity with the tools involed. Ideologically beyond that,
+it seems as though over the past decade or so it has become
+increasingly normalized for many developers to be be reliant on
+service vendors and therefore be equal parts users and creators rather
+than retaining the ability to independently create which seems
+terribly problematic (and arguably a major contributor to the throes
+that are currently rocking much of the industry). While software
+engineering like other forms of engineering tend to rely on prior art
+and abstractions, it is a dramatically picture if those dependencies
+are controlled by vendors.
+
+* Local vs. Server
+
+There's a general tension between allocating resources for a specific
+purpose and wanting to share resources among purposes - when running a
+service you typically want to prefer the former for reliable
+performance (which gets funky when thinking about resource contention
+across users but from a business perpsective it still all makes sense
+when you have controlled unit costs and economies scale and what-not)
+but when running locally you're more likely to want the latter since
+you probably want to actually use your system for other things. This
+is worth a separate blurb, but unsurprisingly given the initial stance
+and industry around AI the service model is embraced: appropriate
+adaptations will be pursued to reduce this footprint.
+
+* Driving Goals
+
+Being able to run things locally is certainly the primary goal. Beyond
+that I want to be able to configure things using what amounts to the
+CLI...this can certainly include whatever additional pieces and code
+may be necessary on top of or beneath what would be available from the
+CLI, but I *don't* want to have to be regularly pushed to some UI and
+related ClickOps. I'll also be regularly pursuing observability as
+questions arise.
+
+** Usage
+
+For the most part especially with local inference, my initial goal is
+to prioritize my own time. If I can sick an agent on a task and it
+takes twice as long but I don't need to anything after the initial
+prompt, then that's less of an impact on my time (and reducing that
+time and resource consumption is a salient but secondary goal). I
+therefore will generally try to avoid human-in-the-loop interrupts.
+
+* Model Selection
+
+Actual disciplined model selection should be driven by an evaluation
+harness...which I don't currently have a strategy for. I'll be getting
+one of those together, but in the meantime I'll mostly just draw on a
+combination of popularity and loosely tracked experience.
+
+* Setup
+
+I started with Ollama given it's accessibility and support, but then
+ended up wanting something that was a bit more modular.
+
+** Downloading of Existing Models
+
+[[id:5C3C29D0-540F-4F03-88CF-DE7E2C1CC028][hugging-face]] provides a decent CLI for this. It seems potentially a
+bit too biased towards expecting to interact with the hub rather than
+having a lot of local-first functionality...but that makes sense given
+that it is a CLI for that hub, but a bit of coaxing can help identiy
+relevant files and prevent inadvertently downloading gigabytes of data.
+
+So far I'm not sure whether I'm just missing invocations that could be
+more helpful, but if I'm confident that they are actually absent I'll
+probably put together some lightweight wrapping.
+
+Hugging face also provides a python library which I was originally
+drawn to, but ultimately it didn't offer a pragmatic advantage over
+the CLI it exposes so it seemed better to just leave out of the python
+environment.
+
+** Running Models
+
+[[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]] provides a lightweight means to run models packaged as GGUF
+which can be readily downloaded using hugging face. This provides a
+CLI for running models directly, and a Web server that provides an
+OpenAI compatible REST interface. I'd probably prefer the CLI route
+largely for the local vs. server reason outlined above, but that
+option seems deprecated within langchain so I'll be using the server
+option for now.
+
+The server will be configured to reduce memory footprint, where
+updating the context size seems to be one of the biggest contributing
+factors.
+
+** Building Agents
+
+As already alluded to and covered elsehwere, I'll be initially using
+[[id:9D4EC4DC-FC1D-430D-B834-CB0916949915][langchain]] to configure and interact with agents. I have some
+reservations about whether I'll stick with langchain over the long
+term, but it's a solid starting point and seems to be a fairly
+dominant option.
+
+For the moment I'm using langchain directly rather than something like
+the deepagents harness, as the latter seems more biased towards
+working with other tools and services, ultimately seemingly like it is
+a solid option for building an agent that makes use of the typical
+larger footprint deployments but not necessarily poised to scale down
+to a more minimal local setup...but that's what langchain is for.
+
+I get the vibe that langchain may be moving away towards such minimal setups.
+
+* Configuration
+
+** Limits
+
+Limits always exist...you either specify them or discover them.
+This will be biased towards speciying limits that are as tight as
+possible based on need to avoid any type of runaways or waste and then
+expanding as necessary.
+
+*** Server
+As mentioned above, llamaserver should have a ~--ctx-size~ configured
+to avoid memory pressure.
+
+*** Agent
+~max_tokens~ should be set to match the context size.
+
+** Streaming
+
+The ~stream_events~ method on the agent is used for information about
+in-flight work.
+
+** Reasoning
+
+Configure the model to return detailed reasoning messages.
+
+* Actual Coding
+
+I currently default to Python...mostly just since it still seems to be
+the more dominant language to do some of the underlying heavily
+lifting whereas JS seems to on the rise on the client side.
+
+As mentioned I primarily use Langchain - my typical development
+process revolves around making sure I can get as much information as I
+need flowing, and then restricting it from there. This leads to using
+calls such as ~astream_events~ to get the model to share as much as
+possible as promptly as possible, and then refining things from there.
+
+For the most part I tend to leave the plumbing fairly exposed:
+producing some pipes that allow for some cleaned up presentations of
+the data but making them easily swappable and not devoting time to
+porcelain without a particular reason (specifically anything
+outside of the happy path is left fairly utilitarian).
+
+* Queue
+
+** Flakiness
+
+The current setup seems flaky from one invocation to the next.
+This is presumably either a side effect of some dirty state or
+something like the selected model.
+
+It seems to work every other time...

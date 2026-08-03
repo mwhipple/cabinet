@@ -2,7 +2,6 @@
 :ID:       D3B65FED-887A-47FB-82F0-55CD3DC41AC7
 :END:
 #+title: say-something
-
 Say something is a concept I'll use for when Don't Repeat Yourself
 (DRY) goes overboard. While there's clearly some value in keeping
 things DRY...it's probably most important to keep a clear perpsective

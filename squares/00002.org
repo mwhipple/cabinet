@@ -2,7 +2,6 @@
 :ID:       A45CC795-73D6-415C-833B-A22379FAB2A2
 :END:
 #+title: GenAI and Software Engineering
-
 Given the current landscape, it seems worth providing assessments of
 [[https://en.wikipedia.org/wiki/Generative_AI][generative AI]] since much of the content presented herein may seem to
 be anachronistic given the spread of such tools.  Professionally I

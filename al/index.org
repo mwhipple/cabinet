@@ -24,19 +24,17 @@
 #+begin_src text :tangle .gitignore
   message_handling.py
 #+end_src
-
 #+transclude: [[file:message_handling.org][message-handling]] :level 3
 ** [[file:chat_driver.org][chat-driver]]
-
 #+begin_src text :tangle .gitignore
   chat_driver.py
 #+end_src
-
 #+transclude: [[file:chat_driver.org][chat-driver]] :level 3
-
 ** [[file./yolo_response_handler.org][yolo-response-handler]]
-
 #+begin_src text :tangle .gitignore
   yolo_response_handler.py
 #+end_src
 #+transclude: [[file:yolo_response_handler.org][yolo-response-handler]] :level 3
+* attic
+** [[id:49D8CA5D-B0C7-4F3A-B773-37A27C4A30A8][fs-tools]]
+#+transclude: [[id:49D8CA5D-B0C7-4F3A-B773-37A27C4A30A8][fs-tools]] :level 3

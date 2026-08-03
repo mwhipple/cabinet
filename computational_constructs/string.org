@@ -1,0 +1,28 @@
+:PROPERTIES:
+:ID:       2BFBCD3A-C357-4498-847B-298421375B57
+:END:
+#+title: string
+A string represents a series of characters.
+
+This is a type of text, but text could presumably also include other
+elements.
+
+Strings are often represented as either a length and an array of
+characters, or the C-style arrach of characters terminated with a null
+byte (0). There are also more sophisticated options that support more
+efficient mutation and sharing.
+
+The C style is arguably less peferred and should potentially just be
+avoided and worked around...potentially also as part of unicode
+support. It does not support null characters which /may/ be an issue
+though I struggle to think of a concrete case where it is. More
+significantly however is that many operations need length and
+determining length is a linear time operation...so you either end up
+burning some cycles or extracting that as an additional parameter that
+gets passed around and if you do the latter then you may as well
+package them into a cohesive structure at which point you've just
+recreated the other model.
+* is-a-string
+:PROPERTIES:
+:ID:       3E70CDD5-BB1F-49FF-869D-97E6E7E5309E
+:END:

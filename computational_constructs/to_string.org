@@ -1,0 +1,13 @@
+:PROPERTIES:
+:ID:       9B61A841-27F9-4CF0-8E71-3AD25410351E
+:END:
+#+title: to-string
+to-string provides the means to represent a given object as a string.
+
+* [[id:222093AC-E4FC-4E90-B124-ADFFC31F6314][emacs-lisp]]
+
+#+begin_src emacs-lisp
+    (cl-defgeneric ->string (ctx obj)
+      "Return a string representation of OBJ.")
+#+end_src
+

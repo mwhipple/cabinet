@@ -2,7 +2,6 @@
 :ID:       DF2B4777-A59D-4D9E-8EC2-BE4692E9A472
 :END:
 #+title: import
-
 Importing is used to refer to the mechanism through which code that is
 defined elsewhere can be used.
 

@@ -1,462 +1,59 @@
 :PROPERTIES:
 :ID:       436EB0B7-811E-4828-BBF7-4126517DD7C6
 :END:
-#+title: emacs
-
+#+title: emacs/core
+This file will be focused on help information which will be referenced
+elsewhere.
 * Startup
-
 ** server-start
-
-#+begin_src emacs-lisp
-  (describe-function #'server-start)
+#+begin_src emacs-lisp :results silent
+  (write-region (describe-function #'server-start) nil "server-start.out")
 #+end_src
-
-#+RESULTS:
-#+begin_example
-server-start is an autoloaded interactive byte-code-function in
-‘server.el’.
-
-(server-start &optional LEAVE-DEAD INHIBIT-PROMPT)
-
-Allow this Emacs process to be a server for client processes.
-This starts a server communications subprocess through which client
-"editors" can send your editing commands to this Emacs job.
-To use the server, set up the program ‘emacsclient’ in the Emacs
-distribution as your standard "editor".
-
-Optional argument LEAVE-DEAD (interactively, a prefix arg) means just
-kill any existing server communications subprocess.
-
-If a server is already running, restart it.  If clients are
-running, ask the user for confirmation first, unless optional
-argument INHIBIT-PROMPT is non-nil.
-
-To force-start a server, do M-x server-force-delete and then
-M-x server-start.
-
-To check from a Lisp program whether a server is running, use
-the ‘server-process’ variable.
-
-  Probably introduced at or before Emacs version 18.
-
-#+end_example
-
+#+transclude: [[file:server-start.out][server-start.out]]
 * Environment Info
 ** user-emacs-directory
-
-#+begin_src emacs-lisp
-  (describe-variable 'user-emacs-directory)
+#+begin_src emacs-lisp :results silent
+  (write-region (describe-variable 'user-emacs-directory) nil "user-emacs-directory.out")
 #+end_src
-
-#+RESULTS:
-#+begin_example
-user-emacs-directory is a variable defined in ‘subr.el’.
-
-Its value is "~/.emacs.d/"
-
-Directory beneath which additional per-user Emacs-specific files are placed.
-Various programs in Emacs store information in this directory.
-Note that this should end with a directory separator.
-See also ‘locate-user-emacs-file’.
-
-  Probably introduced at or before Emacs version 23.1.
-
-#+end_example
-
+#+transclude: [[./user-emacs-directory.out]]
 * Point
-
 ** point
-
-#+begin_src emacs-lisp
-  (describe-function #'point)
+#+begin_src emacs-lisp :results silent
+  (write-region (describe-function #'point) nil "point.out")
 #+end_src
-
-#+RESULTS:
-#+begin_example
-point is a primitive-function in ‘C source code’.
-
-(point)
-
-Declared type: (function nil integer)
-
-Return value of point, as an integer.
-Beginning of buffer is position (point-min).
-
-  Other relevant functions are documented in the buffer group.
-  Probably introduced at or before Emacs version 17.
-  This function does not change global state, including the match
-    data.
-  This function has a ‘byte-compile’ property ‘byte-compile-no-args’.
-    See the manual for details.
-
-#+end_example
-
-#+begin_src emacs-lisp
-  (point)
-#+end_src
-
-#+RESULTS:
-: 2583
-
+#+transclude: [[./point.out]]
 ** point-min
-
 #+begin_src emacs-lisp
-  (describe-function #'point-min)
+  (write-region (describe-function #'point-min) nil "point-min.out")
 #+end_src
-
-#+RESULTS:
-#+begin_example
-point-min is a primitive-function in ‘C source code’.
-
-(point-min)
-
-Declared type: (function nil integer)
-
-Return the minimum permissible value of point in the current buffer.
-This is 1, unless narrowing (a buffer restriction) is in effect.
-
-  Other relevant functions are documented in the buffer group.
-  Probably introduced at or before Emacs version 17.
-  This function does not change global state, including the match
-    data.
-  This function has a ‘byte-compile’ property ‘byte-compile-no-args’.
-    See the manual for details.
-
-#+end_example
-
-#+begin_src emacs-lisp
-  (point-min)
-#+end_src
-
-#+RESULTS:
-: 1
-
+#+transclude: [[./point-min.out]]
 * Buffers
-
 ** Summary
-
-#+begin_src emacs-lisp :results value
+#+begin_src emacs-lisp :results value :results silent
   (save-excursion
     (shortdoc 'buffer)
-    (buffer-substring-no-properties (point-min) (point-max)))
+    (write-region (buffer-substring-no-properties (point-min) (point-max)) nil "buffer.out"))
 #+end_src
-
-#+RESULTS:
-#+begin_example
-Buffer Basics
-
-(current-buffer)
-  Return the current buffer as a Lisp object.
-  (current-buffer)
-    e.g. ⇒ #<buffer shortdoc.el>
-
-
-(bufferp object)
-  Return t if OBJECT is an editor buffer.
-  (bufferp 23)
-    ⇒ nil
-
-
-(buffer-live-p object)
-  Return t if OBJECT is a buffer which has not been killed.
-  (buffer-live-p some-buffer)
-    e.g. ⇒ t
-
-
-(buffer-modified-p &optional buffer)
-  Return non-nil if BUFFER was modified since its file was last read or saved.
-  (buffer-modified-p (current-buffer))
-    ⇒ t
-
-
-(buffer-name &optional buffer)
-  Return the name of BUFFER, as a string.
-  (buffer-name)
-    ⇒ "*Shortdoc buffer*"
-
-
-(window-buffer &optional window)
-  Return the buffer displayed in window WINDOW.
-  (window-buffer)
-    ⇒ #<buffer 20260616070446-emacs.org>
-
-Selecting Buffers
-
-(get-buffer-create buffer-or-name &optional inhibit-buffer-hooks)
-  Return the buffer specified by BUFFER-OR-NAME, creating a new one if needed.
-  (get-buffer-create "*foo*")
-    e.g. ⇒ #<buffer *foo*>
-
-
-(pop-to-buffer buffer-or-name &optional action norecord)
-  Display buffer specified by BUFFER-OR-NAME and select its window.
-  (pop-to-buffer "*foo*")
-    e.g. ⇒ #<buffer *foo*>
-
-
-(with-current-buffer buffer-or-name &rest body)
-  Execute the forms in BODY with BUFFER-OR-NAME temporarily current.
-  (with-current-buffer buffer (buffer-size))
-    → [it depends]
-
-Points and Positions
-
-(point)
-  Return value of point, as an integer.
-  (point)
-    ⇒ 1441
-
-
-(point-min)
-  Return the minimum permissible value of point in the current buffer.
-  (point-min)
-    ⇒ 1
-
-
-(point-max)
-  Return the maximum permissible value of point in the current buffer.
-  (point-max)
-    ⇒ 1658
-
-
-(pos-bol &optional n)
-  Return the position of the first character on the current line.
-  (pos-bol)
-    ⇒ 1753
-
-
-(pos-eol &optional n)
-  Return the position of the last character on the current line.
-  (pos-eol)
-    ⇒ 1871
-
-
-(bolp)
-  Return t if point is at the beginning of a line.
-  (bolp)
-    ⇒ nil
-
-
-(eolp)
-  Return t if point is at the end of a line.
-  (eolp)
-    ⇒ t
-
-
-(line-beginning-position &optional n)
-  Return the position of the first character in the current line/field.
-  (line-beginning-position)
-    ⇒ 2166
-
-
-(line-end-position &optional n)
-  Return the position of the last character in the current line/field.
-  (line-end-position)
-    ⇒ 2310
-
-
-(buffer-size &optional buffer)
-  Return the number of characters in the current buffer.
-  (buffer-size)
-    ⇒ 2421
-
-
-(bobp)
-  Return t if point is at the beginning of the buffer.
-  (bobp)
-    ⇒ nil
-
-
-(eobp)
-  Return t if point is at the end of the buffer.
-  (eobp)
-    ⇒ t
-
-Moving Around
-
-(goto-char position)
-  Set point to POSITION, a number or marker.
-  (goto-char (point-max))
-    e.g. ⇒ 342
-
-
-(search-forward string &optional bound noerror count)
-  Search forward from point for STRING.
-  (search-forward "some-string" nil t)
-    e.g. ⇒ 245
-
-
-(re-search-forward regexp &optional bound noerror count)
-  Search forward from point for regular expression REGEXP.
-  (re-search-forward "some-s.*g" nil t)
-    e.g. ⇒ 245
-
-
-(forward-line &optional n)
-  Move N lines forward (backward if N is negative).
-  (forward-line 1)
-    e.g. ⇒ 0
-  (forward-line -2)
-    e.g. ⇒ 0
-
-Strings from Buffers
-
-(buffer-string)
-  Return the contents of the current buffer as a string.
-  (buffer-string)
-    → [it depends]
-
-
-(buffer-substring start end)
-  Return the contents of part of the current buffer as a string.
-  (buffer-substring (point-min) (+ (point-min) 10))
-    ⇒ #("Buffer Bas" 0 10 (face shortdoc-heading shortdoc-section t outline-level 1))
-
-
-(buffer-substring-no-properties start end)
-  Return the characters of part of the buffer, without the text properties.
-  (buffer-substring-no-properties (point-min) (+ (point-min) 10))
-    ⇒ "Buffer Bas"
-
-
-(following-char)
-  Return the character following point, as a number.
-  (following-char)
-    e.g. ⇒ 67
-
-
-(preceding-char)
-  Return the character preceding point, as a number.
-  (preceding-char)
-    e.g. ⇒ 38
-
-
-(char-after &optional pos)
-  Return character in current buffer at position POS.
-  (char-after 45)
-    ⇒ 32
-
-
-(char-before &optional pos)
-  Return character in current buffer preceding position POS.
-  (char-before 13)
-    ⇒ 99
-
-
-(get-byte &optional position string)
-  Return a byte value of a character at point.
-  (get-byte 45)
-    e.g. ⇒ #xff
-
-Altering Buffers
-
-(delete-region start end)
-  Delete the text between START and END.
-  (delete-region (point-min) (point-max))
-
-
-(erase-buffer)
-  Delete the entire contents of the current buffer.
-  (erase-buffer)
-
-
-(delete-line)
-  Delete the current line.
-  (delete-line)
-
-
-(insert &rest args)
-  Insert the arguments, either strings or characters, at point.
-  (insert "This string will be inserted in the buffer\n")
-
-
-(subst-char-in-region start end fromchar tochar &optional noundo)
-  From START to END, replace FROMCHAR with TOCHAR each time it occurs.
-  (subst-char-in-region (point-min) (point-max) ?+ ?-)
-
-
-(replace-string-in-region string replacement &optional start end)
-  Replace STRING with REPLACEMENT in the region from START to END.
-  (replace-string-in-region "foo" "bar")
-
-Locking
-
-(lock-buffer &optional file)
-  Lock FILE, if current buffer is modified.
-  (lock-buffer "/tmp/foo")
-
-
-(unlock-buffer)
-  Unlock the file visited in the current buffer.
-  (unlock-buffer)
-#+end_example
+#+transclude: [[./buffer.out]]
 
 ** ->string
-
-[[id:F2F61FB6-88DE-4275-B318-3B42CA58D65D][cl-defmethod]]
-
-#+begin_src emacs-lisp
+[[id:F2F61FB6-88DE-4275-B318-3B42CA58D65D][cl-defmethod]] for string conversion.
+#+begin_src emacs-lisp :results silent
   (cl-defmethod ->string (ctx (obj buffer))
     (with-current-buffer obj
       (buffer-substring-no-properties (point-min) (point-max))))
 #+end_src
-
-#+RESULTS:
-: ->string
-
 ** buffer-string
-
-#+begin_src emacs-lisp
-  (describe-function #'buffer-string)
+#+begin_src emacs-lisp :results silent
+  (write-region (describe-function #'buffer-string) nil "buffer-string.out")
 #+end_src
-
-#+RESULTS:
-#+begin_example
-buffer-string is a primitive-function in ‘src/editfns.c’.
-
-(buffer-string)
-
-Declared type: (function nil string)
-
-Return the contents of the current buffer as a string.
-If narrowing is in effect, this function returns only the visible part
-of the buffer.
-
-This function copies the text properties of that part of the buffer
-into the result string; if you don’t want the text properties,
-use ‘buffer-substring-no-properties’ instead.
-
-  Other relevant functions are documented in the buffer group.
-  Probably introduced at or before Emacs version 20.1.
-  This function does not change global state, including the match data.
-
-#+end_example
-
+#+transclude: [[./buffer-string.out]]
 ** buffer-substring-no-properties
-
-#+begin_src emacs-lisp
-  (describe-function #'buffer-substring-no-properties)
+#+begin_src emacs-lisp :results silent
+  (write-region (describe-function #'buffer-substring-no-properties) nil "buffer-substring-no-properties.out")
 #+end_src
-
-#+RESULTS:
-#+begin_example
-buffer-substring-no-properties is a primitive-function in
-‘src/editfns.c’.
-
-(buffer-substring-no-properties START END)
-
-Return the characters of part of the buffer, without the text properties.
-The two arguments START and END are character positions;
-they can be in either order.
-
-  Other relevant functions are documented in the buffer group.
-  Probably introduced at or before Emacs version 19.29.
-  This function does not change global state, including the match data.
-
-#+end_example
-
+#+transclude: [[./buffer-substring-no-properties.out]]
 ** display-buffer
-
 #+begin_src emacs-lisp
   (describe-function #'display-buffer)
 #+end_src
@@ -890,8 +487,8 @@ This function is called by `next-buffer'.
 #+end_example
 
 #+begin_src emacs-lisp
-  (bind-key "C-x n" #'switch-to-next-buffer)
-  (bind-key "C-x p" #'switch-to-prev-buffer)
+  (bind-key* "C-x n" #'switch-to-next-buffer)
+  (bind-key* "C-x p" #'switch-to-prev-buffer)
 #+end_src
 
 #+RESULTS:
@@ -987,177 +584,41 @@ Also see ‘switch-to-prev-buffer-skip’.
 
 #+end_example
 
-* Clearing out definitions
-
-** makunbound
+* Input
 
 #+begin_src emacs-lisp
-  (describe-function #'makunbound)
+  (describe-function #'bind-key)
 #+end_src
 
 #+RESULTS:
 #+begin_example
-makunbound is a primitive-function in ‘C source code’.
+bind-key is an autoloaded Lisp macro in ‘bind-key.el’.
 
-(makunbound SYMBOL)
+(bind-key KEY-NAME COMMAND &optional KEYMAP PREDICATE)
 
-Empty out the value cell of SYMBOL, making it void as a variable.
-Return SYMBOL.
+Bind KEY-NAME to COMMAND in KEYMAP (‘global-map’ if not passed).
 
-If a variable is void, trying to evaluate the variable signals a
-‘void-variable’ error, instead of returning a value.  For more
-details, see Info node ‘(elisp) Void Variables’.
+KEY-NAME may be a vector, in which case it is passed straight to
+‘define-key’.  Or it may be a string to be interpreted as
+spelled-out keystrokes, e.g., "C-c C-z".  See the documentation
+of ‘edmacro-mode’ for details.
 
-See also ‘fmakunbound’.
+COMMAND must be an interactive function or lambda form.
 
-#+end_example
+KEYMAP, if present, should be a keymap variable or symbol.
+For example:
 
-** fmakunbound
+  (bind-key "M-h" #'some-interactive-function my-mode-map)
 
-#+begin_src emacs-lisp
-  (describe-function #'fmakunbound)
-#+end_src
+  (bind-key "M-h" #'some-interactive-function 'my-mode-map)
 
-#+RESULTS:
-#+begin_example
-fmakunbound is a primitive-function in ‘C source code’.
-
-(fmakunbound SYMBOL)
-
-Make SYMBOL’s function definition be nil.
-Return SYMBOL.
-
-If a function definition is nil, trying to call a function by
-that name will cause a ‘void-function’ error.  For more details, see
-Info node ‘(elisp) Function Cells’.
-
-See also ‘makunbound’.
+If PREDICATE is non-nil, it is a form evaluated to determine when
+a key should be bound. It must return non-nil in such cases.
+Emacs can evaluate this form at any time that it does redisplay
+or operates on menu data structures, so you should write it so it
+can safely be called at any time.
 
 #+end_example
-
-* Compilation
-
-** byte-force-recompile
-
-#+begin_src emacs-lisp
-  (describe-function #'byte-force-recompile)
-#+end_src
-
-#+RESULTS:
-#+begin_example
-byte-force-recompile is an autoloaded interactive byte-code-function
-in ‘bytecomp.el’.
-
-(byte-force-recompile DIRECTORY)
-
-Recompile every ‘.el’ file in DIRECTORY that already has a ‘.elc’ file.
-Files in subdirectories of DIRECTORY are processed also.
-
-  Probably introduced at or before Emacs version 19.30.
-
-#+end_example
-
-* Packages
-
-** package-delete
-
-#+begin_src emacs-lisp
-  (describe-function #'package-delete)
-#+end_src
-
-#+RESULTS:
-#+begin_example
-package-delete is an interactive byte-code-function in ‘package.el’.
-
-(package-delete PKG-DESC &optional FORCE NOSAVE)
-
-Delete package PKG-DESC.
-
-Argument PKG-DESC is the full description of the package, for example as
-obtained by ‘package-get-descriptor’.  Interactively, prompt the user
-for the package name and version.
-
-When package is used elsewhere as dependency of another package,
-refuse deleting it and return an error.
-If prefix argument FORCE is non-nil, package will be deleted even
-if it is used elsewhere.
-If NOSAVE is non-nil, the package is not removed from
-‘package-selected-packages’.
-
-  Probably introduced at or before Emacs version 25.1.
-
-#+end_example
-
-** package-get-descriptor
-
-#+begin_src emacs-lisp
-  (describe-function #'package-get-descriptor)
-#+end_src
-
-#+RESULTS:
-: package-get-descriptor is a byte-code-function in ‘package.el’.
-: 
-: (package-get-descriptor PKG-NAME)
-: 
-: Return the ‘package-desc’ of PKG-NAME.
-: 
-
-** package-list-packages
-
-#+begin_src emacs-lisp
-  (describe-function #'package-list-packages)
-#+end_src
-
-#+RESULTS:
-#+begin_example
-package-list-packages is an alias for ‘list-packages’ in ‘package.el’.
-
-It can be invoked from the menu: Options → Manage Emacs Packages
-
-(package-list-packages &optional NO-FETCH)
-
-Display a list of packages.
-This first fetches the updated list of packages before
-displaying, unless a prefix argument NO-FETCH is specified.
-The list is displayed in a buffer named ‘*Packages*’, and
-includes the package’s version, availability status, and a
-short description.
-
-#+end_example
-
-** package-upgrade-all
-
-#+begin_src emacs-lisp
-  (describe-function #'package-upgrade-all)
-#+end_src
-
-#+RESULTS:
-#+begin_example
-package-upgrade-all is an autoloaded interactive byte-code-function in
-‘package.el’.
-
-(package-upgrade-all &optional QUERY)
-
-Refresh package list and upgrade all packages.
-If QUERY, ask the user before upgrading packages.  When called
-interactively, QUERY is always true.
-
-Currently, packages which are part of the Emacs distribution are
-not upgraded by this command.  To enable upgrading such a package
-using this command, first upgrade the package to a newer version
-from ELPA by either using ‘M-x package-upgrade’ or
-‘i’ after ‘M-x list-packages’.
-
-  Probably introduced at or before Emacs version 29.1.
-
-#+end_example
-
-#+begin_src emacs-lisp
-  (package-upgrade-all)
-#+end_src
-
-#+RESULTS:
-| transient | prop-menu | llama | idris-mode | emacsql | cond-let |
 
 * Text Rendering
 ** ansi-color
@@ -1411,7 +872,6 @@ We also still support the deprecated calling convention:
 
 #+end_example
 
-
 * doc-view
 :PROPERTIES:
 :ID:       31802476-6810-42C3-BD8D-24F0E7573563
@@ -1604,9 +1064,18 @@ Open a new xwidget window searching for the provided term
 using [[id:2140D11D-1066-4B77-9062-0B8A1C5A287D][url-encode-url]].
 
 #+begin_src emacs-lisp
-  (defun mw/xw/new-search (q)
-    (xwidget-webkit-browse-url (url-encode-url (format "https://www.duckduckgo.com?q=%s" q)) t))
+  (defun mw/xw/new-window (url)
+    (xwidget-webkit-browse-url (url-encode-url url) t))
 #+end_src
+
+#+RESULTS:
+: mw/xw/new-window
+
+#+begin_src emacs-lisp
+  (defun mw/xw/new-search (q)
+    (mw/xw/new-window (format "https://www.duckduckgo.com?q=%s" q)))
+#+end_src
+
 
 #+RESULTS:
 : mw/xw/new-search
@@ -1635,3 +1104,11 @@ load a shared environment prior to ~exec~ing the main emacs process.
 An invokable recipe should be pulled in here later.
 
 ** TODO Reimplement this
+
+** Work out xwidget focus issue
+
+(setq mouse-autoselect-window nil)
+(set-mouse-position (selected-frame) 0 0)
+(select-window (selected-window))
+
+(setq doc-view-resolution 600)

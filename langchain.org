@@ -3,7 +3,6 @@
 :header-args: :results output :session langchain :async :var venv="/tmp/langchain" :python "/tmp/langchain/bin/python"
 :END:
 #+title: langchain
-
 Langchain is a harness for model orchestration.
 My setup typically involves using langchain directly with [[id:002B2928-C32F-49F3-B93F-CBEEE215A7D7][python]]
 and local inference using [[id:D87B9E33-CA56-4301-A59A-6FC951966D08][ollama]]....to be replaced with [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]]

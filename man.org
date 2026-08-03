@@ -3,7 +3,6 @@
 :ID:       40282DAC-6B66-47A9-9884-06CCC930D29D
 :END:
 #+title: man
-
 man can be invoked within this space,
 but similar to other utilities it should make sure to use a session
 even if it is not seemingly required, otherwise the results will

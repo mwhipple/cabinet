@@ -2,7 +2,6 @@
 :ID:       8BF9E12C-2479-4980-9257-2B732A67A7AE
 :END:
 #+title: Square One
-
 This site will contain a series of "square" posts, where each such
 square will have bounds of 80 columns and 80 rows. This is somewhat of
 an arbitrary decision, but has been adopted since I otherwise have a

@@ -1,0 +1,119 @@
+:PROPERTIES:
+:ID:       F9276CB6-697B-4B18-B02A-E7BF6688A87D
+:END:
+#+title: process-auditing
+* Old Man Rant
+
+Processes running on systems have gotten out of control.
+This perpsective is almost certainly a reflection of both my
+background and my age...but I like to know what the processes are that
+are running on my system, but it seems like this is another casualty
+of our information-overloaded present.
+
+I spent a long time using Linux machines where I had a strong
+awareness of each running process, and I remember when I first started
+using [[id:516B3C9A-4288-4ACF-8DEE-3526DFD21083][macOS]] for work and getting up to speed on what was then a couple
+pages of unfamiliar processes...but since then that number has
+*exploded* to the point where any idea of thinking of it in terms of
+pages or screens has been replaced by waiting for the scroll thumb to
+shrink to a speck. My systems currently seem to have nearly a thousand
+running processes and several thousand threads without any atypical
+workstation software running.
+
+Similar to other sources of overload this feels like a manifestation
+of a tragedy of the commons where everything is looking to work
+continuously rather than actually relinquishing control when it should
+be in the background. There may also be more legitimate reasons such
+as some daemons getting broken up into different processes.
+
+I'd anecdotally posit that a lot of this is also driven by some
+combination of sloppiness, rudeness, and the normalization of that
+bloat. One of the first processes I got rid of (through
+uninstallation) was a 1Password Browser Helper where the app was
+installed but that feature wasn't enabled - that suggests that either
+they have a defect in the form in that the process is spuriously
+spawned regardless of the setting or that they decided to avoid
+branching and just always launch the service which would be an
+understandable position from their perspective, but is being a poorly
+behaved guest on my system. In either case this feels like a
+particularly glaring example of a problem in that the process
+is ostensibly there to provide something that has been
+*intentionally disabled* and it seems incredibly hard to square the
+idea that accepting that applications can introduce explicitly
+unwanted noise is not a vector for a range of unwanted behaviors
+introduced either by those applications or imposters.
+
+A natural question is /why/ this may matter to anyone that isn't a
+cantakerous control freak. The habit was picked up when resources were
+far more precious and I would be looking to make sure they weren't
+being siphoned off by things I didn't care about...and also
+prospectively malicious behaviors (back in the day this type of
+awareness allowed me to chase down and manually mitigate some NT
+worm...I think Code Red). While some of those motivations are less
+important, the underlying stance remains valid and even more
+pronounced in that if you accept the fact that unknown things will be
+running on your system, then it seems perverse to expect that your
+system won't be subjected to some form or other of undesirable
+behaviors.
+
+This feels like the operational equivalent to [[id:10B07080-3A98-411F-BBEC-98A11700F556][lean-software]].
+Accordingly I will audit the processes running on my systems and
+capture many of them here.
+
+** Rant Continued...on Footprint
+
+Another concern is how complicated many of these processes seem to
+be - as alluded to above it seems legitimate for a single daemon to be
+split up for many reasons (Postfix always springs to mind)...but when
+there's what feels like what should be a small utility it seems like
+it should have a commensurate number of background processes...instead
+there often seems to not only be too many processes but all of them
+also have many threads. This feels more like it falls into the
+sloppiness bucket where a coherent structure is lacking because for
+each service individually it seems unnecessary...but when combined
+with all of the other services it leaves a mess.
+
+* Catalog
+
+** Access Experience
+Palo Alto VPN Support...feels like one of the most marketing-speak
+names I've come across. It seems unclear whether the process is
+actually necessary or whether it provides additional support - it has
+the annoying behavior of offering an explicit option to Quit but then
+immediately restarting, but doesn't seem worth disabling the service.
+** Access Experience Graphics and Media
+Footprint bloat...why is this a separate process with a bunch of
+threads? Presumably this is to do something like optimize resource
+access which feels like a weird mix of being overengineered but not
+engineered enough in that its crossing process spaces - I suspect it's
+either Conway's Law or some convenience like an existing package
+leaking out.
+** Access Experience Networking
+More footprint bloat...networking is what I'd be looking for from
+Access Experience so if this process is doing networking what the hell
+is Access Experience doing with it's large number of threads? I'd also
+expect most of the heavy networking lifting to be done by the OS
+stack - so there's apparently a fair amount of extra stuff that this
+service wants to do faily continuously.
+** Accessibility                                                   :macOS:os:
+OS provided support for accessiblity. I think this also enables some automation.
+** accessoryd                                                      :macOS:os:
+OS provided daemon for managing USBish accessories.
+** accessoryupdaterd                                               :macOS:os:
+Automated firmware updates.
+Disabling automatic system updates may take care of this....
+** accountsd                                                       :macOS:os:
+Core authentication daemon.
+May do additional stuff that could be toggled off like iCloud
+synching - I tend to not have that set up.
+The daemon does seem to still consume a non-trivial amount of CPU at
+some point or another, but that is based on time rather than
+activity - if I see it actively sucking up resources it may warrant
+deeper attnetion but otherwise it will be ignored.
+** tauri://localhost
+Tauri is a frontend framework - one of the "lightweight" options that
+uses Web techologies (so lightweight is almost certainly relative to a
+particular context). The framework itself seems like a promising option
+in that space...but for things like daemons any of those seem too heavy.
+the process can also seem to be left dangling after the UI is hidden
+(unlikely to be the framework's fault).

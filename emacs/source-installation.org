@@ -1,0 +1,49 @@
+:PROPERTIES:
+:ID:       758BBED4-FDE4-47E2-A1C3-9C67AE675F34
+:header-args: :dir ~/memex/vendor/emacs :session emacs-build :async
+:END:
+#+title: emacs/source-installation
+Since I tend to have the emacs source kicking around, I'll prefer
+installation from source.
+* Dependencies
+** makeinfo (texinfo)
+#+begin_src bash :results silent
+  brew install texinfo tree-sitter
+#+end_src
+* Start From Clean
+#+begin_src bash :results silent
+  git reset --hard HEAD && git clean -dxf
+#+end_src
+* Installation
+I'll start with the example in the docs and then investigate what
+options are loaded.
+#+begin_src bash :results silent
+  make configure="--prefix=/opt/emacs"
+#+end_src
+Make isn't working...going the longer route.
+#+begin_src bash :results silent
+  ./autogen.sh
+#+end_src
+* Configure
+** Help
+#+begin_src bash :results silent :session none :async no
+  ./configure --help > configure-help.out
+#+end_src
+#+transclude: [[file:~/memex/vendor/emacs/configure-help.out][configure-out]]
+** Selection
+#+begin_src bash :results silent
+  ./configure --with-xwidgets --with-tree-sitter
+#+end_src
+* make
+#+begin_src bash :results silent
+  make
+#+end_src
+** make check
+#+begin_src bash :results silent
+  make check
+#+end_src
+Socket binding failures may be an environmental blips that can be ignored.
+** make install
+#+begin_src bash :results silent
+  sudo make install
+#+end_src

@@ -1,51 +1,20 @@
 :PROPERTIES:
 :ID:       DD7D894A-4ADC-4808-B24A-C2143B507FEF
-:ROAM_ALIASES: org-mode
 :END:
 #+title: org
-
 * Basics
 ** org-directory
 :PROPERTIES:
 :ID:       141D8A2B-2353-4636-9E02-3C9899EB1174
 :END:
-
-#+begin_src emacs-lisp
-  (describe-variable 'org-directory)
+#+begin_src emacs-lisp :results silent
+  (write-region (describe-variable 'org-directory) nil "org-directory.out")
 #+end_src
-
-#+RESULTS:
-#+begin_example
-org-directory is a variable defined in ‘org.el’.
-
-Its value is "~/memex"
-Original value was "~/org"
-
-Directory with Org files.
-This is just a default location to look for Org files.  There is no need
-at all to put your files into this directory.  It is used in the
-following situations:
-
-1. When a capture template specifies a target file that is not an
-   absolute path.  The path will then be interpreted relative to
-   ‘org-directory’
-2. When the value of variable ‘org-agenda-files’ is a single file, any
-   relative paths in this file will be taken as relative to
-   ‘org-directory’.
-
-  You can customize this variable.
-
-#+end_example
-
-#+begin_src emacs-lisp
+#+transclude: [[./org-directory.out]]
+#+begin_src emacs-lisp :results silent
   (setq org-directory (getenv "ROAM_CABINET"))
 #+end_src
-
-#+RESULTS:
-: ~/memex
-
 * Tweaks
-
 ** Content Styling
 
 *** [[id:7F81651F-8535-47C3-81CB-642446A3106C][auto-fill-mode]]
@@ -445,10 +414,17 @@ and removed with ‘M-x org-remove-file’.
 
 #+end_example
 
-Let's just set this to [[id:141D8A2B-2353-4636-9E02-3C9899EB1174][org-directory]].
+Set this based on files collected from [[id:141D8A2B-2353-4636-9E02-3C9899EB1174][org-directory]].
 
 #+begin_src emacs-lisp :results output
-  (setq org-agenda-files (list (file-truename org-directory)))
+  (defun mw/agenda-files ()
+    (setq org-agenda-files
+  	(directory-files-recursively
+  	 org-directory
+  	 "\\.org$"
+  	 nil
+  	 (lambda (dir) (unless (string-match-p "/vendor/" dir) 1)))))
+  (mw/agenda-files)
 #+end_src
 
 #+RESULTS:
@@ -470,6 +446,64 @@ Let's just set this to [[id:141D8A2B-2353-4636-9E02-3C9899EB1174][org-directory]
 : 
 
 **** Debugging Window Selection
+
+This function doesn't seem to be adheering to display-window-alist,
+but it's probably just a result of my not using it properly...adding
+an implementation for debugging....
+
+#+begin_src emacs-lisp
+  (defun mw/org-agenda-open-link (&optional arg)
+    "Open the link(s) in the current entry, if any.
+  This looks for a link in the displayed line in the agenda.
+  It also looks at the text of the entry itself."
+    (interactive "P")
+    (let* ((marker (or (org-get-at-bol 'org-hd-marker)
+  		     (org-get-at-bol 'org-marker)))
+  	 (buffer (and marker (marker-buffer marker)))
+           (prefix (buffer-substring (line-beginning-position)
+                                     (line-end-position)))
+  	 (lkall (and buffer (org-offer-links-in-entry
+  			     buffer marker arg prefix)))
+  	 (lk0 (car lkall))
+  	 (lk (if (stringp lk0) (list lk0) lk0))
+  	 (lkend (cdr lkall))
+  	 trg)
+      (cond
+       ((and buffer lk)
+        (message "!!! buffer")
+        (mapcar (lambda(l)
+  		(with-current-buffer buffer
+  		  (setq trg (and (string-match org-link-bracket-re l)
+  				 (match-string 1 l)))
+  		  (if (or (not trg) (string-match org-link-any-re trg))
+  		      ;; Don't use `org-with-wide-buffer' here as
+  		      ;; opening the link may result in moving the point
+  		      (save-restriction
+  			(widen)
+  			(goto-char marker)
+  			(when (search-forward l nil lkend)
+  			  (goto-char (match-beginning 0))
+  			  (message "!! opening at point")
+  			  (org-open-at-point)))
+  		    (progn
+  		      (message "!!! switching...")
+  		      (switch-to-buffer-other-window buffer))
+  		    ;; This is an internal link, widen the buffer
+  		    (widen)
+  		    (goto-char marker)
+  		    (when (search-forward l nil lkend)
+  		      (goto-char (match-beginning 0))
+  		      (org-open-at-point)))))
+  	      lk))
+       ((or (org-in-regexp (concat "\\(" org-link-bracket-re "\\)"))
+  	  (message "!!! regexp")
+  	  (save-excursion
+  	    (forward-line 0)
+  	    (looking-at (concat ".*?\\(" org-link-bracket-re "\\)"))))
+        (org-link-open-from-string (match-string 1)))
+       (t (message "No link to open here")))))
+#+end_src
+
 *** org-agenda-span
 
 #+begin_src emacs-lisp
@@ -646,8 +680,41 @@ Providing it allows for quicker computation.
 This function may modify match data.
 
 #+end_example
+** Content Type
 
-** org-element-type
+The types themselves aren't readily surfaced so I'll start with
+capturing them as needed until I potentially find a decent resource.
+*** Types
+**** babel-call
+:PROPERTIES:
+:ID:       0C992EE2-DDF8-4475-B157-C017AEF4F6A1
+:END:
+
+A ~call:~ line. This can be passed to [[id:D7816316-280D-4B7B-9420-3E33264E24D2][org-babel-execute-src-block]].
+
+*** Functions
+**** org-element-type-p
+:PROPERTIES:
+:ID:       0593263E-0F14-4414-8AF4-49F164CC3EEC
+:END:
+
+#+call: obi/describe-function(function="org-element-type-p")
+
+#+RESULTS:
+#+begin_example
+org-element-type-p is a byte-code-function in ‘org-element-ast.el’.
+
+(org-element-type-p NODE TYPES)
+
+Return non-nil when NODE type is one of TYPES.
+TYPES can be a type symbol or a list of symbols.
+
+  This function has a compiler macro ‘org-element-type-p--inliner’.
+    See the manual for details.
+
+#+end_example
+
+**** org-element-type
 
 #+begin_src emacs-lisp
   (describe-function #'org-element-type)
@@ -672,3 +739,6 @@ when NODE is an anonymous node.
   This function does not change global state, including the match data.
 
 #+end_example
+
+─────────────────────────────────────────────────────────────────────────────
+Day-agenda (W28):

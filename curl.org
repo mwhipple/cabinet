@@ -3,7 +3,6 @@
 :header-args: :results output
 :END:
 #+title: curl
-
 curl provides the ability to interact with a range of network
 protocols from the command line using URIs.
 
