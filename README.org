@@ -42,12 +42,23 @@ Notebooks should contain all /source/ and that should guide when to
 use which approach. If any file or information (or its equivalent)
 should be able to be reproduced by evaluating the content of the notebook,
 then it is not source and should be transcluded. If information is present
-in content which is not clearly captured elsewhere in the notebook, then it
-should be included in the notebook and tangled.
+in content which is not clearly captured elsewhere in the notebook, then
+it should be included in the notebook and tangled.
 
 In terms of AI-assisted work, this should lend itself to a model where
-specifications and information acting as prompts should be captured in the
-notebook, whereas what is produced from that information can be transcluded.
+specifications and information acting as prompts should be captured in
+the notebook, whereas what is produced from that information can be transcluded.
+
+*** Collecting .gitignore Entries
+
+When tangling out files from a notebook, it is common to also capture the
+resulting .gitignore entries within the same block. This ensures that both
+the source and the generated artifacts are self-contained in the notebook.
+The pattern used in `al/index.org` demonstrates this: each transcluded file
+is followed by a `#+begin_src text :tangle .gitignore` block listing the
+files to be ignored, which is then transcluded with `#+transclude`. This
+approach keeps the .gitignore contents alongside their source, making the
+notebook fully reproducible and reducing external dependencies.
 
 ** Self-Contained
 
@@ -59,8 +70,8 @@ an offline mode.
 
 Working with available resources should always be the initial preference. This should
 include making use of any available help facilities. Whenever such information is used
-it should be captured for future reference in an appropriate topic. In cases where
-the help provides the necessary information, this should be handled by a flow such as:
+it should be captured for future reference in an appropriate topic. In cases where the
+help provides the necessary information, this should be handled by a flow such as:
 
 - Create/find notebook content which invokes a help command producing relevant information
 - As necessary, update that notebook to transclude that information

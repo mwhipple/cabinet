@@ -778,7 +778,7 @@ HTTP status: 000
 : /opt/homebrew/bin//gs
 
 #+begin_src emacs-lisp :var gs=which-gs()
-  (setq doc-view-ghostscript-program gs)
+  (setq doc-view-ghostscript-program "/opt/homebrew/bin/gs")
 #+end_src
 
 #+RESULTS[e6cf812bb84bb800c598b246169dedac8abb70a3]:

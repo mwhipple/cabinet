@@ -2,7 +2,6 @@
 :ID:       8BD69861-CEC7-4D93-804C-7002BEA8BF3B
 :END:
 #+title: dafny
-
 * Installation
 
 https://dafny.org/v4.4.0/Installation

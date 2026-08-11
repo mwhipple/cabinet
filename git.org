@@ -3,7 +3,6 @@
 :header-args: :results output :session git :async
 :END:
 #+title: git
-
 Git is one of the most common (D)VCS solutions.
 
 * Installation

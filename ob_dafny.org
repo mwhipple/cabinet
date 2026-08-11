@@ -2,7 +2,6 @@
 :ID:       7559D25A-A451-46F7-864B-C42C86767B6E
 :END:
 #+title: ob-dafny
-
 Provide [[id:04B03591-50E7-41E2-A2A5-0C2893FAD39C][org-babel]] support for [[id:8BD69861-CEC7-4D93-804C-7002BEA8BF3B][dafny]].
 
 * Basic execution requirements

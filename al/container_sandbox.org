@@ -1,0 +1,104 @@
+:PROPERTIES:
+:ID:       38F74D6C-381F-4A1A-96ED-DC4F0AD691E5
+:END:
+#+title: al/container-sandbox
+What seems to be one of the most useful tools to provide out of the
+gate is a standard POSIX-y shell environment. This would allow the
+agent to perform a variety of work without further logic. A naive
+approach would also pose signficiant security concerns given that it
+would allow wide access to the underlying system. Existing mecahnisms
+should be used to provide a more controlled sandbox, where one of the
+most supported such mechanisms is the use of containers. This tool
+should therefore be designed such that the tool is defined to define a
+containerized environment, and those calls requested by the agent will
+be run within that environment.
+
+The containerization should be prefer using portable approaches rather
+than making use of anything that introduces unnecessary abstractions
+or constraints. For example: generating a system call that would
+compose a docker CLI compatible command would be appropriate (with
+appropriate guards against any kind of injection attacks). Any
+configurations should be modeled as reasonably self-documenting
+objects - while the actual implementation used may be portable and
+low-level, the provided interface should provide expressive logical
+constructs rather than leaking out implementation details.
+
+The work described in this section should be performed without needing
+further context. The requested tool should be produced using standard
+python code where the resulting model is that instantiation configures
+the containerized environment and the instance exposes a method which
+can be used to invoke commands within that environment.
+
+The options available for the sandbox creation is based on
+standard concepts. The starting set should include those that allow
+for interacting with local files while providing maximum protection
+that anything other than such file protections would be prevented.
+#+BEGIN_SRC python :tangle "container_sandbox.py" :results silent
+from abc import ABC
+
+class ContainerArgument(ABC):
+    """Abstract base class for container launch arguments.
+
+    This is a sandbox-independent representation of container arguments.
+    Each sandbox implementation provides its own method to render these
+    arguments in the format required by that sandbox's container runtime.
+    """
+
+    def __init__(self) -> None:
+        pass
+
+
+class BindMount(ContainerArgument):
+    """Bind mount a host directory into the container."""
+
+    def __init__(self, source: str, target: str) -> None:
+        self.source = source
+        self.target = target
+
+
+class TmpFSMount(ContainerArgument):
+    """Mount a tmpfs filesystem inside the container."""
+
+    def __init__(self, target: str, size_mb: int = 0) -> None:
+        self.target = target
+        self.size_mb = size_mb
+
+
+class EnvironmentVariable(ContainerArgument):
+    """Set an environment variable inside the container."""
+
+    def __init__(self, name: str, value: Any) -> None:
+        self.name = name
+        self.value = value
+
+
+class ContainerSandbox(ABC):
+    """Abstract base class for containerized execution environments.
+
+    Provides a uniform interface for launching, stopping, and interacting
+    with containers across different sandbox implementations.
+    """
+
+    def __init__(self, arguments: list[ContainerArgument]) -> None:
+        self._arguments = arguments
+
+    @abstractmethod
+    def run_command(self, command: str) -> str:
+        """Execute a command within the container context and return its output."""
+        ...
+
+    @abstractmethod
+    def start(self) -> None:
+        """Start the container. Must be called before run_command()."""
+        ...
+
+    @abstractmethod
+    def stop(self) -> None:
+        """Stop the container. Should be called after use."""
+        ...
+
+    @abstractmethod
+    def is_running(self) -> bool:
+        """Check whether the container is currently running."""
+        ...
+#+END_SRC

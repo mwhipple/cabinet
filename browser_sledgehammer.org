@@ -2,7 +2,6 @@
 :ID:       F974B544-7B68-42E0-8978-DF4D1DECACA1
 :END:
 #+title: browser-sledgehammer
-
 The browser sledgehammer is a term I just made up so I could point to
 it.
 

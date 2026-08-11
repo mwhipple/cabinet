@@ -2,7 +2,6 @@
 :ID:       F103D183-FA21-4785-96BC-2A526F87E88F
 :END:
 #+title: emacs-tree-sitter
-
 * Grammar Installation
 
 #+begin_src emacs-lisp

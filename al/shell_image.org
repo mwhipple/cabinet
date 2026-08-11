@@ -60,55 +60,58 @@ which would have those components available.
 This should be broken up and better commented.
 
 #+BEGIN_SRC dockerfile :tangle "Dockerfile"
-FROM pandoc/core
+  FROM pandoc/core
 
-RUN apk --no-cache add \
-        alpine-sdk \
-        bash \
-        ca-certificates \
-        cabal \
-        ed \
-        fakeroot \
-        ghc \
-        git \
-        gmp-dev \
-        libffi \
-        libffi-dev \
-        lua5.4-dev \
-        pkgconfig \
-        python3 \
-        shadow \
-        stack \
-        yaml \
-        zlib-dev
+  RUN apk --no-cache add \
+          alpine-sdk \
+          bash \
+          ca-certificates \
+          cabal \
+          diffutils \
+          ed \
+  	  fakeroot \
+          ghc \
+          git \
+          gmp-dev \
+          grep \
+          libffi \
+          libffi-dev \
+          lua5.4-dev \
+          pkgconfig \
+          python3 \
+          sed \
+          shadow \
+          stack \
+          yaml \
+          zlib-dev
 
-ENV USERNAME=al
-ENV HOME=/home/$USERNAME
-# Create a non-root user for al
-RUN groupadd -r $USERNAME \
-    && useradd -r -g $USERNAME -d $HOME -m -s /bin/bash $USERNAME
+  ENV USERNAME=al
+  ENV HOME=/home/$USERNAME
+  # Create a non-root user for al
+  RUN groupadd -r $USERNAME \
+      && useradd -r -g $USERNAME -d $HOME -m -s /bin/bash $USERNAME
 
-# Set up environment variables
+  # Set up environment variables
 
-USER $USERNAME
-WORKDIR $HOME
+  USER $USERNAME
+  WORKDIR $HOME
 
-# Setup and configure cabal
-ENV CABAL_CONFIG=$HOME/.config/cabal/config
+  # Setup and configure cabal
+  ENV CABAL_CONFIG=$HOME/.config/cabal/config
 
-RUN cabal user-config init \
-  && cabal --version \
-  && ghc --version \
-  && cabal update \
-  && cabal install \
-    --jobs=1 \
-    --ghc-options='-O1 -optc-Os -optl=-pthread -fPIC -j' \
-    --ghc-options='+RTS -M1.5G -RTS' \
-    --install-method=copy \
-    pandoc \
-    --lib pandoc-types
+  RUN cabal user-config init \
+    && cabal --version \
+    && ghc --version \
+    && cabal update \
+    && cabal install \
+      --jobs=1 \
+      --ghc-options='-O1 -optc-Os -optl=-pthread -fPIC -j' \
+      --ghc-options='+RTS -M1.5G -RTS' \
+      --install-method=copy \
+      pandoc \
+      --lib pandoc-types
 
-ENTRYPOINT ["/bin/bash", "-c"]
+  ENTRYPOINT ["/bin/bash", "-c"]
 
 #+end_src
 

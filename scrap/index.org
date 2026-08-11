@@ -2,7 +2,6 @@
 :ID:       0DC5A06B-8D69-4CC4-AA03-009E55BFEDCF
 :END:
 #+title: scrap
-
 * Overview
 
 scrap is what I'm calling my set of of utilities for working with

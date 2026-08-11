@@ -4,3 +4,108 @@
 #+title: al/qwen-tool-calls
 Provide support for Qwen style tools to work with the [[id:C7B04713-B224-467C-A355-0F76F2FD5578][al/tool-belt]] and
 [[id:987D73C3-C0DB-439A-860B-C161FDC295E8][al/chat-driver]].
+* Background
+The model I'm currently using seems to make use of Qwen style tool
+calls which for whatever reason is XMLish...but not quite XML.
+
+The matching could likely be trivially generalized to support a
+function that takes a tag name and returns the attribute and body...
+but for now this seems legible anough and below the rule of three.
+
+The logic is organized to support [[id:E64A3393-5DD5-4446-8202-BB7588D4EB10][comprehensions]].
+** Local Handling
+llama.cpp and/or the python bindings seem to provide some pieces to
+help with dealing with tool calls so that the responses can be more
+readily dealt with, but that doesn't seem to work particularly well
+nor does it have a lot of documentation. This support is likely to be
+particularly important when accessing through the server as that would
+enable a cleaner API surface area, but when working with the models
+more directly there seems to be questionable value in trying to push
+that type of logic behind an abstraction rather than dealing with it
+more directly. Overall if it just worked I'd use it but since it
+doesn't I don't see any particular benefit to trying to provide that
+handling in a way that is integrated more deeply rather than just
+having that logic able to be applied; expecting less magic applied
+in-flight and just expecting to apply it after the fact.
+** tool_call_parameter_from_qwen_match
+When passed a regex capture for ~<paramter={}>{}</parameter>~,
+return a tuple of name and parameter value.
+
+The match itself is done by the caller.
+#+begin_src python :results silent
+  import json
+  def tool_call_parameter_from_qwen_match(match):
+      name = match.group(1).strip()
+      str_value = match.group(2).strip()
+      try:
+          return (name, json.loads(str_value))
+      except json.JSONDecodeError:
+          return (name, str_value)
+#+end_src
+** tool_call_request_from_qwen_match
+When passed a regex capture for ~<function={}>{}</function>~,
+return a tuple of name and parameter value.
+
+the match itself is done by the caller.
+#+begin_src python :results silent
+  import re
+  import uuid
+  def tool_call_request_from_qwen_match(match):
+      return {
+          "type": "function",
+          "id": f"call_{uuid.uuid4().hex[:24]}",
+          "function": {
+              "name": match.group(1),
+              "arguments": {k: v for (k, v)
+                            in map(tool_call_parameter_from_qwen_match,
+                                   re.finditer(r'<parameter=([\w.\-]+)>([\s\S]*?)</parameter>', match.group(2)))},
+          },
+      }
+#+end_src
+**** qwen_tool_call_requests
+#+begin_src python :results silent
+  import json
+  import re
+
+  def qwen_tool_call_requests(msg):
+    """Parses Qwen style <function> and <parameter> tags from a string."""
+    return [tool_call_request_from_qwen_match(match) for match in
+            re.finditer(r'<function=([\w.\-]+)>([\s\S]*?)</function>', msg)]
+#+end_src
+**** QwenToolCallResponseHandler
+Inspect missives for requested tool calls.
+When the missives are embedded there may not be further indications
+(tool calls or stop reasons), so this inspects the content
+#+begin_src python :results silent
+  class QwenToolCallResponseHandler:
+      def __init__(self, tool_belt):
+          self.tool_belt = tool_belt;
+
+      def __call__(self, ctx, resp):
+          calls = qwen_tool_call_requests(resp['message']['content'])
+          if not calls: # Don't submit at the end
+              return False
+          for call in calls:
+              output = self.tool_belt.apply(call)
+              ephemeral = ctx['ephemeral']
+              ephemeral(output)
+          return True
+#+end_src
+***** Sandbox
+#+begin_src python
+  print(qwen_tool_call_requests("""
+  Some leading content to ignore
+
+  <tool_call>
+  <function=read_file>
+  <parameter=path>
+  /Users/mwhipple/memex/cabinet/al.org
+  </parameter>
+  </function>
+  </tool_call>
+
+  Ignore me too
+  """))
+#+end_src
+#+RESULTS:
+: [{'type': 'function', 'id': 'call_ad09f755f9804c10a88af8ef', 'function': {'name': 'read_file', 'arguments': {'path': '/Users/mwhipple/memex/cabinet/al.org'}}}]

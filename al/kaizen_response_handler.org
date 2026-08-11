@@ -1,0 +1,20 @@
+#+title: al/kaizen_response_handler
+This function handles responses from the model, checking for completion signals.
+It receives two arguments: ctx (the context containing a driver for tool calls)
+and response (a dict with a 'message' key containing the content). If the content
+includes "Over and out.", the function returns True to signal completion. Otherwise,
+it appends a user missive instructing the agent_kaizen skill to be applied to the
+current session, then returns True.
+#+begin_src python :results silent
+  def kaizen_response_handler(ctx, response):
+      content = response['message']['content']
+      if "Over and out." in content:
+          return True
+      # Over. -> request agent_kaizen skill
+      driver = ctx['driver']
+      driver.user_missive("""
+      Apply agent_kaizen skill to the current session.
+      Upon completion send a message with a final "Over and out." on a line by itself.
+      """)
+      return True
+#+end_src

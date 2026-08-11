@@ -2,7 +2,6 @@
 :ID:       72258C97-F88E-4498-825D-A7447EC008AA
 :END:
 #+title: java
-
 The Java Programming Language
 
 * Configuring for Babel

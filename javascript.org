@@ -2,7 +2,6 @@
 :ID:       BAEC8A6E-A434-4D3B-B05A-5C691A3C10E4
 :END:
 #+title: javascript
-
 JavaScript is one of the most popular programming languages.
 
 * My Take

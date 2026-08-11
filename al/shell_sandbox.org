@@ -1,7 +1,6 @@
-#+BEGIN_FILE_PROPERTIES
+:PROPERTIES:
 :ID:       c3ccf102-3ace-4cda-85b3-2a9312533eec
 :END:
-
 #+TITLE: al/shell-sandbox
 
 ** Tool Definitions
@@ -196,7 +195,7 @@ it should be supported but cautioned against.
 
     def exec(self, command):
       "Exec in existing container"
-      return [self.lxc_cmd, "exec", self.container_name] + shlex.split(command)
+      return [self.lxc_cmd, "exec", self.container_name, "sh", "-c", command] #shlex.split(command)
 
     def handle_results(self, **res):
       observe = self.result_observer
@@ -225,7 +224,7 @@ it should be supported but cautioned against.
   print(sb.shell_command("ls -l /host"))
 #+end_src
 
-#+begin_src python :session al :async yes :results output
+#+begin_src python :session al :async yes :results silent
   class SlowLogResultObserver:
       def __init__(self, slow_ms, slow_log):
           self.slow_ms = slow_ms
@@ -239,4 +238,3 @@ it should be supported but cautioned against.
                   f.write(line)
 #+end_src
 
-#+RESULTS:

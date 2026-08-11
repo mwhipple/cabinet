@@ -2,7 +2,6 @@
 :ID:       BD998169-D426-4D3C-A775-D2D9ED6DCFA3
 :END:
 #+title: org-roam
-
 org-roam allows for powerful zettelkasten style linking between content,
 enabling construction of a knowledge graph (rather than being overly biased
 towards more of a tree).

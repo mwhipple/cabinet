@@ -2,10 +2,9 @@
 :ID:       6292A2C7-5E3E-4CF2-89ED-D184351F116B
 :END:
 #+title: chunkable-length
-
 I try to keep all of my construct within a reasonable length. While
 this often gets reduced to hard rules, I adopt an approach that adapts
-based on the cotnext. There's also often a tension between how large
+based on the context. There's also often a tension between how large
 things are and how many things there are, and also between splitting
 things up just to potentially need to stitch them back together.
 

@@ -3,7 +3,6 @@
 :header-args: :results output :session gh :async
 :END:
 #+title: github
-
 GitHub is a widely used [[file:git.org][git]] hosting site with social elements
 (probably doesn't need an explanation).
 

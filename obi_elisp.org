@@ -2,7 +2,6 @@
 :ID:       0F80D831-E650-4893-AD51-7AF93246FB2B
 :END:
 #+title: obi/elisp
-
 Support evalaution of [[id:222093AC-E4FC-4E90-B124-ADFFC31F6314][emacs-lisp]] in [[id:0F78767D-42FF-4027-B3A2-26CA1898F788][obi]].
 
 * Steal from [[file:/Applications/Emacs.app/Contents/Resources/lisp/org/ob-emacs-lisp.el.gz::;;; ob-emacs-lisp.el --- Babel Functions for Emacs-lisp Code -*- lexical-binding: t; -*-]]

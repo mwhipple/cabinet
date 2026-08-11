@@ -2,7 +2,6 @@
 :ID:       04CB70C7-0644-4623-AE80-63512F671F9A
 :END:
 #+title: formal-verification
-
 I have a general interest in formal verification, and I see it as a
 potential major component in the evolution of software engineering and
 AI. It is nicely complementary in that AI can absorb much of the

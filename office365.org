@@ -3,7 +3,6 @@
 :header-args: :results output :session o365 :async :var venv="/tmp/o365" :python "/tmp/o365/bin/python" :dir /tmp/o365
 :END:
 #+title: office365
-
 Office 365 is Microsoft's office suite.
 
 Unsurpisingly, Office 365 does not seem to like xwidget webkit.

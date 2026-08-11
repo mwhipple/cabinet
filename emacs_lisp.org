@@ -2,7 +2,6 @@
 :ID:       222093AC-E4FC-4E90-B124-ADFFC31F6314
 :END:
 #+title: emacs-lisp
-
 * Style
 There are some established style guides I should probably adopt (I
 just saw batsov's), but for now I'll just capture some explanations

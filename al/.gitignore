@@ -1,4 +1,15 @@
-# A dockerfile to extend a base image with standard desired utilities.
 Dockerfile
-# ToolBelt support
+
 tool_belt.py
+
+message_handling.py
+
+chat_driver.py
+
+yolo_response_handler.py
+
+container_sandbox.py
+
+shell_sandbox.py
+
+pydocker_sandbox.py

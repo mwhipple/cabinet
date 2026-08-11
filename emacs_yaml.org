@@ -2,7 +2,6 @@
 :ID:       CD423BBA-4F33-4CCC-A126-D5E3BA22B219
 :END:
 #+title: emacs-yaml
-
 Support for working with YAML in emacs.
 
 Built-in support makes use of [[id:F103D183-FA21-4785-96BC-2A526F87E88F][emacs-tree-sitter]].

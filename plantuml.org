@@ -2,7 +2,6 @@
 :ID:       3D591887-9B7F-4D41-A7D0-5230F06A4D51
 :END:
 #+title: plantuml
-
 PlantUML is a UML oriented diagram as code tool.
 
 Mermaid is probably more popular nowadays, and more flexible, but

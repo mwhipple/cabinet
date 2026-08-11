@@ -1,6 +1,5 @@
 :PROPERTIES:
 :ID:       D87B9E33-CA56-4301-A59A-6FC951966D08
-:header-args: :results output
 :END:
 #+title: ollama
 

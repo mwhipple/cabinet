@@ -2,7 +2,6 @@
 :ID:       328F5610-DF7E-4F97-B7A5-216B83696C51
 :END:
 #+title: cd-ripping
-
 What tools to use nowadays?
 
 This feels like an area that isn't likely to get active attention

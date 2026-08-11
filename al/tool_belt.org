@@ -107,7 +107,7 @@ This largely just produces a structure conforming to what is expected.
 
       description = func.__doc__
       if not description:
-          raise TypeError("Function must have a non-empty docstring.")
+          raise TypeError(f"Function must have a non-empty docstring: {func.__name__}.")
 
       sig = inspect.signature(func)
       params = sig.parameters.items()

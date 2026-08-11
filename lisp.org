@@ -2,7 +2,6 @@
 :ID:       09D1D0C7-B845-4C87-92D3-B4121CB364DE
 :END:
 #+title: lisp
-
 Lisps are a family of languages largely defined by the homoiconic use
 of modeling the code itself using [[id:58037216-DD41-4C5F-AE7C-7A621EF9D319][lists]] which can be also processed as
 data. This invites preprocessing/macro facilities that make use of

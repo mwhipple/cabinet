@@ -35,6 +35,21 @@
   yolo_response_handler.py
 #+end_src
 #+transclude: [[file:yolo_response_handler.org][yolo-response-handler]] :level 3
+** [[id:2CB46AB1-E4BE-4808-87B6-334329B65949][al/container-sandbox]]
+#+begin_src text :tangle .gitignore
+container_sandbox.py
+#+end_src
+#+transclude: [[id:2CB46AB1-E4BE-4808-87B6-334329B65949][al/container-sandbox]] :level 3
+*** [[id:c3ccf102-3ace-4cda-85b3-2a9312533eec][shell-sandbox]]
+#+begin_src text :tangle .gitignore
+  shell_sandbox.py
+#+end_src
+#+transclude: [[id:c3ccf102-3ace-4cda-85b3-2a9312533eec][al/shell-sandbox]] :level 4
+*** [[id:A6D8F5A4-82B2-4BF8-872E-F0D180620361][pydocker-sandbox]]
+#+begin_src text :tangle .gitignore
+  pydocker_sandbox.py
+#+end_src
+#+transclude: [[id:A6D8F5A4-82B2-4BF8-872E-F0D180620361][pydocker-sandbox]] :level 4
 * attic
 ** [[id:49D8CA5D-B0C7-4F3A-B773-37A27C4A30A8][fs-tools]]
 #+transclude: [[id:49D8CA5D-B0C7-4F3A-B773-37A27C4A30A8][fs-tools]] :level 3

@@ -59,6 +59,7 @@ more controlled API (and disallow things like submit).
           self.tools = tools
           self.on_response = on_response
           self.pending_missives: list[Callable[[], ChatCompletionRequestMessage]] = []
+          self.ephemeral_missives: list[Callable[[], ChatCompletionRequestMessage]] = []
           if system_prompt:
               self.pending_missives.append(lambda: {"role": "system", "content": system_prompt})
 
@@ -67,12 +68,15 @@ more controlled API (and disallow things like submit).
           self.pending_missives.append(lambda: {"role": "user", "content": content})
 
       def submit(self):
-          if not self.pending_missives:
+          if not self.pending_missives and not self.ephemeral_missives:
               return
+          # TODO: Generalize this behavior.
           self.missives += [func() for func in self.pending_missives]
           self.pending_missives.clear()
+          ephemeral = [func() for func in self.ephemeral_missives]
+          self.ephemeral_missives.clear()
           resp = self.model.create_chat_completion(
-              messages = self.missives,
+              messages = self.missives + ephemeral,
               tools = self.tools,
               tool_choice = "auto",
               temperature=0.4,
@@ -83,7 +87,7 @@ more controlled API (and disallow things like submit).
           on_response = self.on_response # Assign to avoid method call
           on_response({
               "user_missive": self.user_missive,
-              "append": lambda msg: self.pending_missives.append(lambda: msg),
+              "ephemeral": lambda msg: self.ephemeral_missives.append(lambda: msg),
           }, choice)
           # This is likely a mild smell unless we can rely on TCO
           # Especially as something like streaming comes in this will probably be re-shuffled

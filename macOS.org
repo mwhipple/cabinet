@@ -2,7 +2,6 @@
 :ID:       516B3C9A-4288-4ACF-8DEE-3526DFD21083
 :END:
 #+title: macOS
-
 macOS is the standard operating system for Apple computers...which I
 tend to call OS X since I'm old. It tends to be just POSIX-y enough
 that most typical needs are met without issue, but then surprises

@@ -1,0 +1,46 @@
+:PROPERTIES:
+:ID:       5CD8773B-0C90-4682-A601-4A9085E42CD4
+:END:
+#+title: mkdocs
+mkdocs is a static site generator. It's not one that ever particularly
+caught my eye, but I ended up using it due to it being selected by an
+adjacent team and wanting to use compatible technologies.
+
+My initial impression which ultimately hasn't changed much is that
+mkdocs falls a bit in the cracks between more documentation oriented
+tools such as Sphinx (which can be complemented), and the more
+Jekyll-y site generators. While mkdocs-material offers a glossier
+package, it also introduces yet another layer.
+
+In 2026, there has been recent disruption in the community which
+seems to plausible invite some stagnation or divergence.
+
+I've also /tended/ to fall into the perspective that some of the
+performance benefits touted by alternatives like Hugo aren't
+pragmatically important...but recent experience with mkdocs on a
+larger site is prompting me to revisit that perspective. While there
+is likely to be a fair amount of factors (including contributors such
+as plugins and containerization), in cases where builds pass into the
+undesirably long category (several minutes) it seems prudent to pivot
+to an alternative where performance is an identified goal.
+
+With mkdocs in particular, especially in out GenAI world, I've also
+somewhat gravitated towards producing in-house logic rather than the
+use of available plugins (when I've run into either functional or
+performance limitations).
+* Running Locally
+** ~dev-addr~
+The listener can be specified with ~dev-addr~, where ~0.0.0.0~ can be
+used as the address to make sure it is available in a
+container. Within a container, the port shouldn't need to be
+modified - but treating it as a parameter can avoid the magic number
+that needs to be shared with port publishing.
+
+The end result therefore resembles:
+~--dev-addr=0.0.0.0:$(MKDOCS_PORT)~ (in a Makefile)
+** ~livereload~
+This may be on by default, but with some minimal experimentation it
+seemed necessary: ~--livereload~
+** ~dirty~
+With long build times, this becomes a necessity for sane livereloading.
+This does not play well with ~strict~.

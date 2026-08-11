@@ -5,264 +5,6 @@
 #+title: al
 * TODO Increment
 SCHEDULED: <1980-01-18 Fri +1d>
-** Tool Call Parsing and Integration
-Such adapaters will be defined separately and plugged in where
-appropriate to the missive passing and handling machinery...so this
-defines a configuraable integration layer rather than something that
-should be baked into either side.
-
-The general interface for parsing will be one that accepts a missive
-and returns (possibly empty) lists of extracted information.
-
-*** Protocol
-
-llama.cpp and/or the python bindings seem to provide some pieces to
-help with dealing with tool calls so that the responses can be more
-readily dealt with, but that doesn't seem to work particularly well
-nor does it have a lot of documentation. This support is likely to be
-particularly important when accessing through the server as that would
-enable a cleaner API surface area, but when working with the models
-more directly there seems to be questionable value in trying to push
-that type of logic behind an abstraction rather than dealing with it
-more directly. Overall if it just worked I'd use it but since it
-doesn't I don't see any particular benefit to trying to provide that
-handling in a way that is integrated more deeply rather than just
-having that logic able to be applied; expecting less magic applied
-in-flight and just expecting to apply it after the fact.
-
-*** Handling Qwen Style Calls
-
-The model I'm currently using seems to make use of Qwen style tool
-calls which for whatever reason is XMLish...but not quite XML.
-
-The matching could likely be trivially generalized to support a
-function that takes a tag name and returns the attribute and body...
-but for now this seems legible anough and below the rule of three.
-
-The logic is organized to support [[id:E64A3393-5DD5-4446-8202-BB7588D4EB10][comprehensions]].
-
-**** tool_call_parameter_from_qwen_match
-
-When passed a regex capture for ~<paramter={}>{}</parameter>~,
-return a tuple of name and parameter value.
-
-The match itself is done by the caller.
-#+begin_src python
-  import json
-  def tool_call_parameter_from_qwen_match(match):
-      name = match.group(1).strip()
-      str_value = match.group(2).strip()
-      try:
-          return (name, json.loads(str_value))
-      except json.JSONDecodeError:
-          return (name, str_value)
-#+end_src
-
-#+RESULTS:
-
-**** tool_call_request_from_qwen_match
-
-When passed a regex capture for ~<function={}>{}</function>~,
-return a tuple of name and parameter value.
-
-the match itself is done by the caller.
-
-#+begin_src python
-  import re
-  import uuid
-  def tool_call_request_from_qwen_match(match):
-      return {
-          "type": "function",
-          "id": f"call_{uuid.uuid4().hex[:24]}",
-          "function": {
-              "name": match.group(1),
-              "arguments": {k: v for (k, v)
-                            in map(tool_call_parameter_from_qwen_match,
-                                   re.finditer(r'<parameter=([\w.\-]+)>([\s\S]*?)</parameter>', match.group(2)))},
-          },
-      }
-#+end_src
-
-**** qwen_tool_call_requests
-
-#+begin_src python
-  import json
-  import re
-
-  def qwen_tool_call_requests(msg):
-    """Parses Qwen style <function> and <parameter> tags from a string."""
-    return [tool_call_request_from_qwen_match(match) for match in
-            re.finditer(r'<function=([\w.\-]+)>([\s\S]*?)</function>', msg)]
-#+end_src
-
-#+RESULTS:
-
-**** QwenToolCallResponseHandler
-
-Inspect missives for requested tool calls.
-When the missives are embedded there may not be further indications
-(tool calls or stop reasons), so this inspects the content
-
-#+begin_src python
-  class QwenToolCallResponseHandler:
-      def __init__(self, tool_belt):
-          self.tool_belt = tool_belt;
-
-      def __call__(self, ctx, resp):
-          calls = qwen_tool_call_requests(resp['message']['content'])
-          if not calls: # Don't submit at the end
-              return False
-          for call in calls:
-              output = self.tool_belt.apply(call)
-              append = ctx['append']
-              append(output)
-          return True
-#+end_src
-
-#+RESULTS:
-
-***** Sandbox
-
-#+begin_src python
-  print(qwen_tool_call_requests("""
-  Some leading content to ignore
-
-  <tool_call>
-  <function=read_file>
-  <parameter=path>
-  /Users/mwhipple/memex/cabinet/al.org
-  </parameter>
-  </function>
-  </tool_call>
-
-  Ignore me too
-  """))
-#+end_src
-
-#+RESULTS:
-: [{'type': 'function', 'id': 'call_ad09f755f9804c10a88af8ef', 'function': {'name': 'read_file', 'arguments': {'path': '/Users/mwhipple/memex/cabinet/al.org'}}}]
-
-**** AL-DONE kaizen_response_handler
-
-This function handles responses from the model, checking for completion signals.
-It receives two arguments: ctx (the context containing a driver for tool calls)
-and response (a dict with a 'message' key containing the content). If the content
-includes "Over and out.", the function returns True to signal completion. Otherwise,
-it appends a user missive instructing the agent_kaizen skill to be applied to the
-current session, then returns True.
-
-#+begin_src python :results silent
-  def kaizen_response_handler(ctx, response):
-      content = response['message']['content']
-      if "Over and out." in content:
-          return True
-      # Over. -> request agent_kaizen skill
-      driver = ctx['driver']
-      driver.user_missive("""
-      Apply agent_kaizen skill to the current session.
-      Upon completion send a message with a final "Over and out." on a line by itself.
-      """)
-      return True
-#+end_src
-
-** Tool Definitions
-
-*** CLI
-
-be run within that environment.
-
-The containerization should be prefer using portable approaches rather
-than making use of anything that introduces unnecessary abstractions
-or constraints. For example: generating a system call that would
-compose a docker CLI compatible command would be appropriate (with
-appropriate guards against any kind of injection attacks). Any
-configuraitons should be modeled as reasonably self-documenting
-objects - while the actual implementation used may be portable and
-low-level, the provided interface should provide expressive logical
-constructs rather than leaking out implementation details.
-
-The work described in this section should be performed without needing
-further context. The requested tool should be produced using standard
-python code where the resulting model is that instantiation configures
-the containerized environment and the instance exposes a method which
-can be used to invoke commands within that environment. For example:
-
-The options available for the sandbox creation is based on
-standard concepts. The starting set should include those that allow
-for interacting with local files while providing maximum protection
-that anything other than such file protections would be prevented.
-
-**** BindMount
-
-Defining mounts is a straightforward way to enable and control access
-to files within the container.
-
-#+begin_src python :results silent
-  from dataclasses import dataclass
-
-  @dataclass
-  class BindMount:
-    host_path: str
-    container_path: str
-    readonly: bool = False
-
-    def as_docker_run_argument(self) -> list[str]:
-      """Render this as a mount argument."""
-      return ["--mount",
-              f"type=bind,source={self.host_path},destination={self.container_path},readonly={str(self.readonly).lower()}"]
-#+end_src
-
-**** TmpFSMount
-
-OK...I created this but I'm not sure if it is entirely useless (or
-just mostly useless). I think it's actually not useless, but the
-current issue would be that the each call spins up a separate
-container - so if this can make use of a volume or similar it could be useful.
-
-Getting ShellSandbox split out and documented would also help with
-some of the recurring stumbling blocks around how these pieces fit together.
-
-#+begin_src python :results silent
-  from dataclasses import dataclass
-
-  @dataclass
-  class TmpFSMount:
-      container_path: str = "/tmp"
-      mode: str = "1777"
-      size: int = 104_857_600
-
-      def as_docker_run_argument(self) -> list[str]:
-          """Render this as a mount argument."""
-          return ["--mount",
-                  f"type=tmpfs,destination={self.container_path},tmpfs-size={self.size},tmpfs-mode={self.mode}"]
-
-#+end_src
-
-**** EnvironmentVariable
-
-#+begin_src python :results silent
-  from dataclasses import dataclass
-
-  @dataclass
-  class EnvironmentVariable:
-      name: str
-      value: str
-
-      def as_docker_run_argument(self) -> list[str]:
-          return ["--env", f"{self.name}={self.value}"]
-#+end_src
-
-**** ShellSandbox
-
-This should be complemented with definitions of container conventions.
-
-Compose and invoke the command for containerized execution.
-This is currently oriented towards single/stateless evaluation.
-It is certainly plausible for performance or functionality that we'd
-want to repeatedly interact with the same container rather than tear
-it down.
-
-***** AL-TODO Time calls and optionally log slow calls (and timeouts)
 
 ***** AL-REVIEW Security Audit
 
@@ -394,49 +136,17 @@ Right now this is producing a pretty interesting hallucination.
 I think for temp directories I'm hitting the mismatch related to macOS virtualization.
 
 #+name: al
-#+begin_src python :var model_path="/Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-v2-GGUF/snapshots/97c11b03687f194b300efbdb4760d9bc4021b759/Qwythos-9B-v2-MTP-Q4_K_M.gguf" :results silent
+#+begin_src python :results silent :session al :async yes :var model_path="/Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-v2-GGUF/snapshots/97c11b03687f194b300efbdb4760d9bc4021b759/Qwythos-9B-v2-MTP-Q4_K_M.gguf"
   from pprint import pprint
   from llama_cpp import Llama
 
   tool_belt = ToolBelt()
   import os
-  import tempfile
-  tmp_dir_obj = tempfile.TemporaryDirectory(dir=f"{os.getcwd()}")
-  tmp_path=tmp_dir_obj.name
-
-  mount_here = BindMount(host_path=os.getcwd(),container_path="/host")
-  mount_tmp = BindMount(host_path=tmp_path,container_path=tmp_path)
-  sb = ShellSandbox(image="al_image:latest",
-                    args=[
-                        EnvironmentVariable(name="TMPDIR", value=tmp_path),
-                        mount_here,
-                        mount_tmp,
-                    ],
-                    timeout_seconds=60*10)
-  tool_belt.register(sb.shell_command)
-
-  llm = Llama(
-      model_path=model_path.strip(),
-      verbose=False,
-      n_ctx=100_000,
-      n_gpu_layers=-1,
-  )
-  handler = ForEachHandler(handlers=[
-      lambda ctx, msg: pprint(msg, width=240),
-      FirstActiveHandler(handlers=[
-          QwenToolCallResponseHandler(tool_belt),
-          yolo_response_handler,
-      ]),
-  ])
+  from pathlib import Path
 
   al_name = "You are my personal AI asssistant named Al."
   al_readme = """
   Consult /host/README.org for information about this project and follow all guidance therein.
-  """
-  al_tmp = f"""
-  Place any temporary files in {tmp_path}.
-  Files in other temp directories (such as /tmp) may be inaccessible to tools.
-
   """
   al_chain = """
   You not only do what is asked, but explain what you are doing
@@ -488,16 +198,16 @@ I think for temp directories I'm hitting the mismatch related to macOS virtualiz
   If necessary tools are missing, provide appropriate feedback.
   """
   al_memory = """
-  /host/AGENTS.md can be used for your memory. As information and techniques to
-  work more effectively and efficiently are discovered, record that information in
-  that file in a form that you can read in the future, and read this file
-  before starting work.
+  Any useful information should be stored within the org files within this directory as
+  documented in the README.org file.
 
-  MAKE SURE to store information in the above locations to reduce churn.
+  Information that assists with working with a particular technology should be stored in the topic
+  directory for that technology (creating it as appropriate). Information that is useful in
+  support of a given project should be included within the content of the org files in that project.
 
-  Whenever you have perform an insepction task in order to determine whether something
-  is available or where to find it, record the information in AGENTS.md for
-  subsequent use.
+  The information present within the files should be able to inform all work done, being consulted,
+  augmentented, and applied as needed.
+
   """
   al_collab = """
   When updating files, only the relevant areas of content should be
@@ -526,49 +236,90 @@ I think for temp directories I'm hitting the mismatch related to macOS virtualiz
 
   """
 
-  driver = ChatDriver(model=llm,
-                      on_response=handler,
-                      tools=tool_belt.declarations(),
-                      system_prompt=f"""
-  {al_name}
-  {al_readme}
-  {al_chain}
-  {al_headless}
-  {al_tmp}
-  {al_local}
-  {al_verify}
-  {al_memory}
-  {al_collab}
-  {al_listen}
+  mount_here = BindMount(host_path=Path.cwd().parent,container_path="/host")
+  mount_tmp = TmpFSMount()
+  llm = Llama(
+      model_path=model_path.strip(),
+      verbose=False,
+      n_ctx=100_000,
+      n_gpu_layers=-1,
+  )
 
-  Skills are available under the /host/skills directory. Relevant skills should be used whenever relevant.
+  with ShellSandbox(image="al_image:latest",
+                    result_observer = SlowLogResultObserver(slow_ms=3_000, slow_log="/tmp/al_slow.log"),
+                    args=[mount_here, mount_tmp],
+                    timeout_seconds=60*10) as sb:
+      tool_belt.register(sb.shell_command)
 
-  All work should strive to be containable within ~10K tokens. Anything
-  that seems likely to exceed or get close to that threshold should be
-  broken up and captured in more granular follow ups.
+      handler = ForEachHandler(handlers=[
+          lambda ctx, msg: pprint(msg, width=240),
+          FirstActiveHandler(handlers=[
+              QwenToolCallResponseHandler(tool_belt),
+              YoloResponseHandler(),
+          ]),
+      ])
 
-  To repeat: /tmp should not be used and the path provided earlier should
-  be used instead.
+      driver = ChatDriver(
+          model=llm,
+          on_response=handler,
+          tools=tool_belt.declarations(),
+          system_prompt=f"""
+          {al_name}
+          {al_readme}
+          {al_chain}
+          {al_headless}
+          {al_local}
+          {al_verify}
+          {al_memory}
+          {al_collab}
+          {al_listen}
 
-  Read AGENTS.md for further context. Trust all information in that file...if any of
-  it turns out to be stale, update it.
+          Skills are available under the /host/skills directory. Relevant skills should be used whenever relevant.
 
-  When you have finished all requested work, emit a missive ending with "Over.".
+          All work should strive to be containable within ~10K tokens. Anything
+          that seems likely to exceed or get close to that threshold should be
+          broken up and captured in more granular follow ups.
 
-  """)
+          Any tool results will not be preserved in the context, so you should respond with any essential
+          details that should be used to inform future work.
 
-  driver.append(user_missive("""
+          When you have finished all requested work, emit a missive ending with "Over.".
 
-  In /host/scrap/book.org the implementation for book.hs should make use of
-  pandoc. The current parsing of block content should be replaced with an
-  implementation that relies on Pandoc to parse the source, and then walks and
-  operates on the resulting parse tree.
+          """)
 
-  """))
+      driver.user_missive("""
 
-  driver.submit()
-  tmp_dir_obj.cleanup()
+      Expand /host/cabinet/al/index.org to make use of the transclusion/.gitignore pattern for the
+      rest of the files (and their tangled outputs) in that directory.
+
+      """)
+
+      driver.submit()
 #+end_src
+
+
+
+      Other index.org files should help define the pattern, and it should be captured as appropriate
+      in /host/README.org or elsewhere. This should involve the index.org file having sections
+      which transclude the other org files within the directory, and prior to that transclusion define
+      .gitignore contents for the files that will be tangled from those transcluded files.
+
+
+      Consult the /host/cabinet/pandoc documentation.
+      The source code for pandoc is available under /host/vendor/pandoc - update the contents
+      in /host/cabinet/pandoc so that it contains any documentation that was necessary to
+      complete this task.
+
+      At the completion of this work:
+      - tangle.hs should be able to be compiled into a `tangle` binary using either stack or cabal
+      - tangle should be able to be run as `tangle tangle.org` in `/host/cabinet/scrap` and produce
+        the `foo` and `run` files with the contents of the corresponding blocks within that file.
+
+
+
+      The matching for CodeBlock is incorrect.
+      The logic to match on the path attribute specifically is likely to need to be refined.
+
 
   First Task:
 
