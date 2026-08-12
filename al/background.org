@@ -37,6 +37,10 @@ avoided as being far too general.
 
 Message will still be in use in the general sense and in forms
 inherited from upstream.
+*** Retained Missive
+A missive which is retained to become part of the context.
+*** Transient Missive
+A missive which is issued, but not stored as part of the context.
 ** Response
 A complete missive received from submitting missives to a model. This
 will include a response missive along with any other enclosing metadata.
