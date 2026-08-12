@@ -44,24 +44,26 @@ it allows for reacting to model responses. It is called with a context
 that provides a ~user_missive~ function to request additional missives
 to be sent to the model. The driver itself is not passed to expose a
 more controlled API (and disallow things like submit).
-#+begin_src python :results silent :tangle chat_driver.py
+#+begin_src python :results silent :tangle chat_driver.py :session al
   from llama_cpp import Llama
   from llama_cpp.llama_types import ChatCompletionRequestMessage
+  import logging
 
   class ChatDriver:
       def __init__(self,
                    model: Llama,
                    tools = [],
                    on_response: MessageHandler = ForEachHandler(),
-                   system_prompt: str = ""):
+                   system_prompt: str = "",
+                   logger = logging.getLogger(__name__)):
           self.model = model
           self.missives: list[ChatCompletionRequestMessage] = []
           self.tools = tools
           self.on_response = on_response
+          self.logger = logger
           self.pending_missives: list[Callable[[], ChatCompletionRequestMessage]] = []
           self.ephemeral_missives: list[Callable[[], ChatCompletionRequestMessage]] = []
-          if system_prompt:
-              self.pending_missives.append(lambda: {"role": "system", "content": system_prompt})
+          self.pending_missives.append(lambda: {"role": "system", "content": system_prompt})
 
       def user_missive(self,
                        content: str):
@@ -71,9 +73,12 @@ more controlled API (and disallow things like submit).
           if not self.pending_missives and not self.ephemeral_missives:
               return
           # TODO: Generalize this behavior.
-          self.missives += [func() for func in self.pending_missives]
+          new_retained = [func() for func in self.pending_missives]
+          self.missives += new_retained
+          self.logger.info("Emitting Retained:\n %r", new_retained)
           self.pending_missives.clear()
           ephemeral = [func() for func in self.ephemeral_missives]
+          self.logger.info("Emitting Transient:\n %r", ephemeral)
           self.ephemeral_missives.clear()
           resp = self.model.create_chat_completion(
               messages = self.missives + ephemeral,
@@ -83,7 +88,9 @@ more controlled API (and disallow things like submit).
               repeat_penalty=1.05,
           )
           choice = single_choice(resp)
-          self.missives.append(choice['message'])
+          received = choice['message']
+          self.logger.info("Received:\n %r", received)
+          self.missives.append(received)
           on_response = self.on_response # Assign to avoid method call
           on_response({
               "user_missive": self.user_missive,
@@ -94,7 +101,11 @@ more controlled API (and disallow things like submit).
           # to a more async/event loop-y model.
           self.submit()
 #+end_src
-** single_choice
+** Logging
+All missives are passed to python logging, which can be configured as documented in
+standard python docs. When working in an ongoing session, force=True may be necessary
+to update configuration changes.
+* single_choice
 Return a presumed single choice from a response or throw trying.
 #+begin_src python :results silent :tangle chat_driver.py
   def single_choice(msg):
