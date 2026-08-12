@@ -53,6 +53,23 @@ tool be invoked.
 ** ToolDeclaration
 Information about the tool that is declared in a form that can be used
 by a model.
+* Error Handling
+Presumably standard practice, but captured here for my own and Al's sake:
+errors should typically be converted into values that are more informative
+than exceptional. This will often be contrary to typical practice of failing
+early and loudly (and avoiding trying to be clever).
+
+Often the AI can adapt around errors and therefore surfacing them as
+information rather than failures can guide follow up steps, and
+subsequently dealing with the errors can therefore be more of a (still
+strongly desirable) optimization rather than a functional necessity.
+
+More to the point, some of the errors may be introduced by the
+probabilistic nature of the AI itself. Models that may /typically/
+behave well and do things like call tools as they are expected to use
+may occasionally deviate from that good behavior; such modes should
+therefore be handled by trying to nudge the wayward LLM back no track
+rather than blowing up.
 * Design
 I'm hoping to just use [[id:701C146E-FE50-4C4D-9332-7B8BA81DAC25][llama.cpp]] as directly as possible through the
 python bindings project. I've ended up moving away from richer
