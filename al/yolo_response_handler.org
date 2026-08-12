@@ -37,7 +37,7 @@ itself is further generalized then this class provides a more general
 template for constructing workflows...that wouldn't be done until
 there's justification and a means to verify - the current parameterization
 is primarily oriented towards prompt optimization within that YOLO flow.
-#+begin_src python :results silent :tangle yolo_response_handler.py
+#+begin_src python :results silent :tangle yolo_response_handler.py :session al
   from dataclasses import dataclass
 
   @dataclass

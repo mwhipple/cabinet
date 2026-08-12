@@ -32,7 +32,7 @@ When passed a regex capture for ~<paramter={}>{}</parameter>~,
 return a tuple of name and parameter value.
 
 The match itself is done by the caller.
-#+begin_src python :results silent
+#+begin_src python :results silent :session al
   import json
   def tool_call_parameter_from_qwen_match(match):
       name = match.group(1).strip()
@@ -47,7 +47,7 @@ When passed a regex capture for ~<function={}>{}</function>~,
 return a tuple of name and parameter value.
 
 the match itself is done by the caller.
-#+begin_src python :results silent
+#+begin_src python :results silent :session al
   import re
   import uuid
   def tool_call_request_from_qwen_match(match):
@@ -63,7 +63,7 @@ the match itself is done by the caller.
       }
 #+end_src
 **** qwen_tool_call_requests
-#+begin_src python :results silent
+#+begin_src python :results silent :session al
   import json
   import re
 
@@ -76,7 +76,7 @@ the match itself is done by the caller.
 Inspect missives for requested tool calls.
 When the missives are embedded there may not be further indications
 (tool calls or stop reasons), so this inspects the content
-#+begin_src python :results silent
+#+begin_src python :results silent :session al
   class QwenToolCallResponseHandler:
       def __init__(self, tool_belt):
           self.tool_belt = tool_belt;
@@ -108,4 +108,3 @@ When the missives are embedded there may not be further indications
   """))
 #+end_src
 #+RESULTS:
-: [{'type': 'function', 'id': 'call_ad09f755f9804c10a88af8ef', 'function': {'name': 'read_file', 'arguments': {'path': '/Users/mwhipple/memex/cabinet/al.org'}}}]
