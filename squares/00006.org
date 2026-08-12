@@ -1,4 +1,7 @@
-#+TITLE: AI and The Carousel of Progress
+:PROPERTIES:
+:ID:       F0CF1770-3814-4856-B1A1-EC1419B30EDB
+:END:
+#+title: AI and The Carousel of Progress
 
 Last week my family and I went to Walt Disney World. Typically
 vacations are a time of reflection for me (with quotidian concerns

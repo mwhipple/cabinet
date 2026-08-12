@@ -1,4 +1,7 @@
-#+TITLE: Abstraction vs. Generalization
+:PROPERTIES:
+:ID:       FF44366D-75AB-4ADB-9784-3BEA96665A0D
+:END:
+#+title: Abstraction vs. Generalization
 
 Abstraction is a key enabler for engineering: providing chunking on
 top of underlying information that allows for actionable

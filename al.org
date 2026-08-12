@@ -3,41 +3,7 @@
 :header-args: :var venv="/tmp/al" :python /tmp/al/bin/python :async yes :results output :session al
 :END:
 #+title: al
-* TODO Increment
-SCHEDULED: <1980-01-18 Fri +1d>
-
-***** AL-REVIEW Security Audit
-
-Security audit completed: implemented tokenized command execution, added --user=1000:1000, and unique container names via UUID.
-
-The security provided by a sandbox should _not_ be able to be bypassed
-through any techniques such as injection or gaining elevated
-privileges. There should be no means to gain access to any details of
-the wider system through a secured sandbox.
-
-Sandbox configuration itself should default to a secure stance.
-Configurations which weaken this stance should be supported but should
-be clearly documented as posing a security risk. For example if a
-container is run as root/superuser this may represent a security risk:
-it should be supported but cautioned against.
-
 #+begin_src python :results silent
-  import subprocess
-  import uuid
-
-  from typing import Optional, List
-  class ShellSandbox:
-    def __init__(self,
-                 image: str,
-                 args: list = [],
-                 timeout_seconds: Optional[int] = None,
-                 lxc_cmd = "docker"):
-        self.image = image
-        self.args = args
-        self.container_name = f"shell_sandbox_{uuid.uuid4().hex}"
-        self.timeout_seconds = timeout_seconds
-        self.lxc_cmd = lxc_cmd
-
     def shell_command(self, command: str) -> tuple[str, str]:
       """
       Execute the provided shell command.

@@ -2,6 +2,7 @@
 :ID:       38F74D6C-381F-4A1A-96ED-DC4F0AD691E5
 :END:
 #+title: al/container-sandbox
+* Background
 What seems to be one of the most useful tools to provide out of the
 gate is a standard POSIX-y shell environment. This would allow the
 agent to perform a variety of work without further logic. A naive
@@ -33,6 +34,7 @@ The options available for the sandbox creation is based on
 standard concepts. The starting set should include those that allow
 for interacting with local files while providing maximum protection
 that anything other than such file protections would be prevented.
+* Implementation
 #+BEGIN_SRC python :tangle "container_sandbox.py" :results silent
 from abc import ABC
 
@@ -83,22 +85,17 @@ class ContainerSandbox(ABC):
         self._arguments = arguments
 
     @abstractmethod
-    def run_command(self, command: str) -> str:
+    def shell_command(self, command: str) -> str:
         """Execute a command within the container context and return its output."""
         ...
 
-    @abstractmethod
-    def start(self) -> None:
-        """Start the container. Must be called before run_command()."""
-        ...
+    def __enter__(self):
+        """Enter the runtime context (e.g., start the container)."""
+        # Placeholder for actual implementation in subclasses.
+        return self
 
-    @abstractmethod
-    def stop(self) -> None:
-        """Stop the container. Should be called after use."""
-        ...
-
-    @abstractmethod
-    def is_running(self) -> bool:
-        """Check whether the container is currently running."""
-        ...
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Exit the runtime context (e.g., stop the container)."""
+        # Placeholder for actual implementation in subclasses.
+        return False
 #+END_SRC

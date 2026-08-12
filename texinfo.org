@@ -2,7 +2,6 @@
 :ID:       C95853E2-E1B1-4E27-B110-7805E29D91C0
 :END:
 #+title: texinfo
-
 #+begin_src emacs-lisp
   (describe-function #'texinfo-mode)
 #+end_src

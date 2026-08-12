@@ -2,7 +2,6 @@
 :ID:       41FBEEAE-48A6-4C8E-830F-985AC8B0B7F6
 :END:
 #+title: web-browser
-
 I've started to try to move off of Web Browsers for the most part.
 Somewhat ironically this idea got a boost from reading timbl's "This
 is for Everyone" and specifically the chapter about the HTML5/WHATWG

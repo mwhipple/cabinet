@@ -2,7 +2,6 @@
 :ID:       3FA03B7E-EC84-40E0-AB18-E3AED640DA89
 :END:
 #+title: scrapbook-interface
-
 * Existing Interfaces
 
 There are a few interface models that currently dominate how we

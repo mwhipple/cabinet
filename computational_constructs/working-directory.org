@@ -2,7 +2,6 @@
 :ID:       407FF7CB-4616-4213-9948-413D9436AAB8
 :END:
 #+title: working-directory
-
 The working directory establishes a location context within a
 filesystem - relative paths would be resolved...relative to the
 working-directory.

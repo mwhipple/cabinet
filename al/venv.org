@@ -10,5 +10,5 @@ assumed host dependency (which could also be taken care of by
 multiple reasons).
 #+begin_src bash :session al-venv :results silent
   python -m venv "${venv}"
-  ${venv}/bin/python -m pip install llama-cpp-python typing_extensions
+  ${venv}/bin/python -m pip install llama-cpp-python typing_extensions pydocker
 #+end_src

@@ -1,0 +1,212 @@
+* PyDocker Sandbox Implementation
+  This module provides a Docker-based container sandbox implementation,
+  allowing execution of arbitrary commands in isolated containers with
+  configurable mounts, environment variables, and security restrictions.
+
+  The sandbox supports:
+  - Bind mounts for persistent data access
+  - TmpFS mounts for temporary storage
+  - Environment variable injection
+  - Security hardening (no-new-privileges, drop all capabilities)
+  - Result observation callbacks for streaming output
+
+#+begin_src python :results output :tangle pydocker_sandbox.py
+from typing import Optional, List, Callable
+import uuid
+from docker import DockerClient
+from docker.errors import ContainerError
+from container_sandbox import BindMount, TmpFSMount, EnvironmentVariable, ContainerSandbox
+
+
+class PyDockerSandbox(ContainerSandbox):
+    """
+    A Docker-based container sandbox that executes commands in isolated
+    containers with configurable mounts and environment variables.
+
+    The sandbox provides a secure execution environment by:
+    - Dropping all capabilities and preventing privilege escalation
+    - Allowing only the specified image to run
+    - Supporting bind mounts, tmpfs mounts, and environment variables
+    - Streaming command output through a callback observer
+
+    Example usage:
+        sandbox = PyDockerSandbox(
+            image="alpine",
+            arguments=[
+                BindMount("/host/data", "/data"),
+                EnvironmentVariable("MY_VAR", "value"),
+            ],
+            result_observer=lambda r: print(r.get("stdout", "")),
+        )
+        result = sandbox.start()
+        output = sandbox.exec_command("echo hello")
+        print(output)
+    """
+
+    def __init__(
+        self,
+        image: str,
+        arguments: List[ContainerArgument] = [],
+        timeout_seconds: Optional[int] = None,
+        result_observer: Callable[[dict], None] = lambda _: None,
+    ):
+        """
+        Initialize the sandbox with an image and optional arguments.
+
+        Args:
+            image: The Docker image to use for container execution.
+            arguments: List of ContainerArgument subclasses (BindMount,
+                       TmpFSMount, EnvironmentVariable) to configure.
+            timeout_seconds: Optional timeout for container operations.
+            result_observer: A callable that receives the result dict
+                             after command execution; default is no-op.
+        """
+        super().__init__(arguments)
+        self.image = image
+        self.timeout_seconds = timeout_seconds
+        self.result_observer = result_observer
+
+    def _sandbox(self) -> dict:
+        """
+        Build the container configuration (mounts and environment).
+
+        This method iterates over the sandbox's arguments, extracting
+        mount dictionaries for bind mounts and tmpfs mounts, and
+        environment variable dictionaries. It also creates a unique
+        container name using UUID.
+
+        Returns:
+            A dict with "mounts" and "envs" keys containing lists of
+            configuration dictionaries.
+        """
+        mount_dicts: List[dict] = []
+        env_dicts: List[dict] = []
+        for arg in self._arguments:
+            if isinstance(arg, BindMount):
+                mount_dicts.append({
+                    "type": "bind",
+                    "source": arg.source,
+                    "target": arg.target,
+                    "read_only": False,
+                })
+            elif isinstance(arg, TmpFSMount):
+                mount_dicts.append({
+                    "type": "tmpfs",
+                    "destination": arg.target,
+                    "size": arg.size_mb * 1024 * 1024,
+                    "mode": "1777",
+                })
+            elif isinstance(arg, EnvironmentVariable):
+                env_dicts.append({
+                    "name": arg.name,
+                    "value": arg.value,
+                })
+
+        self.client = DockerClient.from_env()
+        self.container_name = f"pydocker_sandbox_{uuid.uuid4().hex}"
+        return {
+            "mounts": mount_dicts,
+            "envs": env_dicts,
+        }
+
+    def start(self) -> dict:
+        """
+        Start the container and run /bin/bash inside it.
+
+        This method configures security options (no-new-privileges,
+        drop all capabilities) and launches the container with the
+        previously built mounts and environment. The container runs
+        /bin/bash as its entrypoint in detached mode.
+
+        Returns:
+            A dict containing "container_id" and "name".
+        """
+        host_config = {
+            "security_opt": ["no-new-privileges"],
+            "cap_drop": ["ALL"],
+        }
+        result = self.client.containers.run(
+            image=self.image,
+            command=["/bin/bash"],
+            detach=False,
+            name=self.container_name,
+            mounts=self._sandbox()["mounts"],
+            envs=self._sandbox()["envs"],
+            host_config=host_config,
+        )
+        return {
+            "container_id": result.id,
+            "name": self.container_name,
+        }
+
+    def exec_command(self, command: str) -> dict:
+        """
+        Execute a shell command in the running container.
+
+        This method retrieves the container by name, runs the provided
+        command via Docker's exec API with streaming enabled, and
+        reads both stdout and stderr. The result is returned as a
+        dict with "stdout", "stderr", and "exit_code" keys.
+
+        Args:
+            command: The shell command to execute.
+
+        Returns:
+            A dict containing the command output and exit code.
+        """
+        result = self.client.containers.get(self.container_name).exec_run(
+            command, stream=True, demux=True
+        )
+        stdout, stderr = result[0].read().decode(), result[1].read().decode()
+        return {
+            "stdout": stdout.strip(),
+            "stderr": stderr.strip(),
+            "exit_code": result[1].returncode,
+        }
+
+    def handle_results(self, **res):
+        """
+        Process the results of a command execution.
+
+        This method invokes the registered result_observer callback
+        with the result dictionary, then formats and returns a string
+        representation of stdout and stderr wrapped in <output> tags.
+
+        Args:
+            **res: Keyword arguments representing result keys (e.g.,
+                   "stdout", "stderr").
+
+        Returns:
+            A formatted string with output sections.
+        """
+        observe = self.result_observer
+        observe(res)
+        return f"<output>{''.join((result_element(res, key) for key in ['stdout', 'stderr']))}</output>"
+
+    def result_element(self, res: dict, key: str) -> str:
+        """
+        Extract a single result element from the dictionary.
+
+        Returns the value wrapped in an XML-like tag if the key exists,
+        otherwise returns an empty string.
+
+        Args:
+            res: The result dictionary.
+            key: The key to look up.
+
+        Returns:
+            A string like "<key>value</key>" or "".
+        """
+        return f"<{key}>{res[key]}</{key}>" if key in res else ""
+
+    def __exit__(self, *args):
+        """
+        Clean up the container on context exit.
+
+        This method removes the container by name when the sandbox
+        context manager is exited, ensuring no orphaned containers
+        remain. The force=True flag guarantees removal even if the
+        container is still running.
+        """
+        self.client.containers.get(self.container_name).remove(force=True)
+#+end_src

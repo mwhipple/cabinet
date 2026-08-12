@@ -1,4 +1,7 @@
-#+TITLE: The Trouble With Line Coverage
+:PROPERTIES:
+:ID:       9E45A593-DEDD-4EF1-B510-888BC3BC4465
+:END:
+#+title: The Trouble With Line Coverage
 
 Over the past several years it has seemingly become very standard to
 enforce a threshold for lines of code covered by tests. My experience

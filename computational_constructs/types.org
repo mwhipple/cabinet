@@ -1,0 +1,100 @@
+:PROPERTIES:
+:ID:       824EE294-DF57-45EA-861F-CCE772A8B83F
+:END:
+#+title: types
+* Preference
+
+Over the years I've definitely fallen pretty hard into preferring
+stronger typing. For me a lot of this ultimately comes down to two factors.
+
+The Rule of Representation: it seems far easier to
+understand a well defined piece of data than it does to accurately
+parse logic.
+
+Logical Noise: weaker typing leads to a proliferation of type checks
+and coercions that could simply be avoided if you trust the type.
+
+An extension to the last part is also that proper application of
+strong typing can allow for less code overall: replacing logic that is
+often required to guard against things which should not actually exist
+to simply designing those possibilities out of the system. More
+pointedly this allows for simple constructs with pervasive guarantees
+in place of complex (complected) constructs which require supporting
+logic.
+
+My most important desire in any scenario is that the types defined can
+be trusted and operate within a consistent model. Any system where
+types are applied incorrectly so that they reflect aspiration rather
+than safety and implying that guarantees that are not there are just
+begging for trouble (that type of information is fine for
+documentation but should not spill into misleading code). In a
+somewhat similar vein I'd also rather have tools that provide strong
+type guarantees or those that allow for very flexible slicing through
+data...but there often seems to be an unfortunate middle ground where
+there's work required to get the data to conform to expected types and
+yet those types still can't be fully trusted. For some reason Ruby
+springs to mind for this category, I think due to a fair amount of
+time spent with some inherited RSpec tests that fell into this middle
+ground: that impression may have been driven by how the suite had been
+written but the language itself also seemed biased in that direction
+and left me wishing it would fall more into a more fully dynamic
+lisp-y model to allow slicing up strings. I think many of the
+more mainstream languages that have been around for 20+ years tend to
+invite these types of issues.
+
+** Gradual Typing and Independent Definitions
+
+There's a current trend for "gradual typing" which is where some form
+of hints get added to a language. My perspective towards this is that
+can be useful, but I'd typically strongly prefer that such type
+information is kept out of the language itself. For the most part such
+functionality is provided by discrete type checking and therefore
+there is no impact on the final code...so there's no apparent reason
+to pollute the language itself for the sake of the type checker.
+
+Many languages that provide some of the strongest type guarantees
+(such as Idris) prefer defining types independently which establishes
+precedent. Extending the language with optional syntax that doesn't
+ultimately impact what is executed feels like it is likely to be
+misleading, and introducing unnecessary tangling - whereas introducing
+a means to explicitly guide a type checker feels simpler and more
+transparent.
+
+* What Are Types Anyway?
+
+I think another interesting angle is to view the purpose that types
+serve. I'd think most developers have a very specific notion of types
+which is largely informed by the language that they've tended to use,
+but it seems like there are at least a few categories with slightly
+different purposes. This has almost certainly been explained better
+elsewhere.
+
+** For Encoding
+
+At the lowest level, in languages like C types are used to indicate
+what a sequence of bits actually means: how they should be exposed to
+a user and how they should be operated on by a processor. This is
+particularly evidenced by the standard C convention to represent type
+information as most closely associated with values rather than
+references to those values...all of those indirections end up at some
+encoded bits and the types indicate what to do with those bits.
+
+** For Declaration
+
+Most typically types are used to declare the type of thing you're
+dealing with and some of the expecations around how that things will
+be represented and what can be done with it. At this point the types
+tend to live with the references, and may be used for things like
+dispatching logic based on the type. With some additional guards this
+can provide a fair amount of additional expressiveness and safety.
+
+** For Behaviors
+
+At the most powerful level, the types can represent any
+contracts. This can extend beyond details such as the representation
+of the data and the available functionality to include arbitrary
+properties that can be trusted or verified for the logic. Such systems
+are likely to define types with mechanisms of comparable power to
+other available constructs. This includes dependent types and
+languages that support design-by-contract-style facilities.
+

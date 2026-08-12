@@ -1,4 +1,7 @@
-#+TITLE: (Re)Interpreting the Test Pyramid
+:PROPERTIES:
+:ID:       AA4C6540-FF24-4394-BD2F-F9608656919A
+:END:
+#+title: (Re)Interpreting the Test Pyramid
 
 The Test Pyramid is a well-established model to assess the
 health of a test corpus and strategy, with the standard interprettation

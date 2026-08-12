@@ -1,4 +1,7 @@
-#+TITLE: Information Firehose and Mindful Consumption
+:PROPERTIES:
+:ID:       2347882C-DD9E-4A92-AF35-0D8868C52E22
+:END:
+#+title: Information Firehose and Mindful Consumption
 
 One product that is frequently featured when my family and I watch
 streaming services is Rocket Money, and we have a running joke around

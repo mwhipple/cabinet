@@ -74,8 +74,10 @@ This should be broken up and better commented.
           git \
           gmp-dev \
           grep \
+          jq \
           libffi \
           libffi-dev \
+          libxml2-utils \
           lua5.4-dev \
           pkgconfig \
           python3 \

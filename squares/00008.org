@@ -1,4 +1,7 @@
-#+TITLE: Magical Number Seven
+:PROPERTIES:
+:ID:       37B0817E-F038-4397-AA98-2C2E8E6C8EE1
+:END:
+#+title: Magical Number Seven
 
 A major but often neglected factor in designing systems is the
 limitations of our minds. One of the seminal related works is likely

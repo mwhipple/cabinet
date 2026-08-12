@@ -1,0 +1,15 @@
+:PROPERTIES:
+:ID:       C147A73E-E940-47D6-BBE2-211C7CA167D5
+:END:
+#+title: variable-definition
+Variable definition is used to indicate that it has a value bound to
+it. This may alternatively be called initialization or binding.
+
+[[id:05401C30-3767-4E79-8B02-DECF434EB69E][assignment]] is used in cases where the value is mutated, whereas
+definition does not expect that such mutation will ever happen.
+
+This presupposes or implies variable-declaration.
+* is-a-variable-definition
+:PROPERTIES:
+:ID:       48C2CB7A-35F2-40A8-A430-F6F69B2C6F02
+:END:
