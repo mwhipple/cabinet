@@ -9,6 +9,7 @@ chat_driver.py
 yolo_response_handler.py
 
 container_sandbox.py
+*.log
 
 shell_sandbox.py
 

@@ -75,10 +75,10 @@ more controlled API (and disallow things like submit).
           # TODO: Generalize this behavior.
           new_retained = [func() for func in self.pending_missives]
           self.missives += new_retained
-          self.logger.info("Emitting Retained:\n %r", new_retained)
+          self.logger.info("Emitting Retained: %r", new_retained)
           self.pending_missives.clear()
           ephemeral = [func() for func in self.ephemeral_missives]
-          self.logger.info("Emitting Transient:\n %r", ephemeral)
+          self.logger.info("Emitting Transient: %r", ephemeral)
           self.ephemeral_missives.clear()
           resp = self.model.create_chat_completion(
               messages = self.missives + ephemeral,
@@ -89,7 +89,7 @@ more controlled API (and disallow things like submit).
           )
           choice = single_choice(resp)
           received = choice['message']
-          self.logger.info("Received:\n %r", received)
+          self.logger.info("Received: %r", received)
           self.missives.append(received)
           on_response = self.on_response # Assign to avoid method call
           on_response({

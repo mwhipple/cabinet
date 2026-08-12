@@ -1,24 +1,7 @@
-* PyDocker Sandbox Implementation
-  This module provides a Docker-based container sandbox implementation,
-  allowing execution of arbitrary commands in isolated containers with
-  configurable mounts, environment variables, and security restrictions.
-
-  The sandbox supports:
-  - Bind mounts for persistent data access
-  - TmpFS mounts for temporary storage
-  - Environment variable injection
-  - Security hardening (no-new-privileges, drop all capabilities)
-  - Result observation callbacks for streaming output
-
-#+begin_src python :results output :tangle pydocker_sandbox.py
-from typing import Optional, List, Callable
-import uuid
-from docker import DockerClient
-from docker.errors import ContainerError
-from container_sandbox import BindMount, TmpFSMount, EnvironmentVariable, ContainerSandbox
-
-
-class PyDockerSandbox(ContainerSandbox):
+:PROPERTIES:
+:ID:       3BB9C6A7-ABCF-44F2-8448-2A62C01C443E
+:END:
+#+title: al/pydocker_sandbox
     """
     A Docker-based container sandbox that executes commands in isolated
     containers with configurable mounts and environment variables.

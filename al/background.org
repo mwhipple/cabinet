@@ -77,3 +77,29 @@ harnesses due to feeling like they are more likely to chase richer
 functionality than I want and the perpsective that I should be able to
 use the agent to help build itself (which should effectively dissolve
 the traditional benefits of using more packaged software).
+* Iteration
+Now that I /seem/ to have the basics working together, I'll be looking
+at improving each as a I go - much of this will revolve around
+dogfooding where I ask Al to improve itself (and work on improving its
+ability to improve itself).
+
+This will typically follow a pattern of trying to refine the assorted
+pieces so that they work more reliably, and then using that baseline
+to capture metrics that can be used to drive optimization.
+* Shared Context
+One major goal within this project is to avoid anything agent
+specific, and instead working out various approaches through which the
+agent and myself share the same information. This will include trying
+to collect any supporting documentation in common files (rather than
+using files like AGENTS.md), and using the content in those files for
+additional purposes such as providing prompts. Overall I want to make
+sure that the agent meets me where I am, rather than needing to go
+find it.
+
+Closely related is the goal of recording and using information
+locally. This was originally somewhat independent, but directly
+supports the above goal in that any information which aids in applying
+knowledge should be readily accessible.
+
+All of these goals will be facilitated through the use of tools which
+work with the local content.
