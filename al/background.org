@@ -103,3 +103,50 @@ knowledge should be readily accessible.
 
 All of these goals will be facilitated through the use of tools which
 work with the local content.
+* MCP?
+I /currently/ don't see the need for Model Context Protocol (MCP) and
+therefore its adoption is deferred. The underlying pattern as I
+understand it is that all tool calls are ultimately just conventional
+messages provided by the model which need to be acted upon by some
+code outside of the model, so on the most basic level MCP just
+introduces another moving piece into that flow.
+
+Perhaps the most obvious prospective benefit for MCP is when building
+out an AI-powered infrastructure where resources are allocated for
+diferent pieces: in cases where the LLMs and the tools are running on
+different machines then MCP helps define some of the interfaces...as
+somewhat implied above that is actually a bit simplistic since it
+omits the glue/harness around the LLMs which is the more practically
+significant piece, but the general idea of enabling remote calls to
+support distributed resources is an obvious place where MCP proves
+useful. Given that I'm really focusing on local inference in this
+project, this is effectively irrelevant.
+
+Another area where MCP promises value is for providing a more portable
+contract for inter-process communication (IPC) in general. More
+directly defining the tools introduces the constraint that they all
+need to fit within the same process space and therefore require
+binding in a common language. If the number of tools grow and it makes
+sense for some of them to not be in a single runtime, then having a
+general mechanism to advertise and call those tools would be useful,
+and MCP provides a standard means to do that. In particular, many of
+the tools are likely to amount to thin wrappers around functionality
+that could theoretically be invoked more directly, so it would be
+preferable if that information could be encoded closer to that
+functionality rather than a more presumptuous wrapper. This is likely
+to tip the scales at some point, but from first principles, MCP still
+poses relatively high cost which needs to be amortized. Direct tool
+access can be applied directly around the LLM interactions, whereas
+MCP would require replacing that with code to act as the MCP
+host...which would also need the MCP server...which would /also/ need
+to deal with using the ostensibly polyglot tools. Simplistically this
+therefore represents a bunch of extra pieces that effectively just
+moves rather than solves the core problem. More pragmatically, these
+types of IPC tasks have seemingly remained a nusiance for decades at
+this point which leads to the perspective that they can be worked
+through by just working with some standard or other, and MCP provides
+that standard. From a less isolated perspective, the different pieces
+described in the MCP model also amount to decomposing the problem and
+aligning it with work being done in the wider ecosystem - so while
+the cost in reinventing those wheels is inarguably higher there should
+be wheels available from which we can borrow and steal.

@@ -1,0 +1,4 @@
+:PROPERTIES:
+:ID:       0758F0E1-9C90-43F5-B0E0-1C335307AD83
+:END:
+#+title: cabinet-structure

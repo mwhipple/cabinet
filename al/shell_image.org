@@ -81,9 +81,11 @@ This should be broken up and better commented.
           lua5.4-dev \
           pkgconfig \
           python3 \
+          qbe \
           sed \
           shadow \
           stack \
+          tcc \
           yaml \
           zlib-dev
 
