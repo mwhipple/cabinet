@@ -33,9 +33,9 @@ This provides extension points for configuring and providing models,
 and plugging in [[id:0C1AC947-C54C-4458-9F5E-F405F3DBD475][al/message-handling]].
 
 The current interaction model tracks all messages that the have been
-sent or received from the model in the ~missives~ property, and
+sent or received from the model in the session_missives property, and
 records those that have yet to be sent as thunks in
-~pending_missives~. The thunk model allows for some delayed expansion
+retained_missives. The thunk model allows for some delayed expansion
 or further processing. The immediate use for this would be to support
 system prompt composition.
 
@@ -49,39 +49,38 @@ more controlled API (and disallow things like submit).
   from llama_cpp.llama_types import ChatCompletionRequestMessage
   import logging
 
+  MissiveSupplier = Callable[[], list[ChatCompletionRequestMessage]]
   class ChatDriver:
       def __init__(self,
                    model: Llama,
                    tools = [],
                    on_response: MessageHandler = ForEachHandler(),
-                   system_prompt: str = "",
+                   system_prompt: MissiveSupplier = lambda: [],
                    logger = logging.getLogger(__name__)):
           self.model = model
-          self.missives: list[ChatCompletionRequestMessage] = []
+          self.session_missives: list[ChatCompletionRequestMessage] = []
           self.tools = tools
           self.on_response = on_response
           self.logger = logger
-          self.pending_missives: list[Callable[[], ChatCompletionRequestMessage]] = []
-          self.ephemeral_missives: list[Callable[[], ChatCompletionRequestMessage]] = []
-          self.pending_missives.append(lambda: {"role": "system", "content": system_prompt})
+          self.retained_missive_queue: list[MissiveSupplier] = [system_prompt]
+          self.transient_missive_queue: list[MissiveSupplier] = []
 
       def user_missive(self,
                        content: str):
-          self.pending_missives.append(lambda: {"role": "user", "content": content})
+          self.retained_missives.append(lambda: {"role": "user", "content": content})
+
+      def drain(self, queue):
+          missives = [m for thunk in queue for m in thunk()]
+          self.logger.info("Emitting: %r", missives)
+          queue.clear()
+          return missives
 
       def submit(self):
-          if not self.pending_missives and not self.ephemeral_missives:
+          if not self.retained_missive_queue and not self.transient_missive_queue:
               return
-          # TODO: Generalize this behavior.
-          new_retained = [func() for func in self.pending_missives]
-          self.missives += new_retained
-          self.logger.info("Emitting Retained: %r", new_retained)
-          self.pending_missives.clear()
-          ephemeral = [func() for func in self.ephemeral_missives]
-          self.logger.info("Emitting Transient: %r", ephemeral)
-          self.ephemeral_missives.clear()
+          self.session_missives += self.drain(self.retained_missive_queue)
           resp = self.model.create_chat_completion(
-              messages = self.missives + ephemeral,
+              messages = self.missives + self.drain(self.transient_missive_queue),
               tools = self.tools,
               tool_choice = "auto",
               temperature=0.4,
@@ -94,7 +93,7 @@ more controlled API (and disallow things like submit).
           on_response = self.on_response # Assign to avoid method call
           on_response({
               "user_missive": self.user_missive,
-              "ephemeral": lambda msg: self.ephemeral_missives.append(lambda: msg),
+              "transient": lambda msg: self.transient_missive_queue.append(lambda: msg),
           }, choice)
           # This is likely a mild smell unless we can rely on TCO
           # Especially as something like streaming comes in this will probably be re-shuffled

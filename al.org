@@ -3,104 +3,6 @@
 :header-args: :var venv="/tmp/al" :python /tmp/al/bin/python :async yes :results output :session al
 :END:
 #+title: al
-#+begin_src python :results silent
-    def shell_command(self, command: str) -> tuple[str, str]:
-      """
-      Execute the provided shell command.
-
-      The utilities available will vary based on the image used.
-      Users should therefore check availability prior to invoking.
-
-      This will return the output from stdout and stderr as a single string
-      with XML elements for each stream.
-
-      Note: The command is executed without a shell; it is tokenized
-      safely. If you need shell features (piping, redirections),
-      consider using a different approach or wrapping in a script.
-      """
-      # Tokenize the command safely (no shell invocation)
-      # The security this is intended to provide should be pushed into the image.
-      import shlex
-
-      cmd = [
-        self.lxc_cmd,
-        "run",
-        "--rm",
-        "--cap-drop=all",
-        "--security-opt=no-new-privileges",
-      ] + [
-          cmd for arg in self.args for cmd in arg.as_docker_run_argument()
-      ] + [self.image ]
-
-      # Execute command
-      try:
-        result = subprocess.run(cmd + [command], capture_output=True, timeout=self.timeout_seconds)
-        return f"<output><stdout>{result.stdout.strip()}</stdout><stderr>{result.stderr.strip()}</stderr></output>"
-      except subprocess.TimeoutExpired:
-        return "<output><stderr>Requested command timed out</stderr></output>"
-#+end_src
-
-This was previously above, but should be another guard that is
-probably pushed more into the image.
-        "--user=1000:1000",  # non-root user
-
-**** AL-DONE Longer form options should also be preferred throughout.
-**** AL-DONE BindMounts should self render
-
-**** Sandbox
-
-#+begin_src python :session sb_test :results silent
-  import os
-  sb = ShellSandbox(image="alpine:latest", mounts=[BindMount(host_path=os.getcwd(),container_path="/host")])
-  print(sb.shell_command("ls -l /host"))
-#+end_src
-
-*** Skills
-
-I was originally thinking of skills as a markup analog of tools,
-but after being reminded (again) that the conventions around skills
-are different than I expect, this seems likely to be more trouble
-than it's worth. Skills conventions rely on directory structures
-along with supporting artifacts - all of which ould be far more
-readily implemented using the container mechanisms already in use
-rather than creating anything specialized.
-
-Al did a good job getting the initial design rolling which I
-subsequently squashed.
-
-** Beget Al
-
-Construct and interact with a [[id:D40AB771-6361-484A-8685-D082565D0D1E][llama.Llama]].
-
-There a lot of options for construction documented at [[id:E23922B9-95E0-45AA-A3FB-DB627EA18002][llama.Llama.init]].
-
-*** main
-
-chat_format feels like it has a broad impact but is missing some local explanation.
-The current model is advertised as using Qwen/ChatML style, but when
-the format is changed the tools aren't detected without further help.
-
-Right now this is producing a pretty interesting hallucination.
-
-#+name: this-file
-#+begin_src emacs-lisp :session none :results value
-  buffer-file-name
-#+end_src
-
-#+RESULTS: this-file
-: /Users/mwhipple/memex/cabinet/al.org
-
-#+begin_src emacs-lisp :session none :noweb yes :results silent
-  (defun al/go ()
-    (interactive)
-    (save-excursion
-      (find-file "<<this-file()>>")
-      (goto-char (org-babel-find-named-block "al"))
-      (org-babel-execute-src-block)))
-#+end_src
-
-I think for temp directories I'm hitting the mismatch related to macOS virtualization.
-
 #+name: al
 #+begin_src python :results silent :session al :async yes :var model_path="/Users/mwhipple/.cache/huggingface/hub/models--empero-ai--Qwythos-9B-v2-GGUF/snapshots/97c11b03687f194b300efbdb4760d9bc4021b759/Qwythos-9B-v2-MTP-Q4_K_M.gguf"
   from pprint import pprint
@@ -111,9 +13,6 @@ I think for temp directories I'm hitting the mismatch related to macOS virtualiz
   from pathlib import Path
 
   al_name = "You are my personal AI asssistant named Al."
-  al_readme = """
-  Consult /host/README.org for information about this project and follow all guidance therein.
-  """
   al_chain = """
   You not only do what is asked, but explain what you are doing
   and the reason throughout the process.
