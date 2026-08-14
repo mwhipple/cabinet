@@ -44,12 +44,22 @@ it allows for reacting to model responses. It is called with a context
 that provides a ~user_missive~ function to request additional missives
 to be sent to the model. The driver itself is not passed to expose a
 more controlled API (and disallow things like submit).
+** Imports and MissiveSupplier
+Define a type alias for a thunk which produces one or more missives.
+
+This is used throughout to enable some deferred manipulation of the messages.
+That it produces a list isn't driven by specific requirements, but
+allows for more natural Maybe type behavior in python.
 #+begin_src python :results silent :tangle chat_driver.py :session al
   from llama_cpp import Llama
   from llama_cpp.llama_types import ChatCompletionRequestMessage
   import logging
 
   MissiveSupplier = Callable[[], list[ChatCompletionRequestMessage]]
+#+end_src
+** Definition and Constructor
+Accept arguments and initialize missive storage.
+#+begin_src python :results silent :tangle chat_driver.py :session al
   class ChatDriver:
       def __init__(self,
                    model: Llama,
@@ -58,26 +68,41 @@ more controlled API (and disallow things like submit).
                    system_prompt: MissiveSupplier = lambda: [],
                    logger = logging.getLogger(__name__)):
           self.model = model
-          self.session_missives: list[ChatCompletionRequestMessage] = []
           self.tools = tools
           self.on_response = on_response
           self.logger = logger
+          self.session_missives: list[ChatCompletionRequestMessage] = []
           self.retained_missive_queue: list[MissiveSupplier] = [system_prompt]
           self.transient_missive_queue: list[MissiveSupplier] = []
-
+#+end_src
+** user_missive
+Provide the basic interface through which a user missive can be submitted.
+#+begin_src python :results silent :tangle chat_driver.py :session al
       def user_missive(self,
                        content: str):
           self.retained_missives.append(lambda: {"role": "user", "content": content})
-
+#+end_src
+** drain
+Process queued MissiveSuppliers and log them for future session analysis
+or resurrection.
+#+begin_src python :results silent :tangle chat_driver.py :session al
       def drain(self, queue):
           missives = [m for thunk in queue for m in thunk()]
           self.logger.info("Emitting: %r", missives)
           queue.clear()
           return missives
+#+end_src
+** submit
+Repeatedly any pending missives to the model.
 
+This involves resolving the MissiveSupplier queues,
+updating the session, and sending to the model.
+
+The response handlers may produce new pending missives
+(which would drive the loop).
+#+begin_src python :results silent :tangle chat_driver.py :session al
       def submit(self):
-          if not self.retained_missive_queue and not self.transient_missive_queue:
-              return
+        while self.retained_missive_queue or self.transient_missive_queue:
           self.session_missives += self.drain(self.retained_missive_queue)
           resp = self.model.create_chat_completion(
               messages = self.missives + self.drain(self.transient_missive_queue),
@@ -95,10 +120,6 @@ more controlled API (and disallow things like submit).
               "user_missive": self.user_missive,
               "transient": lambda msg: self.transient_missive_queue.append(lambda: msg),
           }, choice)
-          # This is likely a mild smell unless we can rely on TCO
-          # Especially as something like streaming comes in this will probably be re-shuffled
-          # to a more async/event loop-y model.
-          self.submit()
 #+end_src
 ** Logging
 All missives are passed to python logging, which can be configured as documented in
