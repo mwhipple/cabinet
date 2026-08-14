@@ -59,7 +59,7 @@ allows for more natural Maybe type behavior in python.
 #+end_src
 ** Definition and Constructor
 Accept arguments and initialize missive storage.
-#+begin_src python :results silent :tangle chat_driver.py :session al
+#+begin_src python :results silent :tangle chat_driver.py :session al :noweb yes
   class ChatDriver:
       def __init__(self,
                    model: Llama,
@@ -74,25 +74,31 @@ Accept arguments and initialize missive storage.
           self.session_missives: list[ChatCompletionRequestMessage] = []
           self.retained_missive_queue: list[MissiveSupplier] = [system_prompt]
           self.transient_missive_queue: list[MissiveSupplier] = []
+
+      <<user-missive>>
+      <<drain>>
+      <<submit>>
 #+end_src
-** user_missive
+*** user_missive
 Provide the basic interface through which a user missive can be submitted.
-#+begin_src python :results silent :tangle chat_driver.py :session al
+#+name: user-missive
+#+begin_src python :results silent
       def user_missive(self,
                        content: str):
-          self.retained_missives.append(lambda: {"role": "user", "content": content})
+          self.retained_missive_queue.append(lambda: [{"role": "user", "content": content}])
 #+end_src
-** drain
+*** drain
 Process queued MissiveSuppliers and log them for future session analysis
 or resurrection.
-#+begin_src python :results silent :tangle chat_driver.py :session al
+#+name: drain
+#+begin_src python :results silent
       def drain(self, queue):
           missives = [m for thunk in queue for m in thunk()]
           self.logger.info("Emitting: %r", missives)
           queue.clear()
           return missives
 #+end_src
-** submit
+*** submit
 Repeatedly any pending missives to the model.
 
 This involves resolving the MissiveSupplier queues,
@@ -100,26 +106,27 @@ updating the session, and sending to the model.
 
 The response handlers may produce new pending missives
 (which would drive the loop).
-#+begin_src python :results silent :tangle chat_driver.py :session al
-      def submit(self):
-        while self.retained_missive_queue or self.transient_missive_queue:
-          self.session_missives += self.drain(self.retained_missive_queue)
-          resp = self.model.create_chat_completion(
-              messages = self.missives + self.drain(self.transient_missive_queue),
-              tools = self.tools,
-              tool_choice = "auto",
-              temperature=0.4,
-              repeat_penalty=1.05,
-          )
-          choice = single_choice(resp)
-          received = choice['message']
-          self.logger.info("Received: %r", received)
-          self.missives.append(received)
-          on_response = self.on_response # Assign to avoid method call
-          on_response({
-              "user_missive": self.user_missive,
-              "transient": lambda msg: self.transient_missive_queue.append(lambda: msg),
-          }, choice)
+#+name: submit
+#+begin_src python :results silent
+  def submit(self):
+    while self.retained_missive_queue or self.transient_missive_queue:
+      self.session_missives += self.drain(self.retained_missive_queue)
+      resp = self.model.create_chat_completion(
+          messages = self.session_missives + self.drain(self.transient_missive_queue),
+          tools = self.tools,
+          tool_choice = "auto",
+          temperature=0.4,
+          repeat_penalty=1.05,
+      )
+      choice = single_choice(resp)
+      received = choice['message']
+      self.logger.info("Received: %r", received)
+      self.session_missives.append(received)
+      on_response = self.on_response # Assign to avoid method call
+      on_response({
+          "user_missive": self.user_missive,
+          "tool_result": lambda msg: self.transient_missive_queue.append(lambda: [msg]),
+      }, choice)
 #+end_src
 ** Logging
 All missives are passed to python logging, which can be configured as documented in
